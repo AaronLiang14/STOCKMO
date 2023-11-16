@@ -4,6 +4,7 @@ import Home from "./pages/Home/index.tsx";
 import Industry from "./pages/Industry/index.tsx";
 import Macro from "./pages/Macroeconomics/index.tsx";
 import Member from "./pages/Member/index.tsx";
+import NotFound from "./pages/NotFound/index.tsx";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="member" element={<Member />} />
           <Route path="industry" element={<Industry />} />
           <Route path="macro" element={<Macro />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>
