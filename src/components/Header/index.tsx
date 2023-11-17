@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
+import SearchIcon from "~icons/ic/round-search";
 import logo from "../../assets/logo.png";
 import { auth } from "../../config/firebase";
+import useLoginStore from "../../utils/useLoginStore";
 
 export default function Header() {
+  const handleSearch = () => {};
+  const { isLogin } = useLoginStore();
   return (
     <>
       <header className="bg-gray-500">
@@ -32,12 +36,32 @@ export default function Header() {
                 </Link>
               </div>
             </div>
+
+            <form className="flex items-center">
+              <label htmlFor="simple-search" className="sr-only">
+                Search
+              </label>
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  id="simple-search"
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  placeholder="股票代碼/股票名稱"
+                  required
+                />
+              </div>
+              <SearchIcon
+                className="h-10 w-10 cursor-pointer"
+                onClick={handleSearch}
+              />
+            </form>
+
             <Link to="/member">
               <img
                 className="h-12 w-12 rounded-full"
                 src={
-                  auth?.currentUser?.photoURL
-                    ? auth.currentUser.photoURL
+                  isLogin
+                    ? auth?.currentUser?.photoURL
                     : `https://via.placeholder.com/150`
                 }
               />
