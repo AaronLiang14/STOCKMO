@@ -47,11 +47,10 @@ export default function Stock() {
   };
 
   const handleFavorite = async () => {
+    const memberRef = doc(db, "Member", auth.lastNotifiedUid);
     const docSnap = await getDoc(memberRef);
 
     if (docSnap.exists()) {
-      const memberRef = doc(db, "Member", auth.lastNotifiedUid);
-
       if (docSnap.data().favorite_stocks.includes(id)) {
         await updateDoc(memberRef, {
           favorite_stocks: arrayRemove(id),

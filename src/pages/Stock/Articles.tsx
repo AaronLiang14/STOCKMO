@@ -1,55 +1,82 @@
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import UploadPicture from "~icons/icon-park-outline/upload-picture";
 import FullScreen from "~icons/majesticons/arrows-expand-full-line";
-import { auth, db } from "../../config/firebase";
+import { auth, db, storage } from "../../config/firebase";
+import StockCode from "../../data/StockCode.json";
+
+interface Article {
+  author_id: string;
+  author_name: string;
+  content: string;
+  created_time: Date;
+  industry: string;
+  number_of_favorite: number;
+  photo: string;
+  reply: string[];
+  stock_code: string;
+  title: string;
+}
 
 export default function Articles() {
   const { id } = useParams();
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const title = useRef("");
   const content = useRef("");
+  const uploadImgRef = useRef<HTMLInputElement>(null);
+
+  const industryCode = StockCode.filter(
+    (item) => item.證券代號.toString() === id,
+  );
+
   const handleArticlesSubmit = async (e: React.FormEvent<HTMLInputElement>) => {
     e.preventDefault();
-    await setDoc(doc(db, "Articles", "123"), {
-      author_id: auth.lastNotifiedUid,
-      author_name: auth.currentUser?.displayName,
-      content: content.current,
-      created_time: new Date(),
-      industry_code: 1,
-      number_of_favorite: 12,
-      photo: "https://picsum.photos/200/300",
-      reply: [],
-      stock_code: id,
-      title: title.current,
-    });
+    if (uploadImgRef.current && uploadImgRef.current.files) {
+      const imageRef = ref(
+        storage,
+        `images/${uploadImgRef.current?.files[0].name}`,
+      );
+      const imgUploadBytes = await uploadBytes(
+        imageRef,
+        uploadImgRef.current?.files[0],
+      );
+      const imgUrl = await getDownloadURL(imgUploadBytes.ref);
+      await addDoc(collection(db, "Articles"), {
+        author_id: auth.lastNotifiedUid,
+        author_name: auth.currentUser?.displayName,
+        content: content.current,
+        created_time: new Date(),
+        industry: industryCode[0].產業別,
+        number_of_favorite: 0,
+        photo: imgUrl,
+        reply: [],
+        stock_code: id,
+        title: title.current,
+      });
+    }
   };
 
+  const handleArticleFavorite = async () => {
+    //取得這篇文章的id
+  };
+
+  const q = query(collection(db, "Articles"), where("stock_code", "==", id));
   useEffect(() => {
     const getArticles = async () => {
-      const querySnapshot = await getDocs(collection(db, "Articles"));
+      const querySnapshot = await getDocs(q);
       const articlesData = querySnapshot.docs.map((doc) => doc.data());
       setArticles(articlesData);
     };
 
     getArticles();
   }, []);
-
-  console.log(articles);
   return (
     <>
-      <div>
+      <div className="mx-auto w-9/12">
         <div className="relative bg-gray-50 px-4 pb-20 pt-16 sm:px-6 lg:px-8 lg:pb-28 lg:pt-24">
-          <div className="absolute inset-0">
-            <div className="h-1/3 bg-white sm:h-2/3" />
-          </div>
           <div className="relative mx-auto max-w-7xl">
-            <div className="text-center">
-              <p className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                文章專區
-              </p>
-            </div>
+            <div className="text-center text-lg">文章專區</div>
             <div className="mx-auto mt-12 grid max-w-lg gap-5 lg:max-w-none lg:grid-cols-3">
               {articles.map((post, index) => (
                 <div
@@ -65,40 +92,25 @@ export default function Articles() {
                   </div>
                   <div className="flex flex-1 flex-col justify-between bg-white p-6">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-indigo-600">
-                        <a href="/" className="hover:underline">
-                          {post.name}
-                        </a>
+                      <p className="text-xl font-semibold text-gray-900">
+                        {post.title}
                       </p>
-                      <a href="/" className="mt-2 block">
-                        <p className="text-xl font-semibold text-gray-900">
-                          {post.title}
-                        </p>
-                      </a>
                     </div>
-                    <div className="mt-6 flex items-center">
+                    <div className="mt-6 flex items-center justify-between">
                       <div className="flex-shrink-0">
-                        <a href="/">
-                          <span className="sr-only">{post.name}</span>
-                          <img
-                            className="h-10 w-10 rounded-full"
-                            src={post.photo}
-                            alt=""
-                          />
-                        </a>
+                        <img
+                          className="h-10 w-10 rounded-full"
+                          src={post.photo}
+                          alt=""
+                        />
                       </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">
-                          <a href="/" className="hover:underline">
-                            {post.name}
-                          </a>
-                        </p>
-                        <div className="flex space-x-1 text-sm text-gray-500">
-                          {/* <time dateTime={post.datetime}>{post.date}</time> */}
-                          <span aria-hidden="true">&middot;</span>
-                          {/* <span>{post.readingTime} read</span> */}
-                        </div>
-                      </div>
+                      <button
+                        type="button"
+                        className="mb-2 me-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={handleArticleFavorite}
+                      >
+                        收藏
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -113,14 +125,6 @@ export default function Articles() {
               <div>
                 <button
                   type="button"
-                  data-tooltip-target="tooltip-fullscreen"
-                  className="cursor-pointer rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white sm:ms-auto"
-                >
-                  <UploadPicture className="h-6 w-6" />
-                </button>
-                <button
-                  type="button"
-                  data-tooltip-target="tooltip-fullscreen"
                   className="cursor-pointer rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white sm:ms-auto"
                 >
                   <FullScreen className="h-6 w-6" />
@@ -150,9 +154,23 @@ export default function Articles() {
               ></textarea>
             </div>
           </div>
+
+          <label
+            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            htmlFor="file_input"
+          >
+            Upload file
+          </label>
+          <input
+            className="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+            aria-describedby="file_input_help"
+            id="file_input"
+            type="file"
+            ref={uploadImgRef}
+          />
           <button
             type="submit"
-            className="inline-flex items-center rounded-lg bg-blue-400 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-500 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900"
+            className="mt-5 inline-flex items-center rounded-lg bg-blue-400 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-500 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900"
             onClick={handleArticlesSubmit}
           >
             Publish post

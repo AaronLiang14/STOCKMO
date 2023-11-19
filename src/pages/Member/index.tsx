@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { auth } from "../../config/firebase";
 import useLoginStore from "../../utils/useLoginStore";
 import Login from "./Login";
 import MemberInfo from "./MemberInfo";
@@ -9,7 +8,6 @@ export default function Member() {
 
   useEffect(() => {
     init();
-    console.log(auth);
   }, [init]);
 
   return (

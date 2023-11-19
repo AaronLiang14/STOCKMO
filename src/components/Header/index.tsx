@@ -31,12 +31,13 @@ export default function Header() {
   };
   return (
     <>
-      <header className=" bg-gray-400">
+      <header className=" bg-cyan-950">
         <nav className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex w-full items-center justify-between border-b border-gray-500 py-6 lg:border-none">
-            <div className="flex items-center">
+            <div className="mr-auto flex items-center">
               <Link to="/">
                 <img className="h-12 w-auto" src={logo} alt="" />
+                <p className="text-white">STOCK.MO</p>
               </Link>
               <div className="ml-10 hidden space-x-8 lg:block">
                 <Link
@@ -56,7 +57,7 @@ export default function Header() {
               </div>
             </div>
 
-            <form className="flex items-center">
+            <form className="relative mr-12 flex items-center">
               <label htmlFor="simple-search" className="sr-only">
                 Search
               </label>
@@ -71,7 +72,7 @@ export default function Header() {
                 />
               </div>
               <SearchIcon
-                className="h-10 w-10 cursor-pointer"
+                className="absolute right-0 h-10 w-10 cursor-pointer"
                 onClick={handleSearch}
               />
             </form>
