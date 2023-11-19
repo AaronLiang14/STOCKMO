@@ -15,9 +15,10 @@ export default function Header() {
   };
 
   useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && search !== "") {
         navigate(`/stock/${search}`);
+        setSearch("");
       }
     };
     window.addEventListener("keydown", handleKeyPress);

@@ -12,6 +12,8 @@ import Latest from "./Latest";
 import News from "./News";
 import Report from "./Report";
 
+import ChatRoom from "../../components/ChatRoom";
+
 import {
   arrayRemove,
   arrayUnion,
@@ -177,6 +179,8 @@ export default function Stock() {
           </span>
         </button>
       </div>
+
+      <ChatRoom />
     </>
   );
 }
