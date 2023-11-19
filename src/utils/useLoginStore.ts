@@ -1,7 +1,8 @@
 import { onAuthStateChanged, signInWithPopup } from "@firebase/auth";
 import { signOut } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { create } from "zustand";
-import { auth, provider } from "../config/firebase";
+import { auth, db, provider } from "../config/firebase";
 
 const initialState = {
   isLogin: false,
@@ -25,6 +26,13 @@ const useLoginStore = create<LoginState>((set) => ({
 
   handleLogin: async () => {
     await signInWithPopup(auth, provider);
+    await setDoc(doc(db, "Member", auth.lastNotifiedUid), {
+      avatar: auth.currentUser?.photoURL,
+      email: auth.currentUser?.email,
+      name: auth.currentUser?.displayName,
+      favorite_articles: [],
+      favorite_stocks: [],
+    });
   },
 
   handleLogout: async () => {

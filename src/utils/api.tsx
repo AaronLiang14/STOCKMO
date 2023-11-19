@@ -1,14 +1,11 @@
-// import TWSE from "../TWSE.json";
+const api = {
+  hostName: "https://api.finmindtrade.com/api/v4/data?",
+  async getStocksNews(stockID: string, startDate: string) {
+    const res = await fetch(
+      `${this.hostName}dataset=TaiwanStockNews&data_id=${stockID}&start_date=${startDate}`,
+    );
+    return res.json();
+  },
+};
 
-// interface FetchOptions {
-//   TWSE: string;
-// }
-
-// const api = {
-//   async getTWSEBasicInfo() {
-//     const res = await fetch()
-//     return res.json();
-//   },
-// };
-
-// export default api;
+export default api;

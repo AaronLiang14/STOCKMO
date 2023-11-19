@@ -1,7 +1,10 @@
 export default function Home() {
   return (
     <>
-      <p>Home</p>
+      <div className="">
+        <p>Home</p>
+      </div>
     </>
   );
 }
+// h-screen bg-[url('./src/pages/Home/indexBG.png')]
