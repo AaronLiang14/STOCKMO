@@ -4,7 +4,7 @@ import Login from "./Login";
 import MemberInfo from "./MemberInfo";
 
 export default function Member() {
-  const { init, handleLogin, handleLogout, isLogin } = useLoginStore();
+  const { init, handleLogout, isLogin } = useLoginStore();
 
   useEffect(() => {
     init();
@@ -24,7 +24,7 @@ export default function Member() {
           </button>
         </>
       ) : (
-        <Login login={handleLogin} />
+        <Login />
       )}
     </>
   );
