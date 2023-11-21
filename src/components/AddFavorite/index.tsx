@@ -59,10 +59,10 @@ export default function AddFavoriteStocks() {
 
   return (
     <button
-      className="group absolute right-28 top-40 mb-2 me-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-800 text-sm font-medium text-gray-900 hover:text-white focus:outline-none  focus:ring-cyan-200  dark:text-white dark:focus:ring-cyan-800"
+      className="group mb-2 me-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-800 text-sm font-medium text-gray-900 hover:text-white focus:outline-none  focus:ring-cyan-200  dark:text-white dark:focus:ring-cyan-800"
       onClick={handleFavorite}
     >
-      <span className=" relative rounded-md bg-cyan-700 px-5 py-2.5  text-white transition-all duration-75 ease-in group-hover:bg-opacity-0">
+      <span className="  rounded-md bg-cyan-700 px-5 py-2.5  text-white transition-all duration-75 ease-in group-hover:bg-opacity-0">
         {isFavorite ? "取消追蹤" : "加入追蹤"}
       </span>
     </button>

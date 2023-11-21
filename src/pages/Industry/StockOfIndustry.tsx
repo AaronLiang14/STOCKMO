@@ -14,7 +14,7 @@ export default function StockOfIndustry({ industry }: StockOfIndustryProps) {
   return (
     <ul
       role="list"
-      className="grid cursor-pointer grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:mt-6 lg:grid-cols-4"
+      className="m-auto grid cursor-pointer grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:mt-6 lg:max-w-[1280px] lg:grid-cols-4"
     >
       {stockDependOnIndustry.map((stock) => (
         <li

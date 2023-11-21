@@ -3,10 +3,10 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signOut,
   updateProfile,
-} from "@firebase/auth";
-import { signOut } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+} from "firebase/auth";
+import { collection, doc, query, setDoc, where } from "firebase/firestore";
 import { create } from "zustand";
 import { auth, db, provider } from "../config/firebase";
 
@@ -50,6 +50,11 @@ const useLoginStore = create<LoginState>((set) => ({
 
   handleGoogleLogin: async () => {
     await signInWithPopup(auth, provider);
+    const member = query(
+      collection(db, "Member"),
+      where("email", "==", auth.currentUser?.email),
+    );
+    if (member) return;
     await setDoc(doc(db, "Member", auth.currentUser!.uid), {
       avatar: auth.currentUser?.photoURL,
       email: auth.currentUser?.email,

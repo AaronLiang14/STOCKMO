@@ -6,6 +6,7 @@ import NewsPaper from "~icons/noto/rolled-up-newspaper";
 import Article from "~icons/ooui/articles-rtl";
 
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 import AddFavoriteStocks from "../../components/AddFavorite";
 import ChatRoom from "../../components/ChatRoom";
 import FinanceData from "../../data/TWSE.json";
@@ -16,10 +17,12 @@ import Latest from "./Latest";
 import News from "./News";
 import Report from "./Report";
 
+import { auth } from "../../config/firebase";
+
 export default function Stock() {
   const { init } = useLoginStore();
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState("latest");
+  const [activeTab, setActiveTab] = useState<string>("latest");
   const company = FinanceData.filter((item) => item.公司代號 === id);
 
   const renderTabContent = () => {
@@ -40,6 +43,34 @@ export default function Stock() {
         return null;
     }
   };
+
+  const asideOptions = [
+    {
+      name: "最新動態",
+      icon: <StockOutLined />,
+      option: "latest",
+    },
+    {
+      name: "基本資料",
+      icon: <Enterprise />,
+      option: "Basic",
+    },
+    {
+      name: "儀表板",
+      icon: <Dashboard />,
+      option: "dashboard",
+    },
+    {
+      name: "文章分享",
+      icon: <Article />,
+      option: "articles",
+    },
+    {
+      name: "個股新聞",
+      icon: <NewsPaper />,
+      option: "news",
+    },
+  ];
 
   useEffect(() => {
     init();
@@ -71,75 +102,47 @@ export default function Stock() {
       </button>
 
       <div className="flex flex-row">
-        <aside className="left-0 z-40 h-screen w-52 -translate-x-full  transition-transform sm:translate-x-0">
-          <div className="h-full overflow-y-auto bg-gray-50 px-3 py-4 dark:bg-gray-800">
-            <ul className=" mt-12 cursor-pointer space-y-2 font-medium">
-              <li>
-                <div
-                  className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  onClick={() => setActiveTab("latest")}
-                >
-                  <StockOutLined />
-                  <span className="ms-3">最新動態</span>
-                </div>
-              </li>
-              <li>
-                <div
-                  className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  onClick={() => setActiveTab("Basic")}
-                >
-                  <Enterprise />
-                  <span className="ms-3 flex-1 whitespace-nowrap">
-                    基本資料
-                  </span>
-                </div>
-              </li>
-              <li>
-                <div
-                  className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  onClick={() => setActiveTab("dashboard")}
-                >
-                  <Dashboard />
-                  <span className="ms-3 flex-1 whitespace-nowrap">儀表板</span>
-                </div>
-              </li>
-              <li>
-                <div
-                  className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  onClick={() => setActiveTab("articles")}
-                >
-                  <Article />
-                  <span className="ms-3 flex-1 whitespace-nowrap">
-                    文章分享
-                  </span>
-                </div>
-              </li>
-              <li>
-                <div
-                  className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  onClick={() => setActiveTab("news")}
-                >
-                  <NewsPaper />
-                  <span className="ms-3 flex-1 whitespace-nowrap">
-                    個股新聞
-                  </span>
-                </div>
-              </li>
+        <aside className="ml-8 mt-40 h-full w-60 shadow-lg transition-transform sm:translate-x-0">
+          <div className="rounded-lg bg-gray-300 px-3 py-4">
+            <ul className=" cursor-pointer space-y-2 font-medium">
+              {asideOptions.map((item) => (
+                <li>
+                  <div
+                    className={`group flex items-center rounded-lg p-2 text-gray-900 ${
+                      activeTab === item.option && "bg-gray-100"
+                    } dark:text-black`}
+                    onClick={() => setActiveTab(item.option)}
+                  >
+                    {item.icon}
+                    <span className="ms-3">{item.name}</span>
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
         </aside>
-        <div>
-          <div className="sm:flex-auto">
-            <h1 className="text-2xl font-semibold text-gray-900">
+        <div className=" m-auto mt-16 flex w-[1280px] flex-col justify-center">
+          <div className="flex justify-between">
+            <h1 className="text-4xl font-semibold text-gray-900">
               {company[0].公司代號}
               {company[0].公司名稱}
               {company[0].英文簡稱}
             </h1>
+            {auth.currentUser ? (
+              <AddFavoriteStocks />
+            ) : (
+              <button
+                className="group mb-2 me-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-800 text-sm font-medium text-gray-900 hover:text-white focus:outline-none  focus:ring-cyan-200  dark:text-white dark:focus:ring-cyan-800"
+                onClick={() => toast.error("請先登入")}
+              >
+                <span className="  rounded-md bg-cyan-700 px-5 py-2.5  text-white transition-all duration-75 ease-in group-hover:bg-opacity-0">
+                  加入追蹤
+                </span>
+              </button>
+            )}
           </div>
           {renderTabContent()}
         </div>
-
-        <AddFavoriteStocks />
       </div>
 
       <ChatRoom />

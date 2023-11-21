@@ -13,7 +13,7 @@ export default function Industry() {
   }, []);
   return (
     <>
-      <div className="mt-12 flex items-end pr-12">
+      <div className="m-auto mt-12 flex max-w-[1280px] items-end">
         <Select
           items={industry}
           aria-label="水泥工業"

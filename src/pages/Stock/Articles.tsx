@@ -47,8 +47,11 @@ export default function Articles() {
     (item) => item.證券代號.toString() === id,
   );
 
-  const handleArticlesSubmit = async (e: React.FormEvent<HTMLInputElement>) => {
+  const handleArticlesSubmit = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     e.preventDefault();
+    if (!auth.currentUser) return toast.error("請先登入");
     if (uploadImgRef.current && uploadImgRef.current.files) {
       const imageRef = ref(
         storage,
@@ -102,20 +105,19 @@ export default function Articles() {
   };
 
   const q = query(collection(db, "Articles"), where("stock_code", "==", id));
-
   const getArticlesByStock = async () => {
     const querySnapshot = await getDocs(q);
     const articlesData = querySnapshot.docs.map((doc) => doc.data());
-    setArticles(articlesData);
+    setArticles(articlesData as Article[]);
   };
 
-  const getAuthorAvatar = async (id: string) => {
-    const memberRef = doc(db, "Member", id);
-    const docSnap = await getDoc(memberRef);
-    if (docSnap.exists()) {
-      return docSnap.data().avatar;
-    }
-  };
+  // const getAuthorAvatar = async (id: string) => {
+  //   const memberRef = doc(db, "Member", id);
+  //   const docSnap = await getDoc(memberRef);
+  //   if (docSnap.exists()) {
+  //     return docSnap.data().avatar;
+  //   }
+  // };
 
   useEffect(() => {
     onSnapshot(q, () => {
@@ -128,11 +130,11 @@ export default function Articles() {
   }, [favoriteArticles]);
 
   return (
-    <>
-      <div className="mx-auto w-9/12">
-        <div className="relative bg-gray-50 px-4 pb-20 pt-16 sm:px-6 lg:px-8 lg:pb-28 lg:pt-24">
+    <div>
+      <div className="mx-auto">
+        <div className="relative   pb-20   lg:pb-28 lg:pt-12">
           <div className="relative mx-auto max-w-7xl">
-            <div className="text-center text-lg">文章專區</div>
+            <div className="text-center text-3xl">文章專區</div>
             <div className="mx-auto mt-12 grid max-w-lg gap-5 lg:max-w-none lg:grid-cols-3">
               {articles.map((post, index) => (
                 <div
@@ -178,26 +180,26 @@ export default function Articles() {
         </div>
 
         <form>
-          <div className="mb-4 w-full rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
+          <div className="mb-4 w-full rounded-lg border border-cyan-800 bg-gray-300 focus:border-cyan-800">
             <div className="flex items-center justify-end border-b px-3 py-2 dark:border-gray-600">
               <div>
                 <button
                   type="button"
-                  className="cursor-pointer rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white sm:ms-auto"
+                  className="cursor-pointer rounded p-2 text-gray-500 hover:bg-gray-100   sm:ms-auto"
                 >
                   <FullScreen className="h-6 w-6" />
                   <span className="sr-only">Full screen</span>
                 </button>
               </div>
             </div>
-            <div className="rounded-b-lg bg-white px-4 py-2 dark:bg-gray-800">
+            <div className="rounded-b-lg bg-white px-4 py-2 ">
               <label htmlFor="editor" className="sr-only">
                 Publish post
               </label>
               <textarea
                 id="title"
                 rows={1}
-                className="mb-8 block w-full border-0 bg-white px-0 text-sm text-gray-800 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                className="mb-8 block w-full border-0 bg-white px-0 text-sm text-gray-800 focus:ring-0 "
                 placeholder="Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -206,37 +208,34 @@ export default function Articles() {
               <textarea
                 id="editor"
                 rows={8}
-                className="block w-full border-0 bg-white px-0 text-sm text-gray-800 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                className="block w-full border-0 bg-white px-0 text-sm text-gray-800 focus:ring-0 "
                 placeholder="Write an article..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 required
               ></textarea>
             </div>
-          </div>
 
-          <label
-            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-            htmlFor="file_input"
-          >
-            Upload file
-          </label>
-          <input
-            className="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
-            aria-describedby="file_input_help"
-            id="file_input"
-            type="file"
-            ref={uploadImgRef}
-          />
-          <button
-            type="submit"
-            className="mt-5 inline-flex items-center rounded-lg bg-blue-400 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-500 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900"
-            onClick={handleArticlesSubmit}
-          >
-            Publish post
-          </button>
+            <div className="flex flex-row">
+              <input
+                className=" block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none "
+                id="file_input"
+                type="file"
+                ref={uploadImgRef}
+              />
+              <button
+                type="submit"
+                className=" group inline-flex  rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-800 text-sm font-medium text-gray-900 focus:outline-none  focus:ring-cyan-200     "
+                onClick={handleArticlesSubmit}
+              >
+                <span className=" rounded-md bg-cyan-700 px-8 py-2.5 text-white transition-all duration-75 ease-in group-hover:bg-opacity-0">
+                  Submit
+                </span>
+              </button>
+            </div>
+          </div>
         </form>
       </div>
-    </>
+    </div>
   );
 }

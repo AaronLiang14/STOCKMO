@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import SearchIcon from "~icons/ic/round-search";
+import Avatar from "~icons/ooui/user-avatar";
 import logo from "../../assets/logo.png";
 import { auth } from "../../config/firebase";
 import stockCode from "../../data/StockCode.json";
@@ -42,9 +43,9 @@ export default function Header() {
 
   return (
     <>
-      <header className=" bg-cyan-950">
-        <nav className=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex w-full items-center justify-between border-b border-gray-500 py-6 lg:border-none">
+      <header className="bg-cyan-950">
+        <nav className=" mx-auto p-5 sm:px-6 lg:px-24">
+          <div className="flex w-full items-center justify-between border-b border-gray-500 lg:border-none">
             <div className="mr-auto flex items-center">
               <Link to="/">
                 <img className="h-12 w-auto" src={logo} alt="" />
@@ -92,7 +93,6 @@ export default function Header() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
-
                       handleSearch();
                     }
                   }}
@@ -105,14 +105,14 @@ export default function Header() {
             </form>
 
             <Link to="/member">
-              <img
-                className="h-12 w-12 rounded-full"
-                src={
-                  isLogin
-                    ? auth?.currentUser?.photoURL
-                    : `https://via.placeholder.com/150`
-                }
-              />
+              {isLogin ? (
+                <img
+                  className="h-12 w-12 rounded-full"
+                  src={auth?.currentUser?.photoURL || ""}
+                />
+              ) : (
+                <Avatar className="h-12 w-12 rounded-full bg-gray-300 text-white" />
+              )}
             </Link>
           </div>
         </nav>
