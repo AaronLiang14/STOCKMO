@@ -22,7 +22,6 @@ export default function Header() {
         return item.證券名稱 === search;
       });
       if (searchStock.length === 0) {
-        console.log(searchStock);
         toast.error("查無此檔股票");
         return;
       }

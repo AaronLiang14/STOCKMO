@@ -14,9 +14,11 @@ export default function FavoriteStocks() {
   useEffect(() => {
     getMemberInfo();
   }, []);
-
   return (
     <>
+      {favoriteStocks.map((item) => (
+        <p>{item}</p>
+      ))}
       <p>FavoriteStocks</p>
     </>
   );

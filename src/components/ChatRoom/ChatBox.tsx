@@ -19,7 +19,11 @@ interface Message {
   avatar: string;
 }
 
-export default function ChatBox() {
+interface ChatBoxProps {
+  dispatch: React.Dispatch<{ type: "TOGGLE" }>;
+}
+
+export default function ChatBox({ dispatch }: ChatBoxProps) {
   const { id } = useParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
@@ -38,8 +42,11 @@ export default function ChatBox() {
     await updateDoc(chatRoomsRef, {
       messages: arrayUnion(newMessage),
     });
-    console.log(auth.currentUser);
     setInput("");
+  };
+
+  const handleCheckBox = () => {
+    dispatch({ type: "TOGGLE" });
   };
 
   useEffect(() => {
@@ -61,7 +68,7 @@ export default function ChatBox() {
         <div className="w-full max-w-lg rounded-lg bg-white shadow-md">
           <div className="flex items-center justify-between rounded-t-lg border-b bg-cyan-800 p-4 text-white">
             <p className="text-lg font-semibold">聊天室</p>
-            <Close />
+            <Close onClick={handleCheckBox} className="cursor-pointer" />
           </div>
           <div className="h-80 overflow-y-auto p-4">
             {messages.map((message, index) => {

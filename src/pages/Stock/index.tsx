@@ -5,7 +5,10 @@ import StockOutLined from "~icons/mdi/finance";
 import NewsPaper from "~icons/noto/rolled-up-newspaper";
 import Article from "~icons/ooui/articles-rtl";
 
+import { useParams } from "react-router-dom";
+import AddFavoriteStocks from "../../components/AddFavorite";
 import ChatRoom from "../../components/ChatRoom";
+import FinanceData from "../../data/TWSE.json";
 import useLoginStore from "../../utils/useLoginStore";
 import Articles from "./Articles";
 import BasicInformation from "./BasicInformation";
@@ -13,11 +16,11 @@ import Latest from "./Latest";
 import News from "./News";
 import Report from "./Report";
 
-import AddFavoriteStocks from "../../components/AddFavorite";
-
 export default function Stock() {
   const { init } = useLoginStore();
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState("latest");
+  const company = FinanceData.filter((item) => item.公司代號 === id);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -125,7 +128,16 @@ export default function Stock() {
             </ul>
           </div>
         </aside>
-        {renderTabContent()}
+        <div>
+          <div className="sm:flex-auto">
+            <h1 className="text-2xl font-semibold text-gray-900">
+              {company[0].公司代號}
+              {company[0].公司名稱}
+              {company[0].英文簡稱}
+            </h1>
+          </div>
+          {renderTabContent()}
+        </div>
 
         <AddFavoriteStocks />
       </div>

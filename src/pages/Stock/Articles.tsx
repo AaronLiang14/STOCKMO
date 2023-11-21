@@ -1,9 +1,14 @@
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
+  doc,
+  getDoc,
   getDocs,
   onSnapshot,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -14,13 +19,8 @@ import FullScreen from "~icons/majesticons/arrows-expand-full-line";
 import { auth, db, storage } from "../../config/firebase";
 import StockCode from "../../data/StockCode.json";
 
-import {
-  arrayRemove,
-  arrayUnion,
-  doc,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
+import useFavoritesStore from "../../utils/useFavoriteStore";
+
 interface Article {
   author_id: string;
   author_name: string;
@@ -36,9 +36,9 @@ interface Article {
 }
 
 export default function Articles() {
+  const { favoriteArticles, getFavoriteArticles } = useFavoritesStore();
   const { id } = useParams();
   const [articles, setArticles] = useState<Article[]>([]);
-  const [favoriteArticles, setFavoriteArticles] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const uploadImgRef = useRef<HTMLInputElement>(null);
@@ -90,11 +90,13 @@ export default function Articles() {
         await updateDoc(memberRef, {
           favorite_articles: arrayRemove(id),
         });
+        toast.success("取消收藏");
         return;
       } else {
         await updateDoc(memberRef, {
           favorite_articles: arrayUnion(id),
         });
+        toast.success("加入收藏");
       }
     }
   };
@@ -112,15 +114,6 @@ export default function Articles() {
     const docSnap = await getDoc(memberRef);
     if (docSnap.exists()) {
       return docSnap.data().avatar;
-    }
-  };
-
-  const memberRef = doc(db, "Member", auth.currentUser!.uid);
-
-  const getFavoriteArticles = async () => {
-    const docSnap = await getDoc(memberRef);
-    if (docSnap.exists()) {
-      setFavoriteArticles(docSnap.data().favorite_articles);
     }
   };
 
