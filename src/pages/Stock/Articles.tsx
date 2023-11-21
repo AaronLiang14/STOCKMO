@@ -1,11 +1,26 @@
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 import FullScreen from "~icons/majesticons/arrows-expand-full-line";
 import { auth, db, storage } from "../../config/firebase";
 import StockCode from "../../data/StockCode.json";
 
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 interface Article {
   author_id: string;
   author_name: string;
@@ -17,13 +32,15 @@ interface Article {
   reply: string[];
   stock_code: string;
   title: string;
+  id: string;
 }
 
 export default function Articles() {
   const { id } = useParams();
   const [articles, setArticles] = useState<Article[]>([]);
-  const title = useRef("");
-  const content = useRef("");
+  const [favoriteArticles, setFavoriteArticles] = useState<string[]>([]);
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const uploadImgRef = useRef<HTMLInputElement>(null);
 
   const industryCode = StockCode.filter(
@@ -42,35 +59,81 @@ export default function Articles() {
         uploadImgRef.current?.files[0],
       );
       const imgUrl = await getDownloadURL(imgUploadBytes.ref);
-      await addDoc(collection(db, "Articles"), {
-        author_id: auth.lastNotifiedUid,
+      const docRef = await addDoc(collection(db, "Articles"), {
+        author_id: auth.currentUser!.uid,
         author_name: auth.currentUser?.displayName,
-        content: content.current,
+        content: content,
         created_time: new Date(),
         industry: industryCode[0].產業別,
         number_of_favorite: 0,
         photo: imgUrl,
         reply: [],
         stock_code: id,
-        title: title.current,
+        title: title,
       });
+      const newDocumentId = docRef.id;
+      await updateDoc(doc(db, "Articles", newDocumentId), {
+        id: newDocumentId,
+      });
+      toast.success("發文成功");
+      setContent("");
+      setTitle("");
     }
   };
 
-  const handleArticleFavorite = async () => {
-    //取得這篇文章的id
+  const handleArticleFavorite = async (id: string) => {
+    const memberRef = doc(db, "Member", auth.currentUser!.uid);
+    const docSnap = await getDoc(memberRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().favorite_articles.includes(id)) {
+        await updateDoc(memberRef, {
+          favorite_articles: arrayRemove(id),
+        });
+        return;
+      } else {
+        await updateDoc(memberRef, {
+          favorite_articles: arrayUnion(id),
+        });
+      }
+    }
   };
 
   const q = query(collection(db, "Articles"), where("stock_code", "==", id));
-  useEffect(() => {
-    const getArticles = async () => {
-      const querySnapshot = await getDocs(q);
-      const articlesData = querySnapshot.docs.map((doc) => doc.data());
-      setArticles(articlesData);
-    };
 
-    getArticles();
+  const getArticlesByStock = async () => {
+    const querySnapshot = await getDocs(q);
+    const articlesData = querySnapshot.docs.map((doc) => doc.data());
+    setArticles(articlesData);
+  };
+
+  const getAuthorAvatar = async (id: string) => {
+    const memberRef = doc(db, "Member", id);
+    const docSnap = await getDoc(memberRef);
+    if (docSnap.exists()) {
+      return docSnap.data().avatar;
+    }
+  };
+
+  const memberRef = doc(db, "Member", auth.currentUser!.uid);
+
+  const getFavoriteArticles = async () => {
+    const docSnap = await getDoc(memberRef);
+    if (docSnap.exists()) {
+      setFavoriteArticles(docSnap.data().favorite_articles);
+    }
+  };
+
+  useEffect(() => {
+    onSnapshot(q, () => {
+      getArticlesByStock();
+    });
   }, []);
+
+  useEffect(() => {
+    getFavoriteArticles();
+  }, [favoriteArticles]);
+
   return (
     <>
       <div className="mx-auto w-9/12">
@@ -107,9 +170,11 @@ export default function Articles() {
                       <button
                         type="button"
                         className="mb-2 me-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                        onClick={handleArticleFavorite}
+                        onClick={() => handleArticleFavorite(post.id)}
                       >
-                        收藏
+                        {favoriteArticles.includes(post.id)
+                          ? "取消收藏"
+                          : "收藏文章"}
                       </button>
                     </div>
                   </div>
@@ -141,7 +206,8 @@ export default function Articles() {
                 rows={1}
                 className="mb-8 block w-full border-0 bg-white px-0 text-sm text-gray-800 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                 placeholder="Title"
-                onChange={(e) => (title.current = e.target.value)}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 required
               ></textarea>
               <textarea
@@ -149,7 +215,8 @@ export default function Articles() {
                 rows={8}
                 className="block w-full border-0 bg-white px-0 text-sm text-gray-800 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                 placeholder="Write an article..."
-                onChange={(e) => (content.current = e.target.value)}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
                 required
               ></textarea>
             </div>

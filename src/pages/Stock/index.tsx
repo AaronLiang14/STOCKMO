@@ -1,32 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Enterprise from "~icons/carbon/enterprise";
 import Dashboard from "~icons/material-symbols/space-dashboard";
 import StockOutLined from "~icons/mdi/finance";
 import NewsPaper from "~icons/noto/rolled-up-newspaper";
 import Article from "~icons/ooui/articles-rtl";
 
+import ChatRoom from "../../components/ChatRoom";
+import useLoginStore from "../../utils/useLoginStore";
 import Articles from "./Articles";
 import BasicInformation from "./BasicInformation";
 import Latest from "./Latest";
 import News from "./News";
 import Report from "./Report";
 
-import ChatRoom from "../../components/ChatRoom";
-
-import {
-  arrayRemove,
-  arrayUnion,
-  doc,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { useParams } from "react-router-dom";
-import { auth, db } from "../../config/firebase";
+import AddFavoriteStocks from "../../components/AddFavorite";
 
 export default function Stock() {
+  const { init } = useLoginStore();
   const [activeTab, setActiveTab] = useState("latest");
-  const [isFavorite, setIsFavorite] = useState(false);
-  const { id } = useParams();
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -47,25 +38,9 @@ export default function Stock() {
     }
   };
 
-  const handleFavorite = async () => {
-    const memberRef = doc(db, "Member", auth.lastNotifiedUid);
-    const docSnap = await getDoc(memberRef);
-
-    if (docSnap.exists()) {
-      if (docSnap.data().favorite_stocks.includes(id)) {
-        await updateDoc(memberRef, {
-          favorite_stocks: arrayRemove(id),
-        });
-        setIsFavorite(false);
-        return;
-      } else {
-        await updateDoc(memberRef, {
-          favorite_stocks: arrayUnion(id),
-        });
-        setIsFavorite(true);
-      }
-    }
-  };
+  useEffect(() => {
+    init();
+  }, []);
 
   return (
     <>
@@ -152,14 +127,7 @@ export default function Stock() {
         </aside>
         {renderTabContent()}
 
-        <button
-          className="group absolute right-10 top-40 mb-2 me-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 p-0.5 text-sm font-medium text-gray-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-cyan-200 group-hover:from-cyan-500 group-hover:to-blue-500 dark:text-white dark:focus:ring-cyan-800"
-          onClick={handleFavorite}
-        >
-          <span className="relative rounded-md bg-white px-5 py-2.5 text-gray-900 transition-all duration-75 ease-in  hover:text-white group-hover:bg-opacity-0">
-            {isFavorite ? "取消收藏" : "收藏個股"}
-          </span>
-        </button>
+        <AddFavoriteStocks />
       </div>
 
       <ChatRoom />

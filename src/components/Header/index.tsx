@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import SearchIcon from "~icons/ic/round-search";
 import logo from "../../assets/logo.png";
 import { auth } from "../../config/firebase";
+import stockCode from "../../data/StockCode.json";
 import useLoginStore from "../../utils/useLoginStore";
 
 export default function Header() {
@@ -14,22 +16,31 @@ export default function Header() {
     setSearch(e.target.value);
   };
 
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && search !== "") {
-        navigate(`/stock/${search}`);
-        setSearch("");
-      }
-    };
-    window.addEventListener("keydown", handleKeyPress);
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [search, navigate]);
-
   const handleSearch = () => {
-    navigate(`/stock/${search}`);
+    if (isNaN(parseInt(search))) {
+      const searchStock = stockCode.filter((item) => {
+        return item.證券名稱 === search;
+      });
+      if (searchStock.length === 0) {
+        console.log(searchStock);
+        toast.error("查無此檔股票");
+        return;
+      }
+      navigate(`/stock/${searchStock[0].證券代號}`);
+      setSearch("");
+    } else {
+      const searchStock = stockCode.filter((item) => {
+        return item.證券代號 === parseInt(search);
+      });
+      if (searchStock.length === 0) {
+        toast.error("查無此檔股票");
+        return;
+      }
+      navigate(`/stock/${searchStock[0].證券代號}`);
+      setSearch("");
+    }
   };
+
   return (
     <>
       <header className=" bg-cyan-950">
@@ -56,24 +67,40 @@ export default function Header() {
                   總體經濟
                 </Link>
               </div>
+
+              <div className="ml-10 hidden space-x-8 lg:block">
+                <Link
+                  to="/macro"
+                  className="text-base font-medium text-white hover:text-indigo-50"
+                >
+                  大富翁
+                </Link>
+              </div>
             </div>
 
-            <form className="relative mr-12 flex items-center">
-              <label htmlFor="simple-search" className="sr-only">
+            <form className="relative mr-12 flex items-center ">
+              <label htmlFor="simple-search" className="sr-only ">
                 Search
               </label>
-              <div className="relative w-full">
+              <div className="relative w-full ">
                 <input
                   type="text"
                   id="simple-search"
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  className="block w-full rounded-lg border border-gray-300  p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500    dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                   placeholder="股票代碼/股票名稱"
                   value={search}
                   onChange={handleInputChange}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+
+                      handleSearch();
+                    }
+                  }}
                 />
               </div>
               <SearchIcon
-                className="absolute right-0 h-10 w-10 cursor-pointer"
+                className="absolute right-0 h-9 w-9 cursor-pointer "
                 onClick={handleSearch}
               />
             </form>

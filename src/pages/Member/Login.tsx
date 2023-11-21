@@ -5,6 +5,7 @@ import useLoginStore from "../../utils/useLoginStore";
 export default function Login() {
   const { handleGoogleLogin, handleNativeSignUp, handleNativeLogin } =
     useLoginStore();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");

@@ -12,7 +12,7 @@ export default function ChatRoom() {
   return (
     <>
       <div className="fixed bottom-10 right-10" onClick={handleCheckBox}>
-        <ChatIcons className=" h-24 w-24 text-cyan-800" />
+        <ChatIcons className=" h-24 w-24 cursor-pointer text-cyan-800" />
       </div>
       {isOpen && <ChatBox />}
     </>

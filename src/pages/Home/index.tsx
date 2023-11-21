@@ -1,4 +1,13 @@
+import { useEffect } from "react";
+import useLoginStore from "../../utils/useLoginStore";
+
 export default function Home() {
+  const { init } = useLoginStore();
+
+  useEffect(() => {
+    init();
+  }, []);
+
   return (
     <>
       <div className="">

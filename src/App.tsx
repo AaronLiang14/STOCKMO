@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster } from "sonner";
 import Header from "./components/Header";
 import Home from "./pages/Home/index.tsx";
 import Industry from "./pages/Industry/index.tsx";
@@ -11,6 +12,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
+        <Toaster position="top-center" />
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />

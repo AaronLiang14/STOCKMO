@@ -15,6 +15,8 @@ interface Message {
   member_id: string;
   text: string;
   message_time: Date;
+  name: string;
+  avatar: string;
 }
 
 export default function ChatBox() {
@@ -23,10 +25,11 @@ export default function ChatBox() {
   const [input, setInput] = useState<string>("");
 
   const newMessage = {
-    member_id: auth.lastNotifiedUid,
+    member_id: auth.currentUser!.uid,
     text: input,
     message_time: new Date(),
     name: auth.currentUser?.displayName,
+    avatar: auth.currentUser?.photoURL,
   };
 
   const handleSendMessage = async () => {
@@ -35,12 +38,12 @@ export default function ChatBox() {
     await updateDoc(chatRoomsRef, {
       messages: arrayUnion(newMessage),
     });
+    console.log(auth.currentUser);
     setInput("");
   };
 
   useEffect(() => {
-    if (!id) return;
-    const chatRoomsRef = doc(db, "ChatRooms", id);
+    const chatRoomsRef = doc(db, "ChatRooms", id!);
     onSnapshot(chatRoomsRef, (doc) => {
       if (doc.data() === undefined) {
         setDoc(chatRoomsRef, {
@@ -62,10 +65,20 @@ export default function ChatBox() {
           </div>
           <div className="h-80 overflow-y-auto p-4">
             {messages.map((message, index) => {
-              if (message.member_id === auth.lastNotifiedUid) {
-                return MyMessage(message.text, index);
+              if (message.member_id === auth.currentUser!.uid) {
+                return MyMessage(
+                  message.text,
+                  index,
+                  message.name,
+                  message.avatar,
+                );
               } else {
-                return OtherMessage(message.text, index);
+                return OtherMessage(
+                  message.text,
+                  index,
+                  message.name,
+                  message.avatar,
+                );
               }
             })}
           </div>

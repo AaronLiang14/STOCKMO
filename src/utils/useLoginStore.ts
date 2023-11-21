@@ -3,14 +3,12 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
+  updateProfile,
 } from "@firebase/auth";
 import { signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { create } from "zustand";
 import { auth, db, provider } from "../config/firebase";
-const initialState = {
-  isLogin: false,
-};
 
 interface LoginState {
   isLogin: boolean;
@@ -20,6 +18,10 @@ interface LoginState {
   handleNativeSignUp: (email: string, password: string, name: string) => void;
   handleNativeLogin: (email: string, password: string) => void;
 }
+
+const initialState = {
+  isLogin: false,
+};
 
 const useLoginStore = create<LoginState>((set) => ({
   ...initialState,
@@ -32,7 +34,8 @@ const useLoginStore = create<LoginState>((set) => ({
 
   handleNativeSignUp: async (email: string, password: string, name: string) => {
     await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(db, "Member", auth.lastNotifiedUid), {
+    await updateProfile(auth.currentUser!, { displayName: name });
+    await setDoc(doc(db, "Member", auth.currentUser!.uid), {
       avatar: auth.currentUser?.photoURL,
       email: auth.currentUser?.email,
       name: name,
@@ -47,7 +50,7 @@ const useLoginStore = create<LoginState>((set) => ({
 
   handleGoogleLogin: async () => {
     await signInWithPopup(auth, provider);
-    await setDoc(doc(db, "Member", auth.lastNotifiedUid), {
+    await setDoc(doc(db, "Member", auth.currentUser!.uid), {
       avatar: auth.currentUser?.photoURL,
       email: auth.currentUser?.email,
       name: auth.currentUser?.displayName,
