@@ -234,27 +234,42 @@ export default function BasicInformation() {
                       {year}
                     </td>
                     <td className="hidden whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 sm:table-cell">
-                      <a href={financialReports(id, "1", year, "1")}>
+                      <a
+                        href={financialReports(id, "1", year, "1")}
+                        target="_blank"
+                      >
                         {year}Q1
                       </a>
                     </td>
                     <td className="hidden whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 lg:table-cell">
-                      <a href={financialReports(id, "2", year, "1")}>
+                      <a
+                        href={financialReports(id, "2", year, "1")}
+                        target="_blank"
+                      >
                         {year}Q2
                       </a>
                     </td>
                     <td className="hidden whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 lg:table-cell">
-                      <a href={financialReports(id, "3", year, "1")}>
+                      <a
+                        href={financialReports(id, "3", year, "1")}
+                        target="_blank"
+                      >
                         {year}Q3
                       </a>
                     </td>
                     <td className="hidden whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 lg:table-cell">
-                      <a href={financialReports(id, "4", year, "1")}>
+                      <a
+                        href={financialReports(id, "4", year, "1")}
+                        target="_blank"
+                      >
                         {year}Q4
                       </a>
                     </td>
                     <td className="hidden whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 lg:table-cell">
-                      <a href={financialReports(id, "4", year, "3")}>
+                      <a
+                        href={financialReports(id, "4", year, "3")}
+                        target="_blank"
+                      >
                         {year}Q4個體
                       </a>
                     </td>
