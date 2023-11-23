@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Enterprise from "~icons/carbon/enterprise";
 import Dashboard from "~icons/material-symbols/space-dashboard";
 import StockOutLined from "~icons/mdi/finance";
@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import AddFavoriteStocks from "../../components/AddFavorite";
 import ChatRoom from "../../components/ChatRoom";
 import FinanceData from "../../data/TWSE.json";
-import useLoginStore from "../../utils/useLoginStore";
 import Articles from "./Articles";
 import BasicInformation from "./BasicInformation";
 import Latest from "./Latest";
@@ -20,7 +19,6 @@ import Report from "./Report";
 import { auth } from "../../config/firebase";
 
 export default function Stock() {
-  const { init } = useLoginStore();
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState<string>("latest");
   const company = FinanceData.filter((item) => item.公司代號 === id);
@@ -71,10 +69,6 @@ export default function Stock() {
       option: "news",
     },
   ];
-
-  useEffect(() => {
-    init();
-  }, []);
 
   return (
     <>

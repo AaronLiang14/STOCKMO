@@ -73,7 +73,7 @@ export default function Header() {
                   to="/macro"
                   className="text-base font-medium text-white hover:text-indigo-50"
                 >
-                  大富翁
+                  模擬交易
                 </Link>
               </div>
             </div>

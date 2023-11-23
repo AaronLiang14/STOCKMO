@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
 import Header from "./components/Header";
@@ -7,8 +8,14 @@ import Macro from "./pages/Macroeconomics/index.tsx";
 import Member from "./pages/Member/index.tsx";
 import NotFound from "./pages/NotFound/index.tsx";
 import Stock from "./pages/Stock/index.tsx";
+import useLoginStore from "./utils/useLoginStore";
 
 function App() {
+  const { init } = useLoginStore();
+  useEffect(() => {
+    init();
+  }, [init]);
+
   return (
     <>
       <BrowserRouter>

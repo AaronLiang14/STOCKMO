@@ -1,16 +1,11 @@
 import { Select, SelectItem } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import industry from "../../data/Industry.json";
-import useLoginStore from "../../utils/useLoginStore";
 import StockOfIndustry from "./StockOfIndustry";
 
 export default function Industry() {
-  const { init } = useLoginStore();
   const [industryChosen, setIndustryChosen] = useState<string>("水泥工業");
 
-  useEffect(() => {
-    init();
-  }, []);
   return (
     <>
       <div className="m-auto mt-12 flex max-w-[1280px] items-end">
