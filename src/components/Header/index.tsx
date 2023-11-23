@@ -70,7 +70,7 @@ export default function Header() {
 
               <div className="ml-10 hidden space-x-8 lg:block">
                 <Link
-                  to="/macro"
+                  to="/trades"
                   className="text-base font-medium text-white hover:text-indigo-50"
                 >
                   模擬交易

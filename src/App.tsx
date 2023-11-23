@@ -1,3 +1,4 @@
+import { NextUIProvider } from "@nextui-org/react";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
@@ -8,6 +9,7 @@ import Macro from "./pages/Macroeconomics/index.tsx";
 import Member from "./pages/Member/index.tsx";
 import NotFound from "./pages/NotFound/index.tsx";
 import Stock from "./pages/Stock/index.tsx";
+import Trades from "./pages/Trades/index.tsx";
 import useLoginStore from "./utils/useLoginStore";
 
 function App() {
@@ -18,18 +20,21 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
-        <Toaster position="top-center" />
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="member" element={<Member />} />
-          <Route path="industry" element={<Industry />} />
-          <Route path="macro" element={<Macro />} />
-          <Route path="stock/:id" element={<Stock />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <NextUIProvider>
+        <BrowserRouter>
+          <Toaster position="top-center" />
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="member" element={<Member />} />
+            <Route path="industry" element={<Industry />} />
+            <Route path="macro" element={<Macro />} />
+            <Route path="stock/:id" element={<Stock />} />
+            <Route path="trades" element={<Trades />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </NextUIProvider>
     </>
   );
 }

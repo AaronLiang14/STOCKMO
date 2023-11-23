@@ -1,11 +1,8 @@
 import HighchartsReact from "highcharts-react-official";
-import HC_more from "highcharts/highcharts-more";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../../utils/api";
-
-HC_more(Highcharts);
 
 interface StockPriceProps {
   date: string;
@@ -26,6 +23,10 @@ export default function StockChart() {
   const [stockPrice, setStockPrice] = useState<[]>([]);
   const [volume, setVolume] = useState<[]>([]);
 
+  const endDate = `${new Date().getFullYear()}-${
+    new Date().getMonth() + 1
+  }-${new Date().getDate()}`;
+
   const groupingUnits = [
     ["week", [1]],
     ["month", [1, 2, 3, 4, 6]],
@@ -33,50 +34,20 @@ export default function StockChart() {
 
   const options = {
     chart: {
-      type: "candlestick",
-    },
-    title: {
-      text: "股價",
+      height: 400,
+      width: 900,
     },
 
-    xAxis: {
-      type: "datetime",
-    },
-
-    yAxis: {
-      showFirstLabel: false,
-      showLastLabel: true,
-      title: {
-        text: "股價",
-      },
-    },
-    credits: {
-      enabled: false,
-    },
-    series: [
-      {
-        type: "candlestick",
-        name: "2330",
-        data: stockPrice,
-        color: "green",
-        upColor: "red",
-        upLineColor: "red",
-        lineColor: "green",
-      },
-    ],
-    tooltip: {
-      borderWidth: 1,
-      changeDecimals: 2,
-    },
-  };
-
-  const options2 = {
     rangeSelector: {
       selected: 2,
     },
 
     title: {
-      text: ` ${id}Historical`,
+      text: `歷史股價`,
+    },
+
+    xAxis: {
+      type: "datetime",
     },
 
     yAxis: [
@@ -88,7 +59,7 @@ export default function StockChart() {
           x: -3,
         },
         title: {
-          text: "OHLC",
+          text: "股價",
         },
         height: "60%",
         lineWidth: 2,
@@ -102,10 +73,10 @@ export default function StockChart() {
           x: -3,
         },
         title: {
-          text: "Volume",
+          text: "成交量",
         },
-        top: "65%",
-        height: "35%",
+        top: "70%",
+        height: "30%",
         offset: 0,
         lineWidth: 2,
       },
@@ -176,19 +147,13 @@ export default function StockChart() {
     setStockPrice(formattedData);
   };
 
-  const endDate = `${new Date().getFullYear()}-${
-    new Date().getMonth() + 1
-  }-${new Date().getDate()}`;
-
   useEffect(() => {
-    if (!id) return;
-    getStockPrice(id, "2023-10-01", endDate);
-  }, []);
+    if (id) getStockPrice(id, "2023-10-01", endDate);
+  }, [id]);
 
   return (
     <div>
       <HighchartsReact highcharts={Highcharts} options={options} />
-      <HighchartsReact highcharts={Highcharts} options={options2} />
     </div>
   );
 }

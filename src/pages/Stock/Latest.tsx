@@ -1,3 +1,4 @@
+import PER from "../../components/Graph/Finance/PER";
 import StockChart from "../../components/Graph/StockPrice/OneDayPrice";
 
 export default function Latest() {
@@ -5,6 +6,7 @@ export default function Latest() {
     <>
       <p>即時股價、分點資訊</p>
       <StockChart />
+      <PER />
     </>
   );
 }

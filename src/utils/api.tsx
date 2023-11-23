@@ -14,6 +14,12 @@ const api = {
     );
     return res.json();
   },
+  async getPER(stockID: string, startDate: string, endDate: string) {
+    const res = await fetch(
+      `${this.hostName}dataset=TaiwanStockPER&start_date=${startDate}&end_date=${endDate}&token=${this.token}&data_id=${stockID}`,
+    );
+    return res.json();
+  },
 };
 
 export default api;
