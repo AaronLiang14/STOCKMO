@@ -1,6 +1,6 @@
+import { auth, db } from "@/config/firebase";
+import { DocumentData } from "@firebase/firestore";
 import {
-  Radio,
-  RadioGroup,
   Table,
   TableBody,
   TableCell,
@@ -9,59 +9,111 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { useState } from "react";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-const rows = [
-  {
-    key: "1",
-    name: "Tony Reichert",
-    role: "CEO",
-    status: "Active",
-  },
-  {
-    key: "2",
-    name: "Zoey Lang",
-    role: "Technical Lead",
-    status: "Paused",
-  },
-  {
-    key: "3",
-    name: "Jane Fisher",
-    role: "Senior Developer",
-    status: "Active",
-  },
-  {
-    key: "4",
-    name: "William Howard",
-    role: "Community Manager",
-    status: "Vacation",
-  },
-];
+import StockCode from "@/data/StockCode.json";
+import CancelModal from "./CancelEntrustmentModal.tsx";
 
 const columns = [
   {
-    key: "name",
-    label: "NAME",
-  },
-  {
-    key: "role",
-    label: "ROLE",
+    key: "stockID",
+    label: "股票代碼/名稱",
   },
   {
     key: "status",
-    label: "STATUS",
+    label: "委託狀態",
+  },
+  {
+    key: "tradeType",
+    label: "交易類別",
+  },
+  {
+    key: "orderType",
+    label: "下單類別",
+  },
+  {
+    key: "orderVolumePrice",
+    label: "委託量/價",
+  },
+  {
+    key: "time",
+    label: "委託時間",
+  },
+  {
+    key: "cancel",
+    label: "取消委託",
   },
 ];
 
 export default function Entrustment() {
-  const [selectionBehavior, setSelectionBehavior] = useState("toggle");
+  const [entrustment, setEntrustment] = useState<DocumentData[]>([]);
+
+  const orderQuery = query(
+    collection(db, "Trades"),
+    where("member_id", "==", auth.currentUser?.uid || ""),
+  );
+
+  const getOrders = async () => {
+    if (!auth.currentUser) return;
+    setEntrustment([]); //避免資料重複
+
+    const orders = await getDocs(orderQuery);
+    orders.forEach((doc) => {
+      setEntrustment((prev) => [...prev, doc.data()]);
+    });
+  };
+
+  const cancelEntrustment = async (id: string) => {
+    const entrustmentRef = doc(db, "Trades", id);
+    await updateDoc(entrustmentRef, {
+      status: "已取消",
+    });
+    toast.success("成功取消委託");
+    setEntrustment([]); //避免資料重複
+    getOrders();
+  };
+
+  const rows = entrustment.map((item) => {
+    const stockName =
+      StockCode.find((stock) => stock.證券代號 === parseInt(item.stock_id))
+        ?.證券名稱 || "";
+    if (item.status !== "已成交")
+      return {
+        key: item.id,
+        stockID: item.stock_id + " / " + stockName,
+        status: item.status,
+        tradeType: item.trade_type,
+        orderType: item.order_type,
+        orderVolumePrice: item.order.volume + "股/" + item.order.price,
+        time: item.order.time.toDate().toLocaleString(),
+        cancel: item.status === "委託成功" && (
+          <CancelModal cancelEntrustment={() => cancelEntrustment(item.id)} />
+        ),
+      };
+  });
+
+  useEffect(() => {
+    onSnapshot(orderQuery, () => {
+      getOrders();
+    });
+  }, [auth.currentUser]);
 
   return (
     <div className="flex flex-col gap-3">
       <Table
         aria-label="Rows actions table example with dynamic content"
         selectionMode="multiple"
-        selectionBehavior={selectionBehavior}
+        selectionBehavior="replace"
         onRowAction={(key) => alert(`Opening item ${key}...`)}
       >
         <TableHeader columns={columns}>
@@ -71,7 +123,7 @@ export default function Entrustment() {
         </TableHeader>
         <TableBody items={rows}>
           {(item) => (
-            <TableRow key={item.key}>
+            <TableRow key={item!.key}>
               {(columnKey) => (
                 <TableCell>{getKeyValue(item, columnKey)}</TableCell>
               )}
@@ -79,15 +131,6 @@ export default function Entrustment() {
           )}
         </TableBody>
       </Table>
-      <RadioGroup
-        label="Selection Behavior"
-        orientation="horizontal"
-        value={selectionBehavior}
-        onValueChange={setSelectionBehavior}
-      >
-        <Radio value="toggle">Toggle</Radio>
-        <Radio value="replace">Replace</Radio>
-      </RadioGroup>
     </div>
   );
 }

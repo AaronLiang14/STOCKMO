@@ -1,6 +1,6 @@
+import useLoginStore from "@/utils/useLoginStore";
 import { useState } from "react";
 import Google from "~icons/bi/google";
-import useLoginStore from "../../utils/useLoginStore";
 
 export default function Login() {
   const { handleGoogleLogin, handleNativeSignUp, handleNativeLogin } =

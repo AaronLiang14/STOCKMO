@@ -1,7 +1,7 @@
+import { auth } from "@/config/firebase";
 import { useState } from "react";
 import StockIcon from "~icons/ant-design/stock-outlined";
 import PencilIcon from "~icons/mdi/lead-pencil";
-import { auth } from "../../config/firebase";
 import FavoriteArticles from "./FavoriteArticles";
 import FavoriteStocks from "./FavoriteStocks";
 

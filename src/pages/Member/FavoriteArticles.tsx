@@ -1,7 +1,7 @@
+import { db } from "@/config/firebase";
+import useFavoritesStore from "@/utils/useFavoriteStore";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "../../config/firebase";
-import useFavoritesStore from "../../utils/useFavoriteStore";
 
 interface Article {
   id: string;

@@ -1,4 +1,4 @@
-import useLoginStore from "../../utils/useLoginStore";
+import useLoginStore from "@/utils/useLoginStore";
 import Login from "./Login";
 import MemberInfo from "./MemberInfo";
 

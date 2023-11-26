@@ -6,15 +6,14 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 
-import { useState } from "react";
+import api from "@/utils/api.tsx";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import CheckModal from "./CheckModal.tsx";
 
 const orderType = ["ROD", "IOC", "FOK"];
 
 const tradeType = ["現股", "融資", "融券"];
-
-const priceType = ["限價", "市價", "漲停", "跌停", "平盤"];
 
 const unitType = ["整股", "零股"];
 
@@ -29,7 +28,64 @@ export default function Order() {
   const [unit, setUnit] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [volume, setVolume] = useState<number>(0);
+  const [flatPrice, setFlatPrice] = useState<number>(0);
+  const [marketPrice, setMarketPrice] = useState<number>(0);
 
+  const limitUpPrice = () => {
+    const price = flatPrice * 1.1;
+    return parseInt(price.toFixed(2));
+  };
+
+  const limitDownPrice = () => {
+    const price = flatPrice * 0.9;
+    return parseInt(price.toFixed(2));
+  };
+
+  const priceType: { [key: string]: number } = {
+    限價: flatPrice,
+    市價: flatPrice,
+    漲停: limitUpPrice(),
+    跌停: limitDownPrice(),
+    平盤: flatPrice,
+  };
+
+  const endDate = `${new Date().getFullYear()}-${
+    new Date().getMonth() + 1
+  }-${new Date().getDate()}`;
+
+  //0: 星期日, 6: 星期六
+  const lastOpeningDate =
+    new Date().getDay() === 0
+      ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
+          new Date().getDate() - 2
+        }`
+      : new Date().getDay() === 1
+        ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
+            new Date().getDate() - 3
+          }`
+        : `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
+            new Date().getDate() - 1
+          }`;
+
+  const getHistoryData = async () => {
+    const res = await api.getHistoryStockPrice(
+      stockID,
+      lastOpeningDate,
+      endDate,
+    );
+    setFlatPrice(res.data[0].close);
+  };
+  //等開盤再做
+  // const getMarketPrice = async () => {
+  //   const res = await api.getTaiwanStockPriceTick(stockID);
+  //   console.log(res);
+  //   setMarketPrice(res.data[0].price);
+  // };
+
+  useEffect(() => {
+    getHistoryData();
+    // getMarketPrice();
+  }, [stockID]);
   return (
     <>
       <div className="m-auto flex flex-col items-center justify-center gap-3">
@@ -38,7 +94,10 @@ export default function Order() {
           label="請輸入標的"
           className=" max-w-xs"
           defaultValue={state ? state.stockID : ""}
-          onChange={(e) => setStockID(e.target.value)}
+          onChange={(e) => {
+            setStockID(e.target.value);
+            setPrice(0);
+          }}
         />
 
         <RadioGroup
@@ -84,12 +143,17 @@ export default function Order() {
           type="price"
           label="請輸入價格"
           className=" max-w-xs"
+          value={price.toString()}
           onChange={(e) => setPrice(parseInt(e.target.value))}
         />
 
         <RadioGroup orientation="horizontal">
-          {priceType.map((type, index) => (
-            <Radio key={index} value={type}>
+          {Object.keys(priceType).map((type, index) => (
+            <Radio
+              key={index}
+              value={type}
+              onClick={() => setPrice(priceType[type])}
+            >
               {type}
             </Radio>
           ))}
@@ -109,11 +173,11 @@ export default function Order() {
 
         <Input
           type="number"
-          label="單位股數"
+          label={`單位股數：${unit === "整股" ? "1000股" : "1股"}`}
           placeholder="0"
-          labelPlacement="outside"
           className=" max-w-xs"
           onChange={(e) => setVolume(parseInt(e.target.value))}
+          endContent={"股"}
         />
       </div>
 

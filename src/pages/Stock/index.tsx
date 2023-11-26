@@ -5,19 +5,19 @@ import StockOutLined from "~icons/mdi/finance";
 import NewsPaper from "~icons/noto/rolled-up-newspaper";
 import Article from "~icons/ooui/articles-rtl";
 
+import AddFavoriteStocks from "@/components/AddFavorite";
+import ChatRoom from "@/components/ChatRoom";
+import FinanceData from "@/data/TWSE.json";
 import { Button } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
-import AddFavoriteStocks from "../../components/AddFavorite";
-import ChatRoom from "../../components/ChatRoom";
-import FinanceData from "../../data/TWSE.json";
 import Articles from "./Articles";
 import BasicInformation from "./BasicInformation";
 import Latest from "./Latest";
 import News from "./News";
 import Report from "./Report";
 
-import { auth } from "../../config/firebase";
+import { auth } from "@/config/firebase";
 
 export default function Stock() {
   const { id } = useParams();
@@ -100,8 +100,8 @@ export default function Stock() {
         <aside className="ml-8 mt-40 h-full w-60 shadow-lg transition-transform sm:translate-x-0">
           <div className="rounded-lg bg-gray-300 px-3 py-4">
             <ul className=" cursor-pointer space-y-2 font-medium">
-              {asideOptions.map((item) => (
-                <li>
+              {asideOptions.map((item, index) => (
+                <li key={index}>
                   <div
                     className={`group flex items-center rounded-lg p-2 text-gray-900 ${
                       activeTab === item.option && "bg-gray-100"

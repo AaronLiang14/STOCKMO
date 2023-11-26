@@ -1,8 +1,8 @@
+import api from "@/utils/api";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../../../utils/api";
 
 interface StockPriceProps {
   date: string;
@@ -35,7 +35,7 @@ export default function StockChart() {
   const options = {
     chart: {
       height: 400,
-      width: 900,
+      width: 800,
     },
 
     rangeSelector: {

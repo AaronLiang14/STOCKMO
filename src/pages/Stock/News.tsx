@@ -1,6 +1,6 @@
+import api from "@/utils/api";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../../utils/api";
 
 interface News {
   date: string;

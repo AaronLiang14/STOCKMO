@@ -1,47 +1,30 @@
 import { Button, ButtonGroup } from "@nextui-org/react";
-import { useState } from "react";
-import Account from "./Account";
-import Deal from "./Deal";
-import Entrustment from "./Entrustment";
-import Order from "./Order";
-import Realized from "./Realized";
-import Unrealized from "./Unrealized";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function Trades() {
-  const [activeBar, setActiveBar] = useState("下單");
+  const navigate = useNavigate();
 
-  const renderBar = () => {
-    switch (activeBar) {
-      case "下單":
-        return <Order />;
-      case "委託":
-        return <Entrustment />;
-      case "成交":
-        return <Deal />;
-      case "未實現":
-        return <Unrealized />;
-      case "已實現":
-        return <Realized />;
-      case "帳戶":
-        return <Account />;
-      default:
-        return <Order />;
-    }
+  const Bar: { [key: string]: string } = {
+    下單: "order",
+    委託: "entrustment",
+    成交: "deal",
+    未實現: "unrealized",
+    已實現: "realized",
+    帳戶: "account",
   };
 
-  const button = ["下單", "委託", "成交", "未實現", "已實現", "帳戶"];
   return (
     <>
       <div className="my-24 flex justify-center">
         <ButtonGroup size="lg">
-          {button.map((item, index) => (
-            <Button onClick={() => setActiveBar(item)} key={index}>
+          {Object.keys(Bar).map((item) => (
+            <Button onClick={() => navigate(`${Bar[item]}`)} key={item}>
               {item}
             </Button>
           ))}
         </ButtonGroup>
       </div>
-      {renderBar()}
+      <Outlet />
     </>
   );
 }

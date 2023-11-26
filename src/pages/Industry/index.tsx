@@ -1,11 +1,10 @@
+import industry from "@/data/Industry.json";
 import { Select, SelectItem } from "@nextui-org/react";
 import { useState } from "react";
-import industry from "../../data/Industry.json";
 import StockOfIndustry from "./StockOfIndustry";
 
 export default function Industry() {
   const [industryChosen, setIndustryChosen] = useState<string>("水泥工業");
-  console.log(industryChosen);
   return (
     <>
       <div className="m-auto mt-12 flex max-w-[1280px] justify-end">

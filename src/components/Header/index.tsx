@@ -1,12 +1,12 @@
+import logo from "@/assets/logo.png";
+import { auth } from "@/config/firebase";
+import stockCode from "@/data/StockCode.json";
+import useLoginStore from "@/utils/useLoginStore";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import SearchIcon from "~icons/ic/round-search";
 import Avatar from "~icons/ooui/user-avatar";
-import logo from "../../assets/logo.png";
-import { auth } from "../../config/firebase";
-import stockCode from "../../data/StockCode.json";
-import useLoginStore from "../../utils/useLoginStore";
 
 export default function Header() {
   const { isLogin } = useLoginStore();
@@ -70,7 +70,7 @@ export default function Header() {
 
               <div className="ml-10 hidden space-x-8 lg:block">
                 <Link
-                  to="/trades"
+                  to="/trades/order"
                   className="text-base font-medium text-white hover:text-indigo-50"
                 >
                   模擬交易

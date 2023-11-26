@@ -1,3 +1,4 @@
+import { auth, db } from "@/config/firebase";
 import { Button } from "@nextui-org/react";
 import {
   arrayRemove,
@@ -10,7 +11,6 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { auth, db } from "../../config/firebase";
 
 export default function AddFavoriteStocks() {
   const { id } = useParams();
@@ -67,7 +67,7 @@ export default function AddFavoriteStocks() {
 
       <Button
         color="danger"
-        onClick={() => navigate("/trades", { state: { stockID: id } })}
+        onClick={() => navigate("/trades/order", { state: { stockID: id } })}
       >
         <span> 模擬下單</span>
       </Button>
