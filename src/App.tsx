@@ -14,7 +14,7 @@ import Deal from "./pages/Trades/Deal.tsx";
 import Entrustment from "./pages/Trades/Entrustment";
 import Order from "./pages/Trades/Order/index.tsx";
 import Realized from "./pages/Trades/Realized.tsx";
-import Unrealized from "./pages/Trades/Unrealized.tsx";
+import Unrealized from "./pages/Trades/Unrealized";
 import Trades from "./pages/Trades/index.tsx";
 import useLoginStore from "./utils/useLoginStore";
 
