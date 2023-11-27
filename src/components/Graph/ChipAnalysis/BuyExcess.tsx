@@ -18,7 +18,6 @@ export default function BuyExcess() {
     );
     setBuyExcess(formatted.sort((a, b) => b[1] - a[1]).slice(0, 20));
   };
-  console.log(buyExcess);
   const lastOpeningDate =
     new Date().getDay() === 0
       ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${

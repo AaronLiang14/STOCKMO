@@ -11,7 +11,7 @@ import NotFound from "./pages/NotFound/index.tsx";
 import Stock from "./pages/Stock/index.tsx";
 import Account from "./pages/Trades/Account.tsx";
 import Deal from "./pages/Trades/Deal.tsx";
-import Entrustment from "./pages/Trades/Entrustment.tsx";
+import Entrustment from "./pages/Trades/Entrustment";
 import Order from "./pages/Trades/Order/index.tsx";
 import Realized from "./pages/Trades/Realized.tsx";
 import Unrealized from "./pages/Trades/Unrealized.tsx";

@@ -108,9 +108,6 @@ export default function Unrealized() {
       console.log(error);
     }
   };
-
-  console.log(entrustment);
-
   const rows = entrustment.map((item) => {
     const cost = item.order.price * item.order.volume;
     const marketPrice = stockPrice[item.stock_id] || 0;
@@ -155,6 +152,10 @@ export default function Unrealized() {
 
   useEffect(() => {
     getStockPrice();
+    // const priceInterval = setInterval(() => {
+    //   getStockPrice();
+    // }, 10000);
+    // return () => clearInterval(priceInterval);
   }, [entrustment]);
 
   return (

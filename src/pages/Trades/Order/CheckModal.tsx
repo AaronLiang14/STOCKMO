@@ -55,6 +55,11 @@ export default function CheckModal({
         volume: volume,
         time: new Date(),
       },
+      deal: {
+        price: 0,
+        volume: 0,
+        time: new Date(),
+      },
     });
 
     const newDocID = docRef.id;
@@ -62,7 +67,6 @@ export default function CheckModal({
       id: newDocID,
     });
     toast.success("下單成功");
-    console.log("下單");
     navigate("/trades/entrustment");
   };
 

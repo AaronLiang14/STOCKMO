@@ -29,6 +29,10 @@ const columns = [
     label: "委託狀態",
   },
   {
+    key: "buyOrSell",
+    label: "買/賣",
+  },
+  {
     key: "tradeType",
     label: "交易類別",
   },
@@ -73,6 +77,7 @@ export default function Deal() {
         key: item.id,
         stockID: item.stock_id + " / " + stockName,
         status: item.status,
+        buyOrSell: item.buy_or_sell,
         tradeType: item.trade_type,
         orderType: item.order_type,
         dealVolumePrice: item.order.volume + "股/" + item.order.price,

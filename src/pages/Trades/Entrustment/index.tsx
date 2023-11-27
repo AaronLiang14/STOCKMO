@@ -1,4 +1,6 @@
 import { auth, db } from "@/config/firebase";
+import StockCode from "@/data/StockCode.json";
+import api from "@/utils/api";
 import { DocumentData } from "@firebase/firestore";
 import {
   Table,
@@ -20,9 +22,7 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
-import StockCode from "@/data/StockCode.json";
-import CancelModal from "./CancelEntrustmentModal.tsx";
+import CancelModal from "./CancelEntrustmentModal";
 
 const columns = [
   {
@@ -32,6 +32,10 @@ const columns = [
   {
     key: "status",
     label: "委託狀態",
+  },
+  {
+    key: "buyOrSell",
+    label: "買/賣",
   },
   {
     key: "tradeType",
@@ -91,6 +95,7 @@ export default function Entrustment() {
       return {
         key: item.id,
         stockID: item.stock_id + " / " + stockName,
+        buyOrSell: item.buy_or_sell,
         status: item.status,
         tradeType: item.trade_type,
         orderType: item.order_type,
@@ -102,11 +107,48 @@ export default function Entrustment() {
       };
   });
 
+  const matchmaking = async () => {
+    entrustment.map(async (item) => {
+      if (item.status === "委託成功") {
+        const stockPrice = await api.getTaiwanStockPriceTick(item.stock_id);
+        const marketPrice = stockPrice.data[0].close;
+        const entrustmentRef = doc(db, "Trades", item.id);
+        if (item.buy_or_sell === "買" && item.order.price >= marketPrice) {
+          toast.success("成交");
+          await updateDoc(entrustmentRef, {
+            status: "已成交",
+            deal: {
+              price: item.order.price,
+              volume: item.order.volume,
+              time: new Date(),
+            },
+          });
+        }
+
+        if (item.buy_or_sell === "賣" && item.order.price <= marketPrice) {
+          toast.success("成交");
+          await updateDoc(entrustmentRef, {
+            status: "已成交",
+            deal: {
+              price: item.order.price,
+              volume: item.order.volume,
+              time: new Date(),
+            },
+          });
+        }
+      }
+    });
+  };
+
   useEffect(() => {
     onSnapshot(orderQuery, () => {
       getOrders();
     });
   }, [auth.currentUser]);
+
+  useEffect(() => {
+    matchmaking();
+  }, [entrustment]);
 
   return (
     <div className="flex flex-col gap-3">

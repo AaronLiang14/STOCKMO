@@ -100,8 +100,6 @@ export default function Realized() {
     }
   };
 
-  console.log(entrustment);
-
   const rows = entrustment.map((item) => {
     const stockName =
       StockCode.find((stock) => stock.證券代號 === parseInt(item.stock_id))
