@@ -1,3 +1,5 @@
+import { auth, db, storage } from "@/config/firebase";
+import StockCode from "@/data/StockCode.json";
 import {
   addDoc,
   arrayRemove,
@@ -16,10 +18,8 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import FullScreen from "~icons/majesticons/arrows-expand-full-line";
-import { auth, db, storage } from "../../config/firebase";
-import StockCode from "../../data/StockCode.json";
 
-import useFavoritesStore from "../../utils/useFavoriteStore";
+import useFavoritesStore from "@/utils/useFavoriteStore";
 
 interface Article {
   author_id: string;

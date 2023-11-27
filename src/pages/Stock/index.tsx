@@ -1,26 +1,25 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Enterprise from "~icons/carbon/enterprise";
 import Dashboard from "~icons/material-symbols/space-dashboard";
 import StockOutLined from "~icons/mdi/finance";
 import NewsPaper from "~icons/noto/rolled-up-newspaper";
 import Article from "~icons/ooui/articles-rtl";
 
+import AddFavoriteStocks from "@/components/AddFavorite";
+import ChatRoom from "@/components/ChatRoom";
+import FinanceData from "@/data/TWSE.json";
+import { Button } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
-import AddFavoriteStocks from "../../components/AddFavorite";
-import ChatRoom from "../../components/ChatRoom";
-import FinanceData from "../../data/TWSE.json";
-import useLoginStore from "../../utils/useLoginStore";
 import Articles from "./Articles";
 import BasicInformation from "./BasicInformation";
 import Latest from "./Latest";
 import News from "./News";
 import Report from "./Report";
 
-import { auth } from "../../config/firebase";
+import { auth } from "@/config/firebase";
 
 export default function Stock() {
-  const { init } = useLoginStore();
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState<string>("latest");
   const company = FinanceData.filter((item) => item.公司代號 === id);
@@ -72,10 +71,6 @@ export default function Stock() {
     },
   ];
 
-  useEffect(() => {
-    init();
-  }, []);
-
   return (
     <>
       <button
@@ -105,8 +100,8 @@ export default function Stock() {
         <aside className="ml-8 mt-40 h-full w-60 shadow-lg transition-transform sm:translate-x-0">
           <div className="rounded-lg bg-gray-300 px-3 py-4">
             <ul className=" cursor-pointer space-y-2 font-medium">
-              {asideOptions.map((item) => (
-                <li>
+              {asideOptions.map((item, index) => (
+                <li key={index}>
                   <div
                     className={`group flex items-center rounded-lg p-2 text-gray-900 ${
                       activeTab === item.option && "bg-gray-100"
@@ -131,14 +126,9 @@ export default function Stock() {
             {auth.currentUser ? (
               <AddFavoriteStocks />
             ) : (
-              <button
-                className="group mb-2 me-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-800 text-sm font-medium text-gray-900 hover:text-white focus:outline-none  focus:ring-cyan-200  dark:text-white dark:focus:ring-cyan-800"
-                onClick={() => toast.error("請先登入")}
-              >
-                <span className="  rounded-md bg-cyan-700 px-5 py-2.5  text-white transition-all duration-75 ease-in group-hover:bg-opacity-0">
-                  加入追蹤
-                </span>
-              </button>
+              <Button onClick={() => toast.error("請先登入")} color="primary">
+                <span>加入追蹤</span>
+              </Button>
             )}
           </div>
           {renderTabContent()}

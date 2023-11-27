@@ -1,13 +1,6 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import useLoginStore from "../../utils/useLoginStore";
 
 export default function NotFound() {
-  const { init } = useLoginStore();
-
-  useEffect(() => {
-    init();
-  }, []);
   return (
     <>
       <main

@@ -1,3 +1,4 @@
+import { auth, db } from "@/config/firebase";
 import {
   arrayUnion,
   doc,
@@ -8,7 +9,6 @@ import {
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Close from "~icons/ion/close-round";
-import { auth, db } from "../../config/firebase";
 import { MyMessage, OtherMessage } from "./Messages";
 
 interface Message {

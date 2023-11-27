@@ -1,14 +1,9 @@
-import { useEffect } from "react";
-import useLoginStore from "../../utils/useLoginStore";
+import useLoginStore from "@/utils/useLoginStore";
 import Login from "./Login";
 import MemberInfo from "./MemberInfo";
 
 export default function Member() {
-  const { init, handleLogout, isLogin } = useLoginStore();
-
-  useEffect(() => {
-    init();
-  }, [init]);
+  const { handleLogout, isLogin } = useLoginStore();
 
   return (
     <>

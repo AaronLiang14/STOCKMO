@@ -1,6 +1,6 @@
+import { auth, db } from "@/config/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { auth, db } from "../../config/firebase";
 
 export default function FavoriteStocks() {
   const [favoriteStocks, setFavoriteStocks] = useState<string[]>([]);
