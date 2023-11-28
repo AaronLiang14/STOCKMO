@@ -61,6 +61,9 @@ const useLoginStore = create<LoginState>((set) => ({
       name: auth.currentUser?.displayName,
       favorite_articles: [],
       favorite_stocks: [],
+      realized: [],
+      unrealized: [],
+      cash: 100000,
     });
   },
 

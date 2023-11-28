@@ -27,6 +27,7 @@ export default function PER() {
     }));
     setFormattedData(newData);
   };
+
   const options = {
     chart: {
       type: "line",
