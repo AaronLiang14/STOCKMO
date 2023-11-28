@@ -11,17 +11,10 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import {
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import DetailsModal from "./DetailsModal";
 
 const columns = [
   {
@@ -58,77 +51,29 @@ const columns = [
     label: "報酬率",
   },
   {
-    key: "detail",
-    label: "查看明細",
-  },
-  {
     key: "sell",
     label: "賣出",
   },
 ];
 
-interface stockProps {
-  stock_id: string;
-  holding: number;
-  totalCost: number;
-}
-
 export default function Unrealized() {
-  const [entrustment, setEntrustment] = useState<DocumentData[]>([]);
-  const [stockPrice, setStockPrice] = useState<object>({});
-  const [securitiesAssets, setSecuritiesAssets] = useState<DocumentData>([]);
-
+  const [stockPrice, setStockPrice] = useState<{ [key: string]: number }>({});
+  const [unrealizedStocks, setUnrealizedStocks] = useState<DocumentData[]>([]);
   const navigate = useNavigate();
 
-  const orderQuery = query(
-    collection(db, "Trades"),
-    where("member_id", "==", auth.currentUser?.uid || ""),
-    where("status", "==", "已成交"),
-  );
-
-  const getOrders = async () => {
+  const getUnrealizedStocks = async () => {
     if (!auth.currentUser) return;
-    setEntrustment([]); //避免資料重複
-    const orders = await getDocs(orderQuery);
-    orders.forEach((doc) => {
-      setEntrustment((prev) => [...prev, doc.data()]);
-    });
+    const memberRef = doc(db, "Member", auth.currentUser!.uid);
+    const memberDoc = await getDoc(memberRef);
+
+    if (!memberDoc.exists()) return;
+    setUnrealizedStocks(memberDoc.data().unrealized);
   };
 
-  const uniqueStockIds = [
-    ...new Set(entrustment.map((order) => order.stock_id)),
-  ];
-
-  const organizeSecuritiesAssets = () => {
-    const organizeData = entrustment.reduce((acc, cur) => {
-      const stockId = cur.stock_id;
-      const volume = cur.order.volume;
-      const price = cur.order.price;
-      const cost = volume * price;
-      const existingStock = acc.find(
-        (stock: { stock_id: string }) => stock.stock_id === stockId,
-      );
-      if (cur.buy_or_sell === "買") {
-        if (existingStock) {
-          existingStock.holding += volume;
-          existingStock.totalCost += cost;
-        } else {
-          acc.push({
-            stock_id: stockId,
-            holding: volume,
-            totalCost: cost,
-          });
-        }
-      }
-      return acc;
-    }, []);
-    setSecuritiesAssets(organizeData);
-  };
-
-  const getStockPrice = async () => {
+  const getMarketPrice = async () => {
     try {
-      uniqueStockIds.map(async (stockId) => {
-        const res = await api.getTaiwanStockPriceTick(stockId);
+      unrealizedStocks.map(async (stock) => {
+        const res = await api.getTaiwanStockPriceTick(stock.stock_id);
         res.data.map((stock: { stock_id: string; close: number }) => {
           setStockPrice((prev) => ({
             ...prev,
@@ -143,19 +88,23 @@ export default function Unrealized() {
     }
   };
 
-  const rows = securitiesAssets.map((stock: stockProps) => {
+  const rows = unrealizedStocks.map((stock) => {
+    console.log(stock);
+    if (stock.volume === 0) return;
     const marketPrice = stockPrice[stock.stock_id] || 0;
-    const estimatedProfitLoss = stock.holding * marketPrice - stock.totalCost;
-    const returnRate = (estimatedProfitLoss / stock.totalCost) * 100;
+    const averagePrice = stock.average_price || 0;
+    const cost = averagePrice * stock.volume;
+    const estimatedProfitLoss = stock.volume * marketPrice - cost;
+    const returnRate = (estimatedProfitLoss / cost) * 100;
 
     return {
       key: stock.stock_id,
       stockID: stock.stock_id,
-      volume: stock.holding,
-      averagePrice: (stock.totalCost / stock.holding).toFixed(2),
-      cost: stock.totalCost.toLocaleString(),
+      volume: stock.volume.toLocaleString(),
+      averagePrice: averagePrice.toFixed(2),
+      cost: cost.toLocaleString(),
       marketPrice: marketPrice,
-      presentValue: (stock.holding * marketPrice).toLocaleString(),
+      presentValue: (stock.volume * marketPrice).toLocaleString(),
       estimatedProfitLoss: estimatedProfitLoss.toLocaleString(),
       returnRate: returnRate.toFixed(2) + "%",
       sell: (
@@ -169,34 +118,16 @@ export default function Unrealized() {
           賣出
         </Button>
       ),
-      detail: (
-        <DetailsModal
-          details={entrustment
-            .filter(
-              (order) =>
-                order.stock_id === stock.stock_id && order.buy_or_sell === "買",
-            )
-            .map((doc) => ({
-              id: doc.id,
-              stock_id: doc.stock_id,
-              order: doc.order,
-            }))}
-          marketPrice={stockPrice[stock.stock_id]}
-        />
-      ),
     };
   });
 
   useEffect(() => {
-    onSnapshot(orderQuery, () => {
-      getOrders();
-    });
+    getUnrealizedStocks();
   }, [auth.currentUser]);
 
   useEffect(() => {
-    getStockPrice();
-    organizeSecuritiesAssets();
-  }, [entrustment]);
+    getMarketPrice();
+  }, [unrealizedStocks]);
 
   return (
     <>

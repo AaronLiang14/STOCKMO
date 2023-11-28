@@ -146,7 +146,7 @@ export default function Order() {
           type="price"
           label="請輸入價格"
           className=" max-w-xs"
-          value={price.toString()}
+          value={isNaN(price) ? "" : price.toString()}
           onChange={(e) => setPrice(parseInt(e.target.value))}
         />
 
@@ -175,11 +175,11 @@ export default function Order() {
         </Select>
 
         <Input
-          label={`單位股數：${unit === "整股" ? "1000股" : "1股"}`}
+          label={`單位：${unit === "整股" ? "張" : "股"}`}
           placeholder="0"
           className=" max-w-xs"
           onChange={(e) => setVolume(parseInt(e.target.value))}
-          endContent={"股"}
+          endContent={`${unit === "整股" ? "張" : "股"}`}
         />
       </div>
 

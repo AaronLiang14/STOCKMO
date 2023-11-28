@@ -113,19 +113,10 @@ export default function Entrustment() {
         const stockPrice = await api.getTaiwanStockPriceTick(item.stock_id);
         const marketPrice = stockPrice.data[0].close;
         const entrustmentRef = doc(db, "Trades", item.id);
-        if (item.buy_or_sell === "買" && item.order.price >= marketPrice) {
-          toast.success("成交");
-          await updateDoc(entrustmentRef, {
-            status: "已成交",
-            deal: {
-              price: item.order.price,
-              volume: item.order.volume,
-              time: new Date(),
-            },
-          });
-        }
-
-        if (item.buy_or_sell === "賣" && item.order.price <= marketPrice) {
+        if (
+          (item.buy_or_sell === "買" && item.order.price >= marketPrice) ||
+          (item.buy_or_sell === "賣" && item.order.price <= marketPrice)
+        ) {
           toast.success("成交");
           await updateDoc(entrustmentRef, {
             status: "已成交",

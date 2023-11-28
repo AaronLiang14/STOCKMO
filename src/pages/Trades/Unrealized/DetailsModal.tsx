@@ -81,7 +81,7 @@ export default function DetailsModal({ details, marketPrice }: DetailsProps) {
     return {
       key: item.id,
       stockID: item.stock_id,
-      volume: volume,
+      volume: volume.toLocaleString(),
       price: price,
       marketPrice: marketPrice,
       presentValue: (marketPrice * volume).toLocaleString(),

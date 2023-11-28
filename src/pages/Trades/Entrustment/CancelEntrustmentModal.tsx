@@ -8,12 +8,61 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 
+import { auth, db } from "@/config/firebase";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
+
 interface Props {
   cancelEntrustment: () => void;
 }
 
 export default function CancelEntrustment({ cancelEntrustment }: Props) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const currentTime = new Date();
+  const [orderID, setOrderID] = useState<string[]>([]);
+
+  const orderQuery = query(
+    collection(db, "Trades"),
+    where("member_id", "==", auth.currentUser?.uid || ""),
+    where("status", "==", "委託成功"),
+  );
+
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+
+  const getOrders = async () => {
+    const querySnapshot = await getDocs(orderQuery);
+    querySnapshot.forEach((doc) => {
+      setOrderID((prev: string[]) => [...prev, doc.id]);
+    });
+  };
+
+  const checkTradingTime = async () => {
+    if (currentHour < 23 || (currentHour === 23 && currentMinute <= 30)) {
+      console.log("13:30之前。");
+    } else {
+      orderID.forEach((id) => {
+        updateDoc(doc(db, "Trades", id), {
+          status: "委託失敗",
+        });
+      });
+    }
+  };
+
+  useEffect(() => {
+    getOrders();
+  }, []);
+
+  useEffect(() => {
+    checkTradingTime();
+  }, [orderID]);
 
   return (
     <>
