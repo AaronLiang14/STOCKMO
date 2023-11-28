@@ -9,7 +9,8 @@ import {
 } from "@nextui-org/react";
 
 import { auth, db } from "@/config/firebase";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import api from "@/utils/api";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -23,6 +24,12 @@ interface Props {
   volume: number;
 }
 
+interface memberStocksProps {
+  stock_id: string;
+  volume: number;
+  average_price: number;
+}
+
 export default function CheckModal({
   stockID,
   buySell,
@@ -30,6 +37,7 @@ export default function CheckModal({
   orderType,
   price,
   volume,
+  unit,
 }: Props) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate();
@@ -42,7 +50,123 @@ export default function CheckModal({
     }
   };
 
+  let units = 0;
+
+  const formattedUnits = () => {
+    if (unit === "整股") {
+      units = volume * 1000;
+    } else {
+      units = volume;
+    }
+  };
+  formattedUnits();
+
+  const updateMemberStockHolding = async () => {
+    if (!auth.currentUser) return;
+    const memberRef = doc(db, "Member", auth.currentUser?.uid);
+    const memberDoc = await getDoc(memberRef);
+    const memberData = memberDoc.data();
+    const unrealized = memberData?.unrealized;
+    const stockPrice = await api.getTaiwanStockPriceTick(stockID);
+    const marketPrice = stockPrice.data[0].close;
+
+    let averagePrice = 0;
+    let volume = 0;
+    let isExist = false;
+
+    unrealized.find((stock: memberStocksProps) => {
+      if (stock.stock_id === stockID) {
+        averagePrice = stock.average_price;
+        volume = stock.volume;
+        isExist = true;
+      }
+    });
+
+    const newAveragePrice =
+      buySell === "買"
+        ? (averagePrice * volume + price * units) / (volume + units)
+        : volume === units
+          ? 0
+          : (averagePrice * volume - price * units) / (volume - units);
+
+    const newHold = buySell === "買" ? volume + units : volume - units;
+
+    console.log(averagePrice, volume, isExist);
+    console.log(price, units);
+    console.log(newAveragePrice, newHold);
+
+    if (
+      (buySell === "買" && price >= marketPrice) ||
+      (buySell === "賣" && price <= marketPrice)
+    ) {
+      if (isExist) {
+        const newUnrealized = unrealized.filter(
+          (stock: memberStocksProps) => stock.stock_id !== stockID,
+        );
+        console.log(newAveragePrice, newHold);
+        await updateDoc(memberRef, {
+          unrealized: [
+            ...newUnrealized,
+            {
+              stock_id: stockID,
+              average_price: newAveragePrice,
+              volume: newHold,
+            },
+          ],
+        });
+      }
+      if (!isExist) {
+        await updateDoc(memberRef, {
+          unrealized: [
+            ...unrealized,
+            {
+              stock_id: stockID,
+              average_price: newAveragePrice,
+              volume: newHold,
+            },
+          ],
+        });
+      }
+      ``;
+    }
+  };
+
+  const updateMemberRealizedProfitLoss = async () => {
+    if (!auth.currentUser) return;
+    const memberRef = doc(db, "Member", auth.currentUser?.uid);
+    const memberDoc = await getDoc(memberRef);
+    const memberData = memberDoc.data();
+    const realized = memberData?.realized;
+    const stockHolding = memberData?.unrealized;
+
+    const stockPrice = await api.getTaiwanStockPriceTick(stockID);
+    const marketPrice = stockPrice.data[0].close;
+    let buyPrice = 0;
+
+    stockHolding.find((stock: memberStocksProps) => {
+      if (stock.stock_id === stockID) {
+        buyPrice = stock.average_price;
+      }
+    });
+
+    if (buySell === "賣" && price <= marketPrice) {
+      await updateDoc(memberRef, {
+        realized: [
+          ...realized,
+          {
+            stock_id: stockID,
+            sell_price: price,
+            volume: units,
+            buy_price: buyPrice,
+            time: new Date(),
+          },
+        ],
+      });
+    }
+  };
+
   const handleTrade = async () => {
+    if (!auth.currentUser) return;
     const docRef = await addDoc(collection(db, "Trades"), {
       buy_or_sell: buySell,
       stock_id: stockID,
@@ -55,14 +179,19 @@ export default function CheckModal({
         volume: volume,
         time: new Date(),
       },
+      deal: {
+        price: 0,
+        volume: 0,
+        time: new Date(),
+      },
     });
-
     const newDocID = docRef.id;
     await updateDoc(doc(db, "Trades", newDocID), {
       id: newDocID,
     });
+    updateMemberStockHolding();
+    updateMemberRealizedProfitLoss();
     toast.success("下單成功");
-    console.log("下單");
     navigate("/trades/entrustment");
   };
 
@@ -84,9 +213,12 @@ export default function CheckModal({
                 <p>交易類別：{tradingType}</p>
                 <p>委託條件：{orderType}</p>
                 <p>委託價格：{price}</p>
-                <p>委託股數：{volume}股</p>
+                <p>
+                  委託股數：
+                  {units.toLocaleString()}股
+                </p>
                 <p>交易幣別：台幣</p>
-                <p>預估金額：{(price * volume).toLocaleString()}</p>
+                <p>預估金額：{(price * units).toLocaleString()}</p>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

@@ -43,7 +43,7 @@ export default function Order() {
 
   const priceType: { [key: string]: number } = {
     限價: flatPrice,
-    市價: flatPrice,
+    市價: marketPrice,
     漲停: limitUpPrice(),
     跌停: limitDownPrice(),
     平盤: flatPrice,
@@ -68,23 +68,26 @@ export default function Order() {
           }`;
 
   const getHistoryData = async () => {
-    const res = await api.getHistoryStockPrice(
-      stockID,
-      lastOpeningDate,
-      endDate,
-    );
-    setFlatPrice(res.data[0].close);
+    if (stockID.length === 4) {
+      const res = await api.getHistoryStockPrice(
+        stockID,
+        lastOpeningDate,
+        endDate,
+      );
+      setFlatPrice(res.data[0].close);
+    }
   };
-  //等開盤再做
-  // const getMarketPrice = async () => {
-  //   const res = await api.getTaiwanStockPriceTick(stockID);
-  //   console.log(res);
-  //   setMarketPrice(res.data[0].price);
-  // };
+
+  const getMarketPrice = async () => {
+    if (stockID.length === 4) {
+      const res = await api.getTaiwanStockPriceTick(stockID);
+      setMarketPrice(res.data[0].close);
+    }
+  };
 
   useEffect(() => {
     getHistoryData();
-    // getMarketPrice();
+    getMarketPrice();
   }, [stockID]);
   return (
     <>
@@ -143,7 +146,7 @@ export default function Order() {
           type="price"
           label="請輸入價格"
           className=" max-w-xs"
-          value={price.toString()}
+          value={isNaN(price) ? "" : price.toString()}
           onChange={(e) => setPrice(parseInt(e.target.value))}
         />
 
@@ -172,12 +175,11 @@ export default function Order() {
         </Select>
 
         <Input
-          type="number"
-          label={`單位股數：${unit === "整股" ? "1000股" : "1股"}`}
+          label={`單位：${unit === "整股" ? "張" : "股"}`}
           placeholder="0"
           className=" max-w-xs"
           onChange={(e) => setVolume(parseInt(e.target.value))}
-          endContent={"股"}
+          endContent={`${unit === "整股" ? "張" : "股"}`}
         />
       </div>
 

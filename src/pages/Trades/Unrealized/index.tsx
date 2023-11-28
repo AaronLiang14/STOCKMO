@@ -1,5 +1,4 @@
 import { auth, db } from "@/config/firebase";
-import StockCode from "@/data/StockCode.json";
 import api from "@/utils/api";
 import { DocumentData } from "@firebase/firestore";
 import {
@@ -12,13 +11,7 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import {
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -27,10 +20,6 @@ const columns = [
   {
     key: "stockID",
     label: "股票代碼/名稱",
-  },
-  {
-    key: "tradeType",
-    label: "交易類別",
   },
   {
     key: "volume",
@@ -68,33 +57,23 @@ const columns = [
 ];
 
 export default function Unrealized() {
-  const [entrustment, setEntrustment] = useState<DocumentData[]>([]);
-  const [stockPrice, setStockPrice] = useState<object>({});
+  const [stockPrice, setStockPrice] = useState<{ [key: string]: number }>({});
+  const [unrealizedStocks, setUnrealizedStocks] = useState<DocumentData[]>([]);
   const navigate = useNavigate();
 
-  const orderQuery = query(
-    collection(db, "Trades"),
-    where("member_id", "==", auth.currentUser?.uid || ""),
-    where("status", "==", "已成交"),
-  );
-
-  const getOrders = async () => {
+  const getUnrealizedStocks = async () => {
     if (!auth.currentUser) return;
-    setEntrustment([]); //避免資料重複
-    const orders = await getDocs(orderQuery);
-    orders.forEach((doc) => {
-      setEntrustment((prev) => [...prev, doc.data()]);
-    });
+    const memberRef = doc(db, "Member", auth.currentUser!.uid);
+    const memberDoc = await getDoc(memberRef);
+
+    if (!memberDoc.exists()) return;
+    setUnrealizedStocks(memberDoc.data().unrealized);
   };
 
-  const uniqueStockIds = [
-    ...new Set(entrustment.map((order) => order.stock_id)),
-  ];
-
-  const getStockPrice = async () => {
+  const getMarketPrice = async () => {
     try {
-      uniqueStockIds.map(async (stockId) => {
-        const res = await api.getTaiwanStockPriceTick(stockId);
+      unrealizedStocks.map(async (stock) => {
+        const res = await api.getTaiwanStockPriceTick(stock.stock_id);
         res.data.map((stock: { stock_id: string; close: number }) => {
           setStockPrice((prev) => ({
             ...prev,
@@ -109,28 +88,23 @@ export default function Unrealized() {
     }
   };
 
-  console.log(entrustment);
-
-  const rows = entrustment.map((item) => {
-    const cost = item.order.price * item.order.volume;
-    const marketPrice = stockPrice[item.stock_id] || 0;
-    const estimatedProfitLoss =
-      (marketPrice - item.order.price) * item.order.volume;
+  const rows = unrealizedStocks.map((stock) => {
+    console.log(stock);
+    if (stock.volume === 0) return;
+    const marketPrice = stockPrice[stock.stock_id] || 0;
+    const averagePrice = stock.average_price || 0;
+    const cost = averagePrice * stock.volume;
+    const estimatedProfitLoss = stock.volume * marketPrice - cost;
     const returnRate = (estimatedProfitLoss / cost) * 100;
 
-    const stockName =
-      StockCode.find((stock) => stock.證券代號 === parseInt(item.stock_id))
-        ?.證券名稱 || "";
-
     return {
-      key: item.id,
-      stockID: item.stock_id + " / " + stockName,
-      tradeType: item.trade_type,
-      volume: item.order.volume + "股",
-      averagePrice: item.order.price,
-      presentValue: (item.order.volume * marketPrice).toLocaleString(),
-      marketPrice: marketPrice,
+      key: stock.stock_id,
+      stockID: stock.stock_id,
+      volume: stock.volume.toLocaleString(),
+      averagePrice: averagePrice.toFixed(2),
       cost: cost.toLocaleString(),
+      marketPrice: marketPrice,
+      presentValue: (stock.volume * marketPrice).toLocaleString(),
       estimatedProfitLoss: estimatedProfitLoss.toLocaleString(),
       returnRate: returnRate.toFixed(2) + "%",
       sell: (
@@ -138,7 +112,7 @@ export default function Unrealized() {
           size="sm"
           color="danger"
           onClick={() =>
-            navigate("/trades/order", { state: { stockID: item.stock_id } })
+            navigate("/trades/order", { state: { stockID: stock.stock_id } })
           }
         >
           賣出
@@ -148,14 +122,12 @@ export default function Unrealized() {
   });
 
   useEffect(() => {
-    onSnapshot(orderQuery, () => {
-      getOrders();
-    });
+    getUnrealizedStocks();
   }, [auth.currentUser]);
 
   useEffect(() => {
-    getStockPrice();
-  }, [entrustment]);
+    getMarketPrice();
+  }, [unrealizedStocks]);
 
   return (
     <>

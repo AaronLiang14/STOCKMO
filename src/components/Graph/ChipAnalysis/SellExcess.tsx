@@ -16,10 +16,10 @@ export default function SellExcess() {
         return [item.securities_trader, (item.sell - item.buy) / 1000];
       },
     );
-    console.log(formatted);
-    setBuyExcess(formatted.sort((a, b) => b[1] - a[1]).slice(0, 20));
+    setBuyExcess(
+      formatted.sort((a: number[], b: number[]) => b[1] - a[1]).slice(0, 20),
+    );
   };
-  console.log(buyExcess);
   const lastOpeningDate =
     new Date().getDay() === 0
       ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${

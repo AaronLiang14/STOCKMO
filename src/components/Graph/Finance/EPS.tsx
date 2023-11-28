@@ -30,7 +30,6 @@ export default function EPS() {
     }));
     setFormattedData(newData);
   };
-
   const options = {
     chart: {
       type: "line",

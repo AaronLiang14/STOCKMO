@@ -27,6 +27,7 @@ export default function PER() {
     }));
     setFormattedData(newData);
   };
+
   const options = {
     chart: {
       type: "line",
@@ -52,7 +53,7 @@ export default function PER() {
     series: [
       {
         type: "line",
-        name: id,
+        name: "本益比",
         data: formattedData,
         color: "green",
         upColor: "red",

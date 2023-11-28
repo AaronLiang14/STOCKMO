@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 
 export default function BuyExcess() {
   const [buyExcess, setBuyExcess] = useState<[]>([]);
-
   const { id } = useParams();
 
   const getTradingDailyReport = async (id: string, startDate: string) => {
@@ -16,9 +15,10 @@ export default function BuyExcess() {
         return [item.securities_trader, (item.buy - item.sell) / 1000];
       },
     );
-    setBuyExcess(formatted.sort((a, b) => b[1] - a[1]).slice(0, 20));
+    setBuyExcess(
+      formatted.sort((a: number[], b: number[]) => b[1] - a[1]).slice(0, 20),
+    );
   };
-  console.log(buyExcess);
   const lastOpeningDate =
     new Date().getDay() === 0
       ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${

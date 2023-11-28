@@ -1,6 +1,4 @@
 import { auth, db } from "@/config/firebase";
-import StockCode from "@/data/StockCode.json";
-import api from "@/utils/api";
 import { DocumentData } from "@firebase/firestore";
 import {
   Table,
@@ -11,15 +9,8 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import {
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 const columns = [
   {
@@ -27,8 +18,8 @@ const columns = [
     label: "股票代碼/名稱",
   },
   {
-    key: "tradeType",
-    label: "交易類別",
+    key: "volume",
+    label: "股數",
   },
   {
     key: "buyPrice",
@@ -39,8 +30,8 @@ const columns = [
     label: "賣價",
   },
   {
-    key: "volume",
-    label: "股數",
+    key: "profitLoss",
+    label: "損益",
   },
   {
     key: "fee",
@@ -51,83 +42,56 @@ const columns = [
     label: "交易稅",
   },
   {
-    key: "profitLoss",
-    label: "損益",
-  },
-  {
     key: "returnRate",
     label: "報酬率",
+  },
+  {
+    key: "time",
+    label: "時間",
   },
 ];
 
 export default function Realized() {
-  const [entrustment, setEntrustment] = useState<DocumentData[]>([]);
-  const [stockPrice, setStockPrice] = useState<object>({});
-  const orderQuery = query(
-    collection(db, "Trades"),
-    where("member_id", "==", auth.currentUser?.uid || ""),
-    where("status", "==", "已成交"),
-  );
+  const [realizedStocks, setRealizedStocks] = useState<DocumentData[]>([]);
 
-  const getOrders = async () => {
+  const getRealizedStocks = async () => {
     if (!auth.currentUser) return;
-    setEntrustment([]); //避免資料重複
-    const orders = await getDocs(orderQuery);
-    orders.forEach((doc) => {
-      setEntrustment((prev) => [...prev, doc.data()]);
-    });
+    const memberRef = doc(db, "Member", auth.currentUser!.uid);
+    const memberDoc = await getDoc(memberRef);
+    if (!memberDoc.exists()) return;
+    setRealizedStocks(memberDoc.data().realized);
   };
 
-  const uniqueStockIds = [
-    ...new Set(entrustment.map((order) => order.stock_id)),
-  ];
-
-  const getStockPrice = async () => {
-    try {
-      uniqueStockIds.map(async (stockId) => {
-        const res = await api.getTaiwanStockPriceTick(stockId);
-        res.data.map((stock: { stock_id: string; close: number }) => {
-          setStockPrice((prev) => ({
-            ...prev,
-            [stock.stock_id]: stock.close,
-          }));
-        });
-      });
-    } catch (e) {
-      const error = e as Error;
-      toast.error(error.message);
-      console.log(error);
-    }
-  };
-
-  console.log(entrustment);
-
-  const rows = entrustment.map((item) => {
-    const stockName =
-      StockCode.find((stock) => stock.證券代號 === parseInt(item.stock_id))
-        ?.證券名稱 || "";
+  const rows = realizedStocks.map((stock) => {
+    const buyPrice = stock.buy_price;
+    const sellPrice = stock.sell_price;
+    const volume = stock.volume;
+    const fee = Math.round((buyPrice + sellPrice) * volume * 0.001425 * 0.3);
+    const tax = Math.round(sellPrice * volume * 0.003);
+    const profitLoss = (sellPrice - buyPrice) * volume;
+    const returnRate = ((profitLoss - tax - fee) / (buyPrice * volume)) * 100;
 
     return {
-      key: item.id,
-      stockID: item.stock_id + " / " + stockName,
-      tradeType: item.trade_type,
-      volume: item.order.volume + "股",
+      key: stock.stock_id + stock.sell_price,
+      stockID: stock.stock_id,
+      volume: volume.toLocaleString(),
+      buyPrice: buyPrice.toLocaleString(),
+      sellPrice: sellPrice,
+      profitLoss: profitLoss.toLocaleString(),
+      fee: fee.toLocaleString(),
+      tax: tax.toLocaleString(),
+      returnRate: returnRate.toFixed(2) + "%",
+      time: stock.time.toDate().toLocaleString(),
     };
   });
 
   useEffect(() => {
-    onSnapshot(orderQuery, () => {
-      getOrders();
-    });
+    getRealizedStocks();
   }, [auth.currentUser]);
-
-  useEffect(() => {
-    getStockPrice();
-  }, [entrustment]);
 
   return (
     <>
-      <p>未實現</p>
+      <p>已實現</p>
       <div className="flex flex-col gap-3">
         <Table
           aria-label="Rows actions table example with dynamic content"
