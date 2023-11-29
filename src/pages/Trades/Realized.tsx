@@ -30,16 +30,16 @@ const columns = [
     label: "賣價",
   },
   {
-    key: "profitLoss",
-    label: "損益",
-  },
-  {
     key: "fee",
     label: "手續費",
   },
   {
     key: "tax",
     label: "交易稅",
+  },
+  {
+    key: "totalProfitLoss",
+    label: "總損益",
   },
   {
     key: "returnRate",
@@ -77,9 +77,9 @@ export default function Realized() {
       volume: volume.toLocaleString(),
       buyPrice: buyPrice.toLocaleString(),
       sellPrice: sellPrice,
-      profitLoss: profitLoss.toLocaleString(),
       fee: fee.toLocaleString(),
       tax: tax.toLocaleString(),
+      totalProfitLoss: (profitLoss - tax - fee).toLocaleString(),
       returnRate: returnRate.toFixed(2) + "%",
       time: stock.time.toDate().toLocaleString(),
     };

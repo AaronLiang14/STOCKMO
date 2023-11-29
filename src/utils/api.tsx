@@ -4,7 +4,7 @@ const api = {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRlIjoiMjAyMy0xMS0yMiAxMDo0MDo1NiIsInVzZXJfaWQiOiJBYXJvbkxJYW5nIiwiaXAiOiI1OS4xMjAuMTEuMTI1In0.RJuFpbVur-YtQ2QyLTWoydAASQ2gKwQH8DEQta5yLFQ",
   async getStocksNews(stockID: string, startDate: string) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanStockNews&data_id=${stockID}&start_date=${startDate}`,
+      `${this.hostName}dataset=TaiwanStockNews&data_id=${stockID}&start_date=${startDate}&token=${this.token}`,
     );
     return res.json();
   },

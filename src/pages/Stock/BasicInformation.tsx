@@ -168,7 +168,7 @@ export default function BasicInformation() {
                 scope="col"
                 className="py-3.5 pl-4 pr-4 text-left text-xl font-semibold text-gray-900 sm:pr-6"
               >
-                <a href={company[0].網址}>{company[0].網址}</a>
+                <a href={`https://${company[0].網址}`}>{company[0].網址}</a>
               </th>
             </tr>
           </table>

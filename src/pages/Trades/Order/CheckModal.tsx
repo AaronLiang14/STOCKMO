@@ -91,19 +91,14 @@ export default function CheckModal({
 
     const newHold = buySell === "買" ? volume + units : volume - units;
 
-    console.log(averagePrice, volume, isExist);
-    console.log(price, units);
-    console.log(newAveragePrice, newHold);
+    const fee = Math.round((newAveragePrice + price) * units * 0.001425 * 0.3);
+    const tax = Math.round(price * units * 0.003);
 
-    if (
-      (buySell === "買" && price >= marketPrice) ||
-      (buySell === "賣" && price <= marketPrice)
-    ) {
+    if (buySell === "買" && price >= marketPrice) {
       if (isExist) {
         const newUnrealized = unrealized.filter(
           (stock: memberStocksProps) => stock.stock_id !== stockID,
         );
-        console.log(newAveragePrice, newHold);
         await updateDoc(memberRef, {
           unrealized: [
             ...newUnrealized,
@@ -113,6 +108,8 @@ export default function CheckModal({
               volume: newHold,
             },
           ],
+          cash: memberData?.cash - price * units,
+          securities_assets: price * units + memberData?.securities_assets,
         });
       }
       if (!isExist) {
@@ -125,9 +122,44 @@ export default function CheckModal({
               volume: newHold,
             },
           ],
+          cash: memberData?.cash - price * units,
+          securities_assets: price * units + memberData?.securities_assets,
         });
       }
-      ``;
+    }
+    //////
+    if (buySell === "賣" && price <= marketPrice) {
+      if (isExist) {
+        const newUnrealized = unrealized.filter(
+          (stock: memberStocksProps) => stock.stock_id !== stockID,
+        );
+        await updateDoc(memberRef, {
+          unrealized: [
+            ...newUnrealized,
+            {
+              stock_id: stockID,
+              average_price: newAveragePrice,
+              volume: newHold,
+            },
+          ],
+          cash: memberData?.cash + price * units - fee - tax,
+          securities_assets: price * units - memberData?.securities_assets,
+        });
+      }
+      if (!isExist) {
+        await updateDoc(memberRef, {
+          unrealized: [
+            ...unrealized,
+            {
+              stock_id: stockID,
+              average_price: newAveragePrice,
+              volume: newHold,
+            },
+          ],
+          cash: memberData?.cash + price * units - fee - tax,
+          securities_assets: price * units - memberData?.securities_assets,
+        });
+      }
     }
   };
 
