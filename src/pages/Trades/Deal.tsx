@@ -70,8 +70,8 @@ export default function Deal() {
 
   const rows = entrustment.map((item) => {
     const stockName =
-      StockCode.find((stock) => stock.證券代號 === parseInt(item.stock_id))
-        ?.證券名稱 || "";
+      StockCode.find((stock) => stock.stockCode === parseInt(item.stock_id))
+        ?.stockName || "";
     if (item.status === "已成交")
       return {
         key: item.id,

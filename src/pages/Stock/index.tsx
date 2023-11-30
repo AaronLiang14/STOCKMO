@@ -22,7 +22,9 @@ import { auth } from "@/config/firebase";
 export default function Stock() {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState<string>("latest");
-  const company = FinanceData.filter((item) => item.公司代號 === id);
+  const company = FinanceData.filter(
+    (item) => item.SecuritiesCompanyCode === id,
+  );
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -119,9 +121,9 @@ export default function Stock() {
         <div className=" m-auto mt-16 flex w-[1280px] flex-col justify-center">
           <div className="flex justify-between">
             <h1 className="text-4xl font-semibold text-gray-900">
-              {company[0].公司代號}
-              {company[0].公司名稱}
-              {company[0].英文簡稱}
+              {company[0].SecuritiesCompanyCode}
+              {company[0].CompanyName}
+              {company[0].Symbol}
             </h1>
             {auth.currentUser ? (
               <AddFavoriteStocks />

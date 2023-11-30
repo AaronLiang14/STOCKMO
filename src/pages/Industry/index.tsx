@@ -19,7 +19,9 @@ export default function Industry() {
           }}
         >
           {(industry) => (
-            <SelectItem key={industry.產業名稱}>{industry.產業名稱}</SelectItem>
+            <SelectItem key={industry.industryName}>
+              {industry.industryName}
+            </SelectItem>
           )}
         </Select>
       </div>

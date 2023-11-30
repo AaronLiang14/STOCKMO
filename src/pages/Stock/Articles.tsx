@@ -44,7 +44,7 @@ export default function Articles() {
   const uploadImgRef = useRef<HTMLInputElement>(null);
 
   const industryCode = StockCode.filter(
-    (item) => item.證券代號.toString() === id,
+    (item) => item.stockCode.toString() === id,
   );
 
   const handleArticlesSubmit = async (
@@ -67,7 +67,7 @@ export default function Articles() {
         author_name: auth.currentUser?.displayName,
         content: content,
         created_time: new Date(),
-        industry: industryCode[0].產業別,
+        industry: industryCode[0].industry,
         number_of_favorite: 0,
         photo: imgUrl,
         reply: [],

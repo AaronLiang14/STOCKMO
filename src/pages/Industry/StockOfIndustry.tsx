@@ -40,7 +40,7 @@ const LatestStockPrice = ({ stockID }: LatestStockPriceProps) => {
 
 export default function StockOfIndustry({ industry }: StockOfIndustryProps) {
   const stockDependOnIndustry = StockCode.filter(
-    (stock) => stock.產業別 === industry,
+    (stock) => stock.industry === industry,
   );
   const navigate = useNavigate();
   return (
@@ -50,22 +50,22 @@ export default function StockOfIndustry({ industry }: StockOfIndustryProps) {
     >
       {stockDependOnIndustry.map((stock) => (
         <li
-          key={stock.證券代號}
+          key={stock.stockCode}
           className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow"
-          onClick={() => navigate(`/stock/${stock.證券代號}`)}
+          onClick={() => navigate(`/stock/${stock.stockCode}`)}
         >
           <div className="flex flex-1 flex-col p-8">
             <img className="mx-auto  flex-shrink-0 rounded-full" alt="" />
             <h3 className="mt-6 text-sm font-medium text-gray-900">
-              {stock.證券名稱}
-              {stock.證券代號}
+              {stock.stockName}
+              {stock.stockCode}
             </h3>
             <dl className="mt-1 flex flex-grow flex-col justify-between">
               <dt className="sr-only">Title</dt>
-              <dd className="text-sm text-gray-500">{stock.市場別}</dd>
+              <dd className="text-sm text-gray-500">{stock.market}</dd>
               <dt className="sr-only">Role</dt>
               <dd className="mt-3">
-                <LatestStockPrice stockID={stock.證券代號} />
+                <LatestStockPrice stockID={stock.stockCode} />
               </dd>
             </dl>
           </div>

@@ -20,23 +20,23 @@ export default function Header() {
   const handleSearch = () => {
     if (isNaN(parseInt(search))) {
       const searchStock = stockCode.filter((item) => {
-        return item.證券名稱 === search;
+        return item.stockName === search;
       });
       if (searchStock.length === 0) {
         toast.error("查無此檔股票");
         return;
       }
-      navigate(`/stock/${searchStock[0].證券代號}`);
+      navigate(`/stock/${searchStock[0].stockCode}`);
       setSearch("");
     } else {
       const searchStock = stockCode.filter((item) => {
-        return item.證券代號 === parseInt(search);
+        return item.stockCode === parseInt(search);
       });
       if (searchStock.length === 0) {
         toast.error("查無此檔股票");
         return;
       }
-      navigate(`/stock/${searchStock[0].證券代號}`);
+      navigate(`/stock/${searchStock[0].stockCode}`);
       setSearch("");
     }
   };

@@ -24,7 +24,15 @@ const financeYears = [
 
 export default function BasicInformation() {
   const { id } = useParams();
-  const company = FinanceData.filter((item) => item.公司代號 === id);
+  const company = FinanceData.filter(
+    (item) => item.SecuritiesCompanyCode === id,
+  );
+
+  const companyWebsite =
+    company[0].WebAddress.substring(0, 1) === "w"
+      ? `https://${company[0].WebAddress}`
+      : `${company[0].WebAddress}`;
+  console.log(companyWebsite);
   return (
     <div>
       <div className=" mx-auto mt-16 flex flex-col">
@@ -41,9 +49,9 @@ export default function BasicInformation() {
                 scope="col"
                 className="px-4 py-3.5 text-left text-xl font-semibold text-gray-900"
               >
-                {company[0].成立日期.substring(0, 4)}/
-                {company[0].成立日期.substring(4, 6)}/
-                {company[0].成立日期.substring(6, 8)}
+                {company[0].DateOfIncorporation.substring(0, 4)}/
+                {company[0].DateOfIncorporation.substring(4, 6)}/
+                {company[0].DateOfIncorporation.substring(6, 8)}
               </th>
               <th
                 scope="col"
@@ -55,9 +63,9 @@ export default function BasicInformation() {
                 scope="col"
                 className="py-3.5 pl-4 pr-4 text-left text-xl font-semibold text-gray-900 sm:pr-6"
               >
-                {company[0].上市日期.substring(0, 4)}/
-                {company[0].上市日期.substring(4, 6)}/
-                {company[0].上市日期.substring(6, 8)}
+                {company[0].DateOfListing.substring(0, 4)}/
+                {company[0].DateOfListing.substring(4, 6)}/
+                {company[0].DateOfListing.substring(6, 8)}
               </th>
             </tr>
             <tr className="divide-x divide-gray-200">
@@ -71,7 +79,7 @@ export default function BasicInformation() {
                 scope="col"
                 className="px-4 py-3.5 text-left text-xl font-semibold text-gray-900"
               >
-                {company[0].已發行普通股數或TDR原股發行股數.replace(
+                {company[0].IssuedShares.toString().replace(
                   /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
                   ",",
                 )}
@@ -87,7 +95,7 @@ export default function BasicInformation() {
                 scope="col"
                 className="py-3.5 pl-4 pr-4 text-left text-xl font-semibold text-gray-900 sm:pr-6"
               >
-                {company[0].實收資本額.replace(
+                {company[0].PaidinCapitalNTDollars.replace(
                   /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
                   ",",
                 )}
@@ -104,7 +112,7 @@ export default function BasicInformation() {
                 scope="col"
                 className="px-4 py-3.5 text-left text-xl font-semibold text-gray-900"
               >
-                {company[0].董事長}
+                {company[0].Chairman}
               </th>
               <th
                 scope="col"
@@ -116,7 +124,7 @@ export default function BasicInformation() {
                 scope="col"
                 className="py-3.5 pl-4 pr-4 text-left text-xl font-semibold text-gray-900 sm:pr-6"
               >
-                {company[0].總經理}
+                {company[0].GeneralManager}
               </th>
             </tr>
             <tr className="divide-x divide-gray-200">
@@ -130,7 +138,7 @@ export default function BasicInformation() {
                 scope="col"
                 className="px-4 py-3.5 text-left text-xl font-semibold text-gray-900"
               >
-                {company[0].簽證會計師事務所}
+                {company[0].AccountingFirm}
               </th>
               <th
                 scope="col"
@@ -142,7 +150,7 @@ export default function BasicInformation() {
                 scope="col"
                 className="py-3.5 pl-4 pr-4 text-left text-xl font-semibold text-gray-900 sm:pr-6"
               >
-                {company[0].簽證會計師1}、{company[0].簽證會計師2}
+                {company[0].CPAFirst}、{company[0].CPASecond}
               </th>
             </tr>
             <tr className="divide-x divide-gray-200">
@@ -156,7 +164,7 @@ export default function BasicInformation() {
                 scope="col"
                 className="px-4 py-3.5 text-left text-xl font-semibold text-gray-900"
               >
-                {company[0].住址}
+                {company[0].Address}
               </th>
               <th
                 scope="col"
@@ -168,7 +176,7 @@ export default function BasicInformation() {
                 scope="col"
                 className="py-3.5 pl-4 pr-4 text-left text-xl font-semibold text-gray-900 sm:pr-6"
               >
-                <a href={`https://${company[0].網址}`}>{company[0].網址}</a>
+                <a href={companyWebsite}>{companyWebsite}</a>
               </th>
             </tr>
           </table>
