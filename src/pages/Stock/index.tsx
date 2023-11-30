@@ -7,7 +7,7 @@ import Article from "~icons/ooui/articles-rtl";
 
 import AddFavoriteStocks from "@/components/AddFavorite";
 import ChatRoom from "@/components/ChatRoom";
-import FinanceData from "@/data/TWSE.json";
+import FinanceData from "@/data/StockDetail.json";
 import { Button } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";

@@ -1,4 +1,4 @@
-import FinanceData from "@/data/TWSE.json";
+import FinanceData from "@/data/StockDetail.json";
 import { useParams } from "react-router-dom";
 
 const financialReports = (
