@@ -6,6 +6,9 @@ import Header from "./components/Header";
 import Home from "./pages/Home/index.tsx";
 import Industry from "./pages/Industry/index.tsx";
 import Macro from "./pages/Macroeconomics/index.tsx";
+import FavoriteArticles from "./pages/Member/FavoriteArticles.tsx";
+import FavoriteStocks from "./pages/Member/FavoriteStocks";
+import Login from "./pages/Member/Login";
 import Member from "./pages/Member/index.tsx";
 import NotFound from "./pages/NotFound/index.tsx";
 import Stock from "./pages/Stock/index.tsx";
@@ -32,7 +35,12 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="member" element={<Member />} />
+            <Route path="member" element={<Member />}>
+              <Route path="favoriteArticles" element={<FavoriteArticles />} />
+              <Route path="favoriteStocks" element={<FavoriteStocks />} />
+            </Route>
+            <Route path="login" element={<Login />} />
+
             <Route path="industry" element={<Industry />} />
             <Route path="macro" element={<Macro />} />
             <Route path="stock/:id" element={<Stock />} />

@@ -10,6 +10,7 @@ type FavoriteArticlesState = {
 const useFavoritesStore = create<FavoriteArticlesState>((set) => ({
   favoriteArticles: [],
   getFavoriteArticles: async () => {
+    if (!auth.currentUser) return;
     const memberRef = doc(db, "Member", auth.currentUser!.uid);
     const docSnap = await getDoc(memberRef);
     if (docSnap.exists()) {

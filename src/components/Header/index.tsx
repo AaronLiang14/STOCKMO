@@ -1,28 +1,43 @@
 import logo from "@/assets/logo.png";
-import { auth } from "@/config/firebase";
-import useLoginStore from "@/utils/useLoginStore";
 import { Link } from "react-router-dom";
-import Avatar from "~icons/ooui/user-avatar";
 
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import Avatar from "./Avatar";
 import SearchBox from "./SearchBox";
 
 export default function Header() {
-  const { isLogin } = useLoginStore();
+  const location = useLocation();
+
+  const [backgroundColor, setBackgroundColor] = useState("bg-gray-300");
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setBackgroundColor("bg-gray-300");
+    }
+    if (location.pathname === "/login") {
+      setBackgroundColor("");
+    } else {
+      setBackgroundColor("bg-gray-300");
+    }
+  }, [location]);
 
   return (
     <>
-      <header className="bg-cyan-950">
-        <nav className=" mx-auto p-5 sm:px-6 lg:px-24">
+      <header
+        className={`fixed z-10 flex h-24 w-full items-center ${backgroundColor} `}
+      >
+        <nav className=" mx-auto  w-10/12">
           <div className="flex items-center justify-between">
             <div className="mr-auto flex items-center">
               <Link to="/">
                 <img className="h-12 w-auto" src={logo} alt="logo" />
-                <p className="text-white">STOCK.MO</p>
+                <p className="text-black">STOCK.MO</p>
               </Link>
               <div className="ml-10">
                 <Link
                   to="/industry"
-                  className="text-base font-medium text-white hover:text-indigo-50"
+                  className="text-base font-medium text-black hover:text-indigo-50"
                 >
                   產業類別
                 </Link>
@@ -30,7 +45,7 @@ export default function Header() {
               <div className="ml-10">
                 <Link
                   to="/macro"
-                  className="text-base font-medium text-white hover:text-indigo-50"
+                  className="text-base font-medium text-black hover:text-indigo-50"
                 >
                   總體經濟
                 </Link>
@@ -39,24 +54,14 @@ export default function Header() {
               <div className="ml-10">
                 <Link
                   to="/trades/order"
-                  className="text-base font-medium text-white hover:text-indigo-50"
+                  className="text-base font-medium text-black hover:text-indigo-50"
                 >
                   模擬交易
                 </Link>
               </div>
             </div>
             <SearchBox />
-
-            <Link to="/member">
-              {isLogin ? (
-                <img
-                  className="h-12 w-12 rounded-full"
-                  src={auth?.currentUser?.photoURL || ""}
-                />
-              ) : (
-                <Avatar className="h-12 w-12 rounded-full bg-gray-300 text-white" />
-              )}
-            </Link>
+            <Avatar />
           </div>
         </nav>
       </header>

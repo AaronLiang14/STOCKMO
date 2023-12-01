@@ -62,7 +62,7 @@ export default function SearchBox() {
         <label htmlFor="simple-search" className="sr-only">
           Search
         </label>
-        <div>
+        <div className="relative">
           <Input
             type="text"
             id="simple-search"
@@ -84,7 +84,7 @@ export default function SearchBox() {
               }
             }}
           />
-          <div className="fixed z-10 mt-2 rounded-lg bg-gray-100 ">
+          <div className="absolute z-10 mt-2 w-full rounded-lg bg-gray-100">
             {search && filterOptions.length > 0 && (
               <ul className="max-h-60  overflow-y-scroll py-2 text-sm text-gray-700 dark:text-gray-200">
                 {filterOptions.map((item, index) => (
@@ -92,7 +92,10 @@ export default function SearchBox() {
                     <Link
                       to={`/stock/${item.split("/")[0]}`}
                       className="block px-4 py-2  text-black hover:rounded-lg hover:bg-gray-200"
-                      onClick={() => setFilterOptions([])}
+                      onClick={() => {
+                        setFilterOptions([]);
+                        setSearch("");
+                      }}
                     >
                       {item}
                     </Link>

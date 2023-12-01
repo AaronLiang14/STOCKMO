@@ -1,3 +1,4 @@
+import { storage } from "@/config/firebase";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -7,20 +8,32 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { collection, doc, query, setDoc, where } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { auth, db, provider } from "../config/firebase";
 
 interface LoginState {
+  avatarFile: object;
+  avatar: string;
   isLogin: boolean;
   init: () => void;
   handleGoogleLogin: () => void;
   handleLogout: () => void;
-  handleNativeSignUp: (email: string, password: string, name: string) => void;
+  handleNativeSignUp: (
+    email: string,
+    password: string,
+    name: string,
+    avatarFile: object,
+  ) => void;
   handleNativeLogin: (email: string, password: string) => void;
+  handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const initialState = {
   isLogin: false,
+  avatar: "",
+  avatarFile: {},
 };
 
 const useLoginStore = create<LoginState>((set) => ({
@@ -32,20 +45,40 @@ const useLoginStore = create<LoginState>((set) => ({
     });
   },
 
-  handleNativeSignUp: async (email: string, password: string, name: string) => {
+  handleNativeSignUp: async (
+    email: string,
+    password: string,
+    name: string,
+    avatarFile: object,
+  ) => {
+    const imageRef = ref(storage, `images/${avatarFile.name}`);
+    const imgUploadBytes = await uploadBytes(imageRef, avatarFile);
+    const imgUrl = await getDownloadURL(imgUploadBytes.ref);
+
     await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(auth.currentUser!, { displayName: name });
-    await setDoc(doc(db, "Member", auth.currentUser!.uid), {
-      avatar: auth.currentUser?.photoURL,
-      email: auth.currentUser?.email,
+    await updateProfile(auth.currentUser!, { photoURL: imgUrl });
+    await setDoc(doc(db, "Member", email), {
+      avatar: imgUrl,
+      email: email,
       name: name,
       favorite_articles: [],
       favorite_stocks: [],
+      realized: [],
+      unrealized: [],
+      cash: 100000,
+      securities_assets: 0,
     });
+    toast.success("註冊成功");
   },
 
   handleNativeLogin: async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      toast.error("無此帳號，登入失敗");
+      return;
+    }
   },
 
   handleGoogleLogin: async () => {
@@ -64,11 +97,25 @@ const useLoginStore = create<LoginState>((set) => ({
       realized: [],
       unrealized: [],
       cash: 100000,
+      securities_assets: 0,
     });
   },
 
   handleLogout: async () => {
     await signOut(auth);
+  },
+
+  handleAvatarChange: async (e) => {
+    if (!e.target.files) return;
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader(); //HTML5的API，讓瀏覽器讀取本地檔案
+      reader.onloadend = () => {
+        set({ avatar: reader.result as string }); //reader.result 包含一個代表檔案內容資料的URL
+        set({ avatarFile: file });
+      };
+      reader.readAsDataURL(file); //啟動 FileReader 開始讀取檔案
+    }
   },
 }));
 

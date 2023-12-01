@@ -52,6 +52,7 @@ export default function Articles() {
   ) => {
     e.preventDefault();
     if (!auth.currentUser) return toast.error("請先登入");
+
     if (uploadImgRef.current && uploadImgRef.current.files) {
       const imageRef = ref(
         storage,
@@ -225,7 +226,7 @@ export default function Articles() {
               />
               <button
                 type="submit"
-                className=" group inline-flex  rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-800 text-sm font-medium text-gray-900 focus:outline-none  focus:ring-cyan-200     "
+                className=" group inline-flex rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-800 text-sm font-medium text-gray-900 focus:outline-none  focus:ring-cyan-200     "
                 onClick={handleArticlesSubmit}
               >
                 <span className=" rounded-md bg-cyan-700 px-8 py-2.5 text-white transition-all duration-75 ease-in group-hover:bg-opacity-0">
