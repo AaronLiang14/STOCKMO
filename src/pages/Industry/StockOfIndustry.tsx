@@ -62,7 +62,7 @@ export default function StockOfIndustry({
         {stockDependOnIndustry.map((stock) => (
           <div
             className=" relative h-64"
-            onClick={() => navigate(`/stock/${stock.stockCode}`)}
+            onClick={() => navigate(`/stock/${stock.stockCode}/latest`)}
           >
             <LatestStockPriceCharts stockID={stock.stockCode.toString()} />
             <Card

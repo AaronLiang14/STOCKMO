@@ -12,10 +12,7 @@ export default function Header() {
   const [backgroundColor, setBackgroundColor] = useState("bg-gray-300");
 
   useEffect(() => {
-    if (location.pathname === "/") {
-      setBackgroundColor("bg-gray-300");
-    }
-    if (location.pathname === "/login") {
+    if (location.pathname === "/login" || location.pathname === "/") {
       setBackgroundColor("");
     } else {
       setBackgroundColor("bg-gray-300");
@@ -37,7 +34,7 @@ export default function Header() {
               <div className="ml-10">
                 <Link
                   to="/industry"
-                  className="text-base font-medium text-black hover:text-indigo-50"
+                  className="pb-4 text-base font-medium text-black hover:border-b-4 hover:border-gray-600 "
                 >
                   產業類別
                 </Link>
@@ -45,7 +42,7 @@ export default function Header() {
               <div className="ml-10">
                 <Link
                   to="/dashboard"
-                  className="text-base font-medium text-black hover:text-indigo-50"
+                  className="pb-4 text-base font-medium text-black hover:border-b-4 hover:border-gray-600"
                 >
                   儀表板
                 </Link>
@@ -54,7 +51,7 @@ export default function Header() {
               <div className="ml-10">
                 <Link
                   to="/trades/order"
-                  className="text-base font-medium text-black hover:text-indigo-50"
+                  className="pb-4 text-base font-medium text-black hover:border-b-4 hover:border-gray-600"
                 >
                   模擬交易
                 </Link>

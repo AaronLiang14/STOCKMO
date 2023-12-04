@@ -24,17 +24,9 @@ export default function StockChart() {
   const { id } = useParams<string>();
   const [stockPrice, setStockPrice] = useState<[]>([]);
   const [volume, setVolume] = useState<[]>([]);
-  const [time, setTime] = useState<string>(timeSelector.oneYear);
+  const [time, setTime] = useState<string>(timeSelector.oneMonth);
 
   const chartsTime = [
-    {
-      label: "五年",
-      value: timeSelector.fiveYears,
-    },
-    {
-      label: "三年",
-      value: timeSelector.threeYears,
-    },
     {
       label: "一年",
       value: timeSelector.oneYear,
@@ -42,6 +34,22 @@ export default function StockChart() {
     {
       label: "半年",
       value: timeSelector.halfYear,
+    },
+    {
+      label: "三個月",
+      value: timeSelector.threeMonths,
+    },
+    {
+      label: "一個月",
+      value: timeSelector.oneMonth,
+    },
+    {
+      label: "五天",
+      value: timeSelector.fiveDays,
+    },
+    {
+      label: "昨日",
+      value: timeSelector.lastOpeningDate,
     },
   ];
 
@@ -52,8 +60,7 @@ export default function StockChart() {
 
   const options = {
     chart: {
-      height: 400,
-      width: 800,
+      height: 700,
     },
 
     rangeSelector: {
@@ -99,9 +106,14 @@ export default function StockChart() {
         lineWidth: 2,
       },
     ],
-
+    credits: {
+      enabled: false,
+    },
     tooltip: {
       split: true,
+      style: {
+        fontSize: "16px",
+      },
     },
 
     plotOptions: {
@@ -121,6 +133,7 @@ export default function StockChart() {
         upColor: "red",
         upLineColor: "red",
         lineColor: "green",
+        showInLegend: false,
       },
       {
         type: "column",
@@ -128,18 +141,8 @@ export default function StockChart() {
         id: "volume",
         data: volume,
         yAxis: 1,
+        showInLegend: false,
       },
-      // {
-      //   type: "sma",
-      //   linkedTo: "aapl",
-      // },
-      // {
-      //   type: "sma",
-      //   linkedTo: "aapl",
-      //   params: {
-      //     period: 50,
-      //   },
-      // },
     ],
   };
 
@@ -167,16 +170,16 @@ export default function StockChart() {
 
   useEffect(() => {
     if (id) getStockPrice(id, time, timeSelector.endDate);
-  }, [id]);
+  }, [id, time]);
 
   return (
     <>
-      <div className="flex w-full flex-col items-end">
+      <div className="flex flex-col items-end">
         <Select
           items={chartsTime}
           label="選擇時段"
-          placeholder="一年"
-          className="flex w-full max-w-xs justify-end"
+          placeholder="一個月"
+          className="flex  max-w-xs justify-end"
           value={time}
           onChange={(e) => {
             setTime(e.target.value);
@@ -186,11 +189,9 @@ export default function StockChart() {
             <SelectItem key={item.value}>{item.label}</SelectItem>
           ))}
         </Select>
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          className="w-full"
-        />
+        <div className=" w-full">
+          <HighchartsReact highcharts={Highcharts} options={options} />
+        </div>
       </div>
     </>
   );

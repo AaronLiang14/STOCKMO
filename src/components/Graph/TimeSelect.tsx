@@ -27,7 +27,7 @@ const oneMonth = `${new Date().getFullYear()}-${
 }-${new Date().getDate()}`;
 
 const fiveDays = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
-  new Date().getDate() - 5
+  new Date().getDate() - 7
 }`;
 
 const lastOpeningDate =

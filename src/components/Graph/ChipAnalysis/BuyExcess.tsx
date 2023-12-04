@@ -28,8 +28,6 @@ export default function BuyExcess() {
   const options = {
     chart: {
       type: "column",
-      height: 400,
-      width: 800,
     },
     title: {
       text: "券商買超排行",
@@ -46,7 +44,13 @@ export default function BuyExcess() {
     },
     yAxis: {
       title: {
-        text: "買超張數(張)",
+        text: "",
+      },
+    },
+    tooltip: {
+      split: true,
+      style: {
+        fontSize: "16px",
       },
     },
     credits: {
@@ -57,9 +61,14 @@ export default function BuyExcess() {
         name: "買超張數",
         color: "#d28d71",
         data: buyExcess,
+        showInLegend: false,
       },
     ],
   };
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return (
+    <div className="w-full">
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </div>
+  );
 }

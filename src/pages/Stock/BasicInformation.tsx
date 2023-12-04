@@ -34,7 +34,7 @@ export default function BasicInformation() {
     company[0].WebAddress.substring(0, 1) === "w"
       ? `https://${company[0].WebAddress}`
       : `${company[0].WebAddress}`;
-  console.log(companyWebsite);
+
   return (
     <div>
       <div className=" mx-auto mt-16 flex flex-col">

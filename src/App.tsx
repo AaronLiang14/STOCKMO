@@ -2,6 +2,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
+import Footer from "./components/Footer/index.tsx";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard/index.tsx";
 import Home from "./pages/Home/index.tsx";
@@ -11,6 +12,10 @@ import FavoriteStocks from "./pages/Member/FavoriteStocks";
 import Login from "./pages/Member/Login";
 import Member from "./pages/Member/index.tsx";
 import NotFound from "./pages/NotFound/index.tsx";
+import Articles from "./pages/Stock/Articles";
+import BasicInformation from "./pages/Stock/BasicInformation";
+import Latest from "./pages/Stock/Latest.tsx";
+import News from "./pages/Stock/News";
 import Stock from "./pages/Stock/index.tsx";
 import Account from "./pages/Trades/Account.tsx";
 import Deal from "./pages/Trades/Deal.tsx";
@@ -40,10 +45,14 @@ function App() {
               <Route path="favoriteStocks" element={<FavoriteStocks />} />
             </Route>
             <Route path="login" element={<Login />} />
-
             <Route path="industry" element={<Industry />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="stock/:id" element={<Stock />} />
+            <Route path="stock/:id" element={<Stock />}>
+              <Route path="latest" element={<Latest />} />
+              <Route path="basic" element={<BasicInformation />} />
+              <Route path="news" element={<News />} />
+              <Route path="articles" element={<Articles />} />
+            </Route>
             <Route path="trades" element={<Trades />}>
               <Route path="order" element={<Order />} />
               <Route path="account" element={<Account />} />
@@ -54,6 +63,7 @@ function App() {
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </NextUIProvider>
     </>

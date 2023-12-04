@@ -41,7 +41,7 @@ export default function SearchBox() {
         toast.error("查無此檔股票");
         return;
       }
-      navigate(`/stock/${searchStock[0].stockCode}`);
+      navigate(`/stock/${searchStock[0].stockCode}/latest`);
       setSearch("");
     } else {
       const searchStock = stockCode.filter((item) => {
@@ -51,7 +51,7 @@ export default function SearchBox() {
         toast.error("查無此檔股票");
         return;
       }
-      navigate(`/stock/${searchStock[0].stockCode}`);
+      navigate(`/stock/${searchStock[0].stockCode}/latest`);
       setSearch("");
     }
   };
@@ -90,7 +90,7 @@ export default function SearchBox() {
                 {filterOptions.map((item, index) => (
                   <li key={index}>
                     <Link
-                      to={`/stock/${item.split("/")[0]}`}
+                      to={`/stock/${item.split("/")[0]}/latest`}
                       className="block px-4 py-2  text-black hover:rounded-lg hover:bg-gray-200"
                       onClick={() => {
                         setFilterOptions([]);

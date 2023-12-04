@@ -29,11 +29,9 @@ export default function SellExcess() {
   const options = {
     chart: {
       type: "column",
-      height: 400,
-      width: 800,
     },
     title: {
-      text: "券商賣超排行",
+      text: "券商賣超(張)排行",
     },
     xAxis: {
       type: "category",
@@ -47,7 +45,7 @@ export default function SellExcess() {
     },
     yAxis: {
       title: {
-        text: "賣超張數(張)",
+        text: "",
       },
     },
     credits: {
@@ -58,9 +56,14 @@ export default function SellExcess() {
         name: "賣超張數",
         color: "#b4e4b9",
         data: buyExcess,
+        showInLegend: false,
       },
     ],
   };
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return (
+    <div className="w-full">
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </div>
+  );
 }

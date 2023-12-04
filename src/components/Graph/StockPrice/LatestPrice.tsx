@@ -52,18 +52,20 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
   const options = {
     chart: {
       type: "area",
-      height: 270,
-      width: 310,
     },
     title: {
       text: "",
     },
     xAxis: {
-      visible: false,
+      type: "datetime",
+      min: Date.UTC(2023, 0, 1, 9, 0), // 開始時間 9:00 AM
+      max: Date.UTC(2023, 0, 1, 13, 30),
     },
     yAxis: {
-      visible: false,
+      showFirstLabel: false,
+      title: false,
     },
+
     plotOptions: {
       area: {
         fillColor: {
@@ -74,17 +76,17 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
             y2: 1,
           },
           stops: [
-            [0, chartsColor], // 开始颜色，这里是红色的半透明
+            [0, chartsColor], // 開始顏色
             [1, chartsTransparentColor], // 结束颜色，透明
           ],
         },
         marker: {
           radius: 2,
         },
-        lineWidth: 1,
+        lineWidth: 0,
         states: {
           hover: {
-            lineWidth: 1,
+            lineWidth: 0,
           },
         },
         threshold: null,
@@ -96,7 +98,7 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
     series: [
       {
         type: "area",
-        name: "",
+        name: "股價",
         data: formattedData,
         showInLegend: false,
         color: chartsBorderColor,
@@ -112,7 +114,7 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
 
   return (
     <>
-      <div className=" absolute inset-0 -z-10 flex w-full flex-col items-end ">
+      <div className="mt-12">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </>

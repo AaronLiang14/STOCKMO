@@ -67,6 +67,9 @@ export default function Revenue() {
         text: "月營收",
       },
     },
+    credits: {
+      enabled: false,
+    },
     plotOptions: {
       area: {
         fillColor: {
@@ -77,15 +80,11 @@ export default function Revenue() {
             y2: 1,
           },
           stops: [
-            [0, Highcharts.getOptions().colors[0]],
-            [
-              1,
-              Highcharts.color(Highcharts.getOptions().colors[0])
-                .setOpacity(0)
-                .get("rgba"),
-            ],
+            [0, "rgb(64,181,254)"],
+            [1, "rgb(255, 255, 255)"],
           ],
         },
+
         marker: {
           radius: 2,
         },
