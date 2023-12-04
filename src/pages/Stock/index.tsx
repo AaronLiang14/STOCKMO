@@ -75,7 +75,7 @@ export default function Stock() {
 
   return (
     <>
-      <div className="flex flex-row">
+      <div className="m-auto flex max-w-[1280px] flex-row  pt-24">
         <aside className="mx-8 mt-40 h-full w-60">
           <div className="w-full rounded-lg bg-gray-300 px-3 py-4">
             <ul className=" cursor-pointer space-y-2 font-medium">
@@ -95,7 +95,7 @@ export default function Stock() {
             </ul>
           </div>
         </aside>
-        <div className=" m-auto mt-16 flex w-[1280px] flex-col justify-center">
+        <div className=" m-auto mt-16 flex  flex-col justify-center">
           <div className="flex justify-between">
             <h1 className="text-4xl font-semibold text-gray-900">
               {company[0].SecuritiesCompanyCode}

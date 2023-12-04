@@ -15,8 +15,8 @@ export default function Trades() {
 
   return (
     <>
-      <div className="my-24 flex justify-center">
-        <ButtonGroup size="lg">
+      <div className="flex justify-center pt-48">
+        <ButtonGroup size="lg" className="mb-12">
           {Object.keys(Bar).map((item) => (
             <Button onClick={() => navigate(`${Bar[item]}`)} key={item}>
               {item}

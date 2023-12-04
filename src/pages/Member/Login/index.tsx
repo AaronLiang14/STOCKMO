@@ -2,6 +2,7 @@ import ChangeAvatar from "@/components/Header/ChangeAvatar";
 import useLoginStore from "@/utils/useLoginStore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import LoginBackGroundImage from "./LoginBackgroundImage.jpg";
 
 export default function Login() {
@@ -17,7 +18,12 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  console.log(LoginBackGroundImage);
+
+  const handleGoogle = async () => {
+    await handleGoogleLogin();
+    navigate("/");
+  };
+
   return (
     <>
       <div
@@ -106,7 +112,11 @@ export default function Login() {
                 <div className="flex w-full gap-4">
                   <div
                     className="flex w-full  justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 "
-                    onClick={() => handleNativeLogin(email, password)}
+                    onClick={() => {
+                      handleNativeLogin(email, password);
+                      toast.success("登入成功");
+                      navigate("/");
+                    }}
                   >
                     登入
                   </div>
@@ -137,7 +147,7 @@ export default function Login() {
                     <button
                       type="button"
                       className="flex w-full justify-center gap-2 rounded-lg border border-slate-200 bg-gray-100 px-4 py-2 text-slate-700 transition  hover:border-slate-400 hover:text-slate-900 hover:shadow "
-                      onClick={handleGoogleLogin}
+                      onClick={() => handleGoogle()}
                     >
                       <img
                         className="h-6 w-6"

@@ -52,6 +52,12 @@ const api = {
     );
     return res.json();
   },
+  async getStockRevenue(stockID: string, startDate: string, endDate: string) {
+    const res = await fetch(
+      `${this.hostName}dataset=TaiwanStockMonthRevenue&start_date=${startDate}&end_date=${endDate}&token=${this.token}&data_id=${stockID}`,
+    );
+    return res.json();
+  },
 };
 
 export default api;

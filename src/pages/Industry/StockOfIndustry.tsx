@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 interface StockOfIndustryProps {
   industry: string;
+  market: string;
 }
 
 interface LatestStockPriceProps {
@@ -38,9 +39,14 @@ const LatestStockPrice = ({ stockID }: LatestStockPriceProps) => {
   );
 };
 
-export default function StockOfIndustry({ industry }: StockOfIndustryProps) {
+export default function StockOfIndustry({
+  industry,
+  market,
+}: StockOfIndustryProps) {
   const stockDependOnIndustry = StockCode.filter(
-    (stock) => stock.industry === industry,
+    (stock) =>
+      stock.industry === industry &&
+      (market === "全部" || stock.market === market),
   );
   const navigate = useNavigate();
   return (

@@ -82,23 +82,29 @@ const useLoginStore = create<LoginState>((set) => ({
   },
 
   handleGoogleLogin: async () => {
-    await signInWithPopup(auth, provider);
-    const member = query(
-      collection(db, "Member"),
-      where("email", "==", auth.currentUser?.email),
-    );
-    if (member) return;
-    await setDoc(doc(db, "Member", auth.currentUser!.uid), {
-      avatar: auth.currentUser?.photoURL,
-      email: auth.currentUser?.email,
-      name: auth.currentUser?.displayName,
-      favorite_articles: [],
-      favorite_stocks: [],
-      realized: [],
-      unrealized: [],
-      cash: 100000,
-      securities_assets: 0,
-    });
+    try {
+      await signInWithPopup(auth, provider);
+      const member = query(
+        collection(db, "Member"),
+        where("email", "==", auth.currentUser?.email),
+      );
+      if (member) return;
+      await setDoc(doc(db, "Member", auth.currentUser!.uid), {
+        avatar: auth.currentUser?.photoURL,
+        email: auth.currentUser?.email,
+        name: auth.currentUser?.displayName,
+        favorite_articles: [],
+        favorite_stocks: [],
+        realized: [],
+        unrealized: [],
+        cash: 100000,
+        securities_assets: 0,
+      });
+
+      toast.success("登入成功");
+    } catch (e) {
+      toast.error("登入失敗");
+    }
   },
 
   handleLogout: async () => {

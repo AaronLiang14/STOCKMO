@@ -67,7 +67,6 @@ export default function BuyExcess() {
       {
         name: "買超張數",
         color: "#d28d71",
-
         data: buyExcess,
       },
     ],
