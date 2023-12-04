@@ -3,6 +3,7 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import timeSelector from "../TimeSelect";
 
 export default function BuyExcess() {
   const [buyExcess, setBuyExcess] = useState<[]>([]);
@@ -19,21 +20,9 @@ export default function BuyExcess() {
       formatted.sort((a: number[], b: number[]) => b[1] - a[1]).slice(0, 20),
     );
   };
-  const lastOpeningDate =
-    new Date().getDay() === 0
-      ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
-          new Date().getDate() - 2
-        }`
-      : new Date().getDay() === 1
-        ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
-            new Date().getDate() - 3
-          }`
-        : `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
-            new Date().getDate() - 1
-          }`;
 
   useEffect(() => {
-    if (id) getTradingDailyReport(id, lastOpeningDate);
+    if (id) getTradingDailyReport(id, timeSelector.lastOpeningDate);
   }, [id]);
 
   const options = {

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Enterprise from "~icons/carbon/enterprise";
 import NewsPaper from "~icons/fluent-emoji-high-contrast/rolled-up-newspaper";
-import Dashboard from "~icons/material-symbols/space-dashboard";
 import StockOutLined from "~icons/mdi/finance";
 import Article from "~icons/ooui/articles-rtl";
 
@@ -32,8 +31,6 @@ export default function Stock() {
         return <Latest />;
       case "Basic":
         return <BasicInformation />;
-      case "dashboard":
-        return <Latest />;
       case "finance":
         return <Report />;
       case "articles":
@@ -55,11 +52,6 @@ export default function Stock() {
       name: "基本資料",
       icon: <Enterprise />,
       option: "Basic",
-    },
-    {
-      name: "儀表板",
-      icon: <Dashboard />,
-      option: "dashboard",
     },
     {
       name: "文章分享",
@@ -98,7 +90,6 @@ export default function Stock() {
         <div className=" m-auto mt-16 flex  flex-col justify-center">
           <div className="flex justify-between">
             <h1 className="text-4xl font-semibold text-gray-900">
-              {company[0].SecuritiesCompanyCode}
               {company[0].CompanyName}
               {company[0].Symbol}
             </h1>

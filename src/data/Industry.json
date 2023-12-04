@@ -26,6 +26,10 @@
   { "industryName": "金融保險業", "IndustryCode": 17 },
   { "industryName": "貿易百貨業", "IndustryCode": 18 },
   { "industryName": "油電燃氣業", "IndustryCode": 23 },
+  { "industryName": "綜合", "IndustryCode": 19 },
+  { "industryName": "其他業", "IndustryCode": 20 },
   { "industryName": "文化創意業", "IndustryCode": 32 },
-  { "industryName": "農業科技業", "IndustryCode": 33 }
+  { "industryName": "農業科技業", "IndustryCode": 33 },
+  { "industryName": "電子商務", "IndustryCode": 34 },
+  { "industryName": "管理股票", "IndustryCode": 80 }
 ]

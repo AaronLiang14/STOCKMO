@@ -1,7 +1,10 @@
+import LatestStockPriceCharts from "@/components/Graph/StockPrice/LastOpeningDay";
 import StockCode from "@/data/StockCode.json";
 import api from "@/utils/api";
+import { Card, CardBody } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 interface StockOfIndustryProps {
   industry: string;
   market: string;
@@ -49,34 +52,39 @@ export default function StockOfIndustry({
       (market === "全部" || stock.market === market),
   );
   const navigate = useNavigate();
+
   return (
-    <ul
-      role="list"
-      className="m-auto grid cursor-pointer grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:mt-6 lg:max-w-[1280px] lg:grid-cols-4"
-    >
-      {stockDependOnIndustry.map((stock) => (
-        <li
-          key={stock.stockCode}
-          className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow"
-          onClick={() => navigate(`/stock/${stock.stockCode}`)}
-        >
-          <div className="flex flex-1 flex-col p-8">
-            <img className="mx-auto  flex-shrink-0 rounded-full" alt="" />
-            <h3 className="mt-6 text-sm font-medium text-gray-900">
-              {stock.stockName}
-              {stock.stockCode}
-            </h3>
-            <dl className="mt-1 flex flex-grow flex-col justify-between">
-              <dt className="sr-only">Title</dt>
-              <dd className="text-sm text-gray-500">{stock.market}</dd>
-              <dt className="sr-only">Role</dt>
-              <dd className="mt-3">
-                <LatestStockPrice stockID={stock.stockCode} />
-              </dd>
-            </dl>
+    <>
+      <div
+        role="list"
+        className="m-auto grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:mt-6 lg:max-w-[1280px] lg:grid-cols-4"
+      >
+        {stockDependOnIndustry.map((stock) => (
+          <div
+            className=" relative h-64"
+            onClick={() => navigate(`/stock/${stock.stockCode}`)}
+          >
+            <LatestStockPriceCharts stockID={stock.stockCode.toString()} />
+            <Card
+              key={stock.stockCode}
+              className="col-span-1 flex h-full cursor-pointer flex-col rounded-lg  bg-opacity-50 text-center"
+            >
+              <CardBody className="flex flex-1 flex-col p-8">
+                <h3 className="mt-6 text-base font-medium text-gray-900">
+                  {stock.stockName}
+                  {stock.stockCode}
+                </h3>
+                <div className="mt-1 flex flex-grow flex-col justify-between">
+                  <p className="text-sm text-gray-500">{stock.market}</p>
+                  <div className="mt-3">
+                    <LatestStockPrice stockID={stock.stockCode} />
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
           </div>
-        </li>
-      ))}
-    </ul>
+        ))}
+      </div>
+    </>
   );
 }

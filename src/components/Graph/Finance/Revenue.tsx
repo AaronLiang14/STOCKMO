@@ -4,31 +4,12 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-const fiveYears = `${new Date().getFullYear() - 5}-${
-  new Date().getMonth() + 1
-}-${new Date().getDate()}`;
-
-const threeYears = `${new Date().getFullYear() - 3}-${
-  new Date().getMonth() + 1
-}-${new Date().getDate()}`;
-
-const oneYear = `${new Date().getFullYear() - 1}-${
-  new Date().getMonth() + 1
-}-${new Date().getDate()}`;
-
-const endDate = `${new Date().getFullYear()}-${
-  new Date().getMonth() + 1
-}-${new Date().getDate()}`;
+import timeSelector from "../TimeSelect";
 
 interface PERProps {
   date: string;
   revenue: number;
 }
-
-const halfYear = `${new Date().getFullYear()}-${
-  new Date().getMonth() - 6
-}-${new Date().getDate()}`;
 
 export default function Revenue() {
   const { id } = useParams<string>();
@@ -36,24 +17,24 @@ export default function Revenue() {
     { x: number; y: number }[]
   >([]);
 
-  const [time, setTime] = useState<string>(oneYear);
+  const [time, setTime] = useState<string>(timeSelector.oneYear);
 
   const chartsTime = [
     {
       label: "五年",
-      value: fiveYears,
+      value: timeSelector.fiveYears,
     },
     {
       label: "三年",
-      value: threeYears,
+      value: timeSelector.threeYears,
     },
     {
       label: "一年",
-      value: oneYear,
+      value: timeSelector.oneYear,
     },
     {
       label: "半年",
-      value: halfYear,
+      value: timeSelector.halfYear,
     },
   ];
 
@@ -127,7 +108,7 @@ export default function Revenue() {
   };
 
   useEffect(() => {
-    if (id) getRevenue(id, time, endDate);
+    if (id) getRevenue(id, time, timeSelector.endDate);
   }, [id, time]);
 
   return (

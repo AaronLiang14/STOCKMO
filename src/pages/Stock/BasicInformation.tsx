@@ -1,3 +1,5 @@
+import EPS from "@/components/Graph/Finance/EPS";
+import PER from "@/components/Graph/Finance/PER";
 import FinanceData from "@/data/StockDetail.json";
 import { useParams } from "react-router-dom";
 
@@ -182,6 +184,9 @@ export default function BasicInformation() {
           </table>
         </div>
       </div>
+
+      <EPS />
+      <PER />
 
       <div className="mt-12">
         <div className="sm:flex sm:items-center">

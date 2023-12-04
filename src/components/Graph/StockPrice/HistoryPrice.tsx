@@ -1,8 +1,10 @@
 import api from "@/utils/api";
+import { Select, SelectItem } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import timeSelector from "../TimeSelect";
 
 interface StockPriceProps {
   date: string;
@@ -22,10 +24,26 @@ export default function StockChart() {
   const { id } = useParams<string>();
   const [stockPrice, setStockPrice] = useState<[]>([]);
   const [volume, setVolume] = useState<[]>([]);
+  const [time, setTime] = useState<string>(timeSelector.oneYear);
 
-  const endDate = `${new Date().getFullYear()}-${
-    new Date().getMonth() + 1
-  }-${new Date().getDate()}`;
+  const chartsTime = [
+    {
+      label: "五年",
+      value: timeSelector.fiveYears,
+    },
+    {
+      label: "三年",
+      value: timeSelector.threeYears,
+    },
+    {
+      label: "一年",
+      value: timeSelector.oneYear,
+    },
+    {
+      label: "半年",
+      value: timeSelector.halfYear,
+    },
+  ];
 
   const groupingUnits = [
     ["week", [1]],
@@ -148,12 +166,32 @@ export default function StockChart() {
   };
 
   useEffect(() => {
-    if (id) getStockPrice(id, "2023-10-01", endDate);
+    if (id) getStockPrice(id, time, timeSelector.endDate);
   }, [id]);
 
   return (
-    <div>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
+    <>
+      <div className="flex w-full flex-col items-end">
+        <Select
+          items={chartsTime}
+          label="選擇時段"
+          placeholder="一年"
+          className="flex w-full max-w-xs justify-end"
+          value={time}
+          onChange={(e) => {
+            setTime(e.target.value);
+          }}
+        >
+          {chartsTime.map((item) => (
+            <SelectItem key={item.value}>{item.label}</SelectItem>
+          ))}
+        </Select>
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={options}
+          className="w-full"
+        />
+      </div>
+    </>
   );
 }

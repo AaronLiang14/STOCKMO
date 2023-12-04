@@ -58,6 +58,12 @@ const api = {
     );
     return res.json();
   },
+  async getTaiwanStockKBar(stockID: string, startDate: string) {
+    const res = await fetch(
+      `${this.hostName}dataset=TaiwanStockKBar&start_date=${startDate}&token=${this.token}&data_id=${stockID}`,
+    );
+    return res.json();
+  },
 };
 
 export default api;

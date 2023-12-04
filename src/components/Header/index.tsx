@@ -44,10 +44,10 @@ export default function Header() {
               </div>
               <div className="ml-10">
                 <Link
-                  to="/macro"
+                  to="/dashboard"
                   className="text-base font-medium text-black hover:text-indigo-50"
                 >
-                  總體經濟
+                  儀表板
                 </Link>
               </div>
 

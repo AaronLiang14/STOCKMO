@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
 import Header from "./components/Header";
+import Dashboard from "./pages/Dashboard/index.tsx";
 import Home from "./pages/Home/index.tsx";
 import Industry from "./pages/Industry/index.tsx";
-import Macro from "./pages/Macroeconomics/index.tsx";
 import FavoriteArticles from "./pages/Member/FavoriteArticles.tsx";
 import FavoriteStocks from "./pages/Member/FavoriteStocks";
 import Login from "./pages/Member/Login";
@@ -42,7 +42,7 @@ function App() {
             <Route path="login" element={<Login />} />
 
             <Route path="industry" element={<Industry />} />
-            <Route path="macro" element={<Macro />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="stock/:id" element={<Stock />} />
             <Route path="trades" element={<Trades />}>
               <Route path="order" element={<Order />} />
