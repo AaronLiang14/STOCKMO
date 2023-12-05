@@ -1,5 +1,6 @@
 import EPS from "@/components/Graph/Finance/EPS";
 import PER from "@/components/Graph/Finance/PER";
+import Revenue from "@/components/Graph/Finance/Revenue";
 import FinanceData from "@/data/StockDetail.json";
 import { useParams } from "react-router-dom";
 
@@ -22,6 +23,15 @@ const financeYears = [
   "2018",
   "2017",
   "2016",
+];
+
+const tableHead = [
+  "年度",
+  "第一季",
+  "第二季",
+  "第三季",
+  "第四季",
+  "第四季個體",
 ];
 
 export default function BasicInformation() {
@@ -184,13 +194,22 @@ export default function BasicInformation() {
           </table>
         </div>
       </div>
-
-      <EPS />
-      <PER />
-
+      <div className="my-12">
+        <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
+          最新財務資訊
+        </p>
+      </div>
+      <div className="mt-12 flex w-full flex-row">
+        <EPS />
+        <PER />
+      </div>
+      <div className="mt-12 flex w-full flex-row">
+        <Revenue />
+        <Revenue />
+      </div>
       <div className="mt-12">
         <div className="sm:flex sm:items-center">
-          <p className=" border-l-8 border-solid border-red-500 text-2xl font-semibold text-gray-900">
+          <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
             歷年財務報表
           </p>
         </div>
@@ -198,42 +217,16 @@ export default function BasicInformation() {
           <table className="min-w-full divide-y divide-gray-300">
             <thead className="bg-gray-50">
               <tr>
-                <th
-                  scope="col"
-                  className="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-gray-900 sm:pl-6"
-                >
-                  年度
-                </th>
-                <th
-                  scope="col"
-                  className="hidden px-3 py-3.5 text-center text-sm font-semibold text-gray-900 sm:table-cell"
-                >
-                  第一季
-                </th>
-                <th
-                  scope="col"
-                  className="hidden px-3 py-3.5 text-center text-sm font-semibold text-gray-900 lg:table-cell"
-                >
-                  第二季
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
-                >
-                  第三季
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900 "
-                >
-                  第四季
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
-                >
-                  第四季個體
-                </th>
+                {tableHead.map((item) => {
+                  return (
+                    <th
+                      scope="col"
+                      className="py-3.5 text-center text-base font-semibold text-gray-900 "
+                    >
+                      {item}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">

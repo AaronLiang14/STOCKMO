@@ -50,8 +50,6 @@ export default function PER() {
   const options = {
     chart: {
       type: "line",
-      height: 400,
-      width: 800,
     },
     title: {
       text: "本益比",
@@ -77,6 +75,7 @@ export default function PER() {
         color: "green",
         upColor: "red",
         upLineColor: "red",
+        showInLegend: false,
       },
     ],
   };
@@ -102,7 +101,9 @@ export default function PER() {
             <SelectItem key={item.value}>{item.label}</SelectItem>
           ))}
         </Select>
-        <HighchartsReact highcharts={Highcharts} options={options} />{" "}
+        <div className="w-full">
+          <HighchartsReact highcharts={Highcharts} options={options} />{" "}
+        </div>
       </div>
     </>
   );

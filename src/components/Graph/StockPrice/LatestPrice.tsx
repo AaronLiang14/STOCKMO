@@ -7,6 +7,7 @@ import timeSelector from "../TimeSelect";
 interface PERProps {
   minute: string;
   close: number;
+  date: string;
 }
 
 export default function LatestStockPrice({ stockID }: { stockID: string }) {
@@ -14,14 +15,25 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
     { x: number; y: number }[]
   >([]);
 
+  const [rise, setRise] = useState<boolean>(false);
+  const chartsColor = rise ? "rgba(255, 0, 0, 0.5)" : "rgb(201,228,222)";
+  const chartsBorderColor = rise ? "rgb(242,53,69)" : "#0A9981";
+
+  const chartsTransparentColor = rise
+    ? "rgba(255, 0, 0, 0.1)"
+    : "rgba(39, 208, 115, 0.1)";
+
   const getTaiwanStockKBar = async (id: string, startDate: string) => {
     const res = await api.getTaiwanStockKBar(id, startDate);
     const newData = res.data.map((item: PERProps) => {
       const timeArray = item.minute.split(":");
+      const year = item.date.split("-")[0];
+      const month = item.date.split("-")[1];
+      const day = item.date.split("-")[2];
       const dateTime = Date.UTC(
-        2023,
-        0,
-        1,
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
         parseInt(timeArray[0]),
         parseInt(timeArray[1]),
         parseInt(timeArray[2]),
@@ -34,20 +46,12 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
     });
     setFormattedData(newData);
   };
-  const [rise, setRise] = useState<boolean>(false);
 
-  const getLatestInfo = async () => {
+  const judgeRiseOrFall = async () => {
     const res = await api.getTaiwanStockPriceTick(stockID.toString());
     if (res.data[0].change_rate > 0) setRise(true);
     else setRise(false);
   };
-
-  const chartsColor = rise ? "rgba(255, 0, 0, 0.5)" : "rgb(201,228,222)";
-  const chartsBorderColor = rise ? "rgb(242,53,69)" : "#0A9981";
-
-  const chartsTransparentColor = rise
-    ? "rgba(255, 0, 0, 0.1)"
-    : "rgba(39, 208, 115, 0.1)";
 
   const options = {
     chart: {
@@ -58,8 +62,6 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
     },
     xAxis: {
       type: "datetime",
-      min: Date.UTC(2023, 0, 1, 9, 0), // 開始時間 9:00 AM
-      max: Date.UTC(2023, 0, 1, 13, 30),
     },
     yAxis: {
       showFirstLabel: false,
@@ -108,13 +110,13 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
   };
 
   useEffect(() => {
-    if (stockID) getTaiwanStockKBar(stockID, timeSelector.endDate);
-    getLatestInfo();
+    if (stockID) getTaiwanStockKBar(stockID, timeSelector.lastOpeningDate);
+    judgeRiseOrFall();
   }, [stockID]);
 
   return (
     <>
-      <div className="mt-12">
+      <div className="mt-12 w-full">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </>

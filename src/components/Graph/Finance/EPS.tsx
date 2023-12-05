@@ -51,8 +51,6 @@ export default function EPS() {
   const options = {
     chart: {
       type: "line",
-      height: 400,
-      width: 800,
     },
     title: {
       text: "EPS",
@@ -75,6 +73,7 @@ export default function EPS() {
         type: "line",
         name: "EPS",
         data: formattedData,
+        showInLegend: false,
       },
     ],
   };
@@ -100,7 +99,9 @@ export default function EPS() {
             <SelectItem key={item.value}>{item.label}</SelectItem>
           ))}
         </Select>
-        <HighchartsReact highcharts={Highcharts} options={options} />{" "}
+        <div className="w-full">
+          <HighchartsReact highcharts={Highcharts} options={options} />{" "}
+        </div>
       </div>
     </>
   );

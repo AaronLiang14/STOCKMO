@@ -1,6 +1,5 @@
 import BuyExcess from "@/components/Graph/ChipAnalysis/BuyExcess";
 import SellExcess from "@/components/Graph/ChipAnalysis/SellExcess";
-import Revenue from "@/components/Graph/Finance/Revenue";
 import HistoryStock from "@/components/Graph/StockPrice/HistoryPrice";
 import LatestPrice from "@/components/Graph/StockPrice/LatestPrice";
 import { useParams } from "react-router-dom";
@@ -26,7 +25,6 @@ export default function Latest() {
         </p>
       </div>
       <HistoryStock />
-      <Revenue />
     </>
   );
 }

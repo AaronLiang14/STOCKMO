@@ -42,7 +42,7 @@ export default function Revenue() {
     const res = await api.getStockRevenue(id, startDate, endDate);
     const newData = res.data.map((item: PERProps) => ({
       x: new Date(item.date).getTime(),
-      y: item.revenue,
+      y: item.revenue / 1000000,
     }));
     setFormattedData(newData);
   };
@@ -51,8 +51,6 @@ export default function Revenue() {
   const options = {
     chart: {
       type: "line",
-      height: 400,
-      width: 800,
     },
     title: {
       text: "月營收",
@@ -64,7 +62,7 @@ export default function Revenue() {
       showFirstLabel: false,
       showLastLabel: true,
       title: {
-        text: "月營收",
+        text: "月營收(百萬元)",
       },
     },
     credits: {
@@ -100,10 +98,14 @@ export default function Revenue() {
     series: [
       {
         type: "area",
-        name: "月營收",
+        name: "月營收(百萬元)",
         data: formattedData,
+        showInLegend: false,
       },
     ],
+    Tooltip: {
+      shadow: false,
+    },
   };
 
   useEffect(() => {
@@ -127,11 +129,9 @@ export default function Revenue() {
             <SelectItem key={item.value}>{item.label}</SelectItem>
           ))}
         </Select>
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          className="w-full"
-        />
+        <div className="w-full">
+          <HighchartsReact highcharts={Highcharts} options={options} />
+        </div>
       </div>
     </>
   );
