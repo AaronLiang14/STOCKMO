@@ -13,7 +13,7 @@ import {
 } from "@nextui-org/react";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import AddFavorite from "./AddFavoriteSearchBox";
+import { Link } from "react-router-dom";
 
 const columns = [
   {
@@ -102,7 +102,7 @@ export default function FavoriteStocks() {
 
     return {
       id: item,
-      stock: item + "/" + stockName,
+      stock: <Link to={`/stock/${item}/latest`}>{item + "/" + stockName}</Link>,
       industry: industry,
       market: market,
       price: price,
@@ -134,9 +134,8 @@ export default function FavoriteStocks() {
   return (
     <>
       <div className="mt-24 w-full">
-        <AddFavorite />
         <div>
-          <Table aria-label="我的最愛的股票" className=" mt-8 pr-8">
+          <Table aria-label="我的最愛的股票" className="pr-8">
             <TableHeader columns={columns}>
               {(column) => (
                 <TableColumn key={column.key}>{column.label}</TableColumn>

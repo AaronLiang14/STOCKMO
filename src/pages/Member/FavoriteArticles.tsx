@@ -1,5 +1,5 @@
 import { auth, db } from "@/config/firebase";
-import useFavoritesStore from "@/utils/useFavoriteStore";
+import { useFavoritesStore } from "@/utils/useLoginStore";
 import { Card, CardBody, Image } from "@nextui-org/react";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";

@@ -7,12 +7,18 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { collection, doc, query, setDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { auth, db, provider } from "../config/firebase";
-
 interface LoginState {
   avatarFile: object;
   avatar: string;
@@ -28,6 +34,11 @@ interface LoginState {
   ) => void;
   handleNativeLogin: (email: string, password: string) => void;
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+interface FavoriteArticlesState {
+  favoriteArticles: string[];
+  getFavoriteArticles: (callback: void) => void;
 }
 
 const initialState = {
@@ -125,4 +136,18 @@ const useLoginStore = create<LoginState>((set) => ({
   },
 }));
 
+const useFavoritesStore = create<FavoriteArticlesState>((set) => ({
+  favoriteArticles: [],
+  getFavoriteArticles: async () => {
+    if (!auth.currentUser) return;
+    const memberRef = doc(db, "Member", auth.currentUser!.uid);
+    const docSnap = await getDoc(memberRef);
+    if (docSnap.exists()) {
+      set({ favoriteArticles: docSnap.data().favorite_articles });
+    }
+  },
+}));
+
 export default useLoginStore;
+
+export { useFavoritesStore };

@@ -52,8 +52,6 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
   const options = {
     chart: {
       type: "area",
-      height: 270,
-      width: 310,
     },
     title: {
       text: "",
@@ -112,7 +110,7 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
 
   return (
     <>
-      <div className=" absolute inset-0 -z-10 flex w-full flex-col items-end ">
+      <div className=" absolute inset-0 z-10 scale-y-50">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </>

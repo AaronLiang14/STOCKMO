@@ -29,7 +29,7 @@ export default function Member() {
 
   return (
     <>
-      <div className="m-auto flex max-w-[1280px] pt-24">
+      <div className="m-auto mb-24 flex min-h-[calc(100vh_-_120px)] max-w-[1280px] pt-24">
         <div className="flex flex-row">
           <aside className="mx-8 mt-24 h-full w-60 ">
             <div className="rounded-lg bg-gray-300 px-3 py-4">

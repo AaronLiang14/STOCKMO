@@ -6,16 +6,17 @@ import timeSelector from "../TimeSelect";
 
 interface PERProps {
   minute: string;
-  close: number;
   date: string;
+  TAIEX: number;
 }
 
-export default function LatestStockPrice({ stockID }: { stockID: string }) {
+export default function LatestStockPrice() {
   const [formattedData, setFormattedData] = useState<
     { x: number; y: number }[]
   >([]);
 
   const [rise, setRise] = useState<boolean>(false);
+  const [date, setDate] = useState<string>("");
   const chartsColor = rise ? "rgba(255, 0, 0, 0.5)" : "rgb(201,228,222)";
   const chartsBorderColor = rise ? "rgb(242,53,69)" : "#0A9981";
 
@@ -23,35 +24,31 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
     ? "rgba(255, 0, 0, 0.1)"
     : "rgba(39, 208, 115, 0.1)";
 
-  const getTaiwanStockKBar = async (id: string, startDate: string) => {
-    const res = await api.getTaiwanStockKBar(id, startDate);
+  const getTaiwanStockKBar = async (startDate: string) => {
+    const res = await api.getTaiwanVariousIndicators5Seconds(startDate);
+    if (res.data[0].TAIEX < res.data[res.data.length - 1].TAIEX) setRise(true);
     const newData = res.data.map((item: PERProps) => {
-      const timeArray = item.minute.split(":");
-      const year = item.date.split("-")[0];
-      const month = item.date.split("-")[1];
-      const day = item.date.split("-")[2];
-      console.log(timeArray[0]);
+      setDate(item.date.split(" ")[0]);
+      const timeArray = item.date.split(" ");
+      const year = timeArray[0].split("-")[0];
+      const month = timeArray[0].split("-")[1];
+      const day = timeArray[0].split("-")[2];
+      const time = timeArray[1].split(":");
       const dateTime = Date.UTC(
         parseInt(year),
         parseInt(month) - 1,
         parseInt(day),
-        parseInt(timeArray[0]),
-        parseInt(timeArray[1]),
-        parseInt(timeArray[2]),
+        parseInt(time[0]),
+        parseInt(time[1]),
+        parseInt(time[2]),
       );
 
       return {
         x: dateTime,
-        y: item.close,
+        y: item.TAIEX,
       };
     });
     setFormattedData(newData);
-  };
-
-  const judgeRiseOrFall = async () => {
-    const res = await api.getTaiwanStockPriceTick(stockID.toString());
-    if (res.data[0].change_rate > 0) setRise(true);
-    else setRise(false);
   };
 
   const options = {
@@ -59,7 +56,10 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
       type: "area",
     },
     title: {
-      text: "",
+      text: `${date} 上市加權指數`,
+      style: {
+        fontSize: "24px",
+      },
     },
     xAxis: {
       type: "datetime",
@@ -102,6 +102,7 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
       {
         type: "area",
         name: "股價",
+        turboThreshold: 4000,
         data: formattedData,
         showInLegend: false,
         color: chartsBorderColor,
@@ -111,13 +112,12 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
   };
 
   useEffect(() => {
-    if (stockID) getTaiwanStockKBar(stockID, timeSelector.endDate);
-    judgeRiseOrFall();
-  }, [stockID]);
+    getTaiwanStockKBar(timeSelector.endDate);
+  }, []);
 
   return (
     <>
-      <div className="mt-12 w-full">
+      <div className=" col-span-2 w-full">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </>

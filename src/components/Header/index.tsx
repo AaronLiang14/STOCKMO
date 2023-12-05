@@ -15,7 +15,7 @@ export default function Header() {
     if (location.pathname === "/login" || location.pathname === "/") {
       setBackgroundColor("");
     } else {
-      setBackgroundColor("bg-gray-300");
+      setBackgroundColor(" bg-gray-300");
     }
   }, [location]);
 

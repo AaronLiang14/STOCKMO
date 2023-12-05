@@ -19,6 +19,7 @@ interface LatestInfoType {
   change_rate: number;
   high: number;
   low: number;
+  total_volume: number;
 }
 
 const LatestPrice = () => {
@@ -31,7 +32,6 @@ const LatestPrice = () => {
   const getLatestPrice = async () => {
     const res = await api.getTaiwanStockPriceTick(id!.toString());
     setLatestInfo(res.data[0]);
-    console.log(res.data[0]);
     if (res.data[0].change_rate > 0) setRise(true);
     else setRise(false);
   };
@@ -73,6 +73,14 @@ const LatestPrice = () => {
           </span>
           <span className="text-sm font-normal text-green-800">最低價</span>
         </div>
+
+        <div className="flex flex-col">
+          <span className="text-center text-sm font-normal text-gray-800">
+            {latestInfo.total_volume &&
+              latestInfo.total_volume.toLocaleString()}
+          </span>
+          <span className="text-sm font-normal text-gray-800">累積成交量</span>
+        </div>
       </div>
     </div>
   );
@@ -112,10 +120,10 @@ export default function Stock() {
 
   return (
     <>
-      <div className="m-auto flex w-11/12 flex-col pt-20">
+      <div className="m-auto mb-24 flex min-h-[calc(100vh_-_120px)] w-11/12 flex-col  pt-24">
         <div className=" m-auto mt-8 flex w-11/12 flex-col justify-center">
-          <div className="h-18 sticky top-24 z-40 mb-3 flex justify-between  bg-white py-6">
-            <p className="text-4xl font-medium	  text-gray-900">
+          <div className="h-18 sticky top-24 z-40 mb-3 flex justify-between  py-6">
+            <p className="text-4xl font-medium text-gray-900">
               {company[0].CompanyName}
               {company[0].Symbol}
             </p>

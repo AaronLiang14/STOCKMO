@@ -57,20 +57,21 @@ export default function StockOfIndustry({
     <>
       <div
         role="list"
-        className="m-auto grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:mt-6 lg:max-w-[1280px] lg:grid-cols-4"
+        className="m-auto mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4"
       >
         {stockDependOnIndustry.map((stock) => (
           <div
-            className=" relative h-64"
+            className="h-64"
             onClick={() => navigate(`/stock/${stock.stockCode}/latest`)}
           >
-            <LatestStockPriceCharts stockID={stock.stockCode.toString()} />
             <Card
               key={stock.stockCode}
-              className="col-span-1 flex h-full cursor-pointer flex-col rounded-lg  bg-opacity-50 text-center"
+              className="h-full cursor-pointer rounded-lg hover:scale-105"
             >
-              <CardBody className="flex flex-1 flex-col p-8">
-                <h3 className="mt-6 text-base font-medium text-gray-900">
+              <LatestStockPriceCharts stockID={stock.stockCode.toString()} />
+
+              <CardBody className="z-20 flex flex-1 flex-col p-8">
+                <h3 className="mt-6 text-2xl font-medium text-gray-900">
                   {stock.stockName}
                   {stock.stockCode}
                 </h3>

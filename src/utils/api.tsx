@@ -64,6 +64,13 @@ const api = {
     );
     return res.json();
   },
+
+  async getTaiwanVariousIndicators5Seconds(startDate: string) {
+    const res = await fetch(
+      `${this.hostName}dataset=TaiwanVariousIndicators5Seconds&start_date=${startDate}&token=${this.token}`,
+    );
+    return res.json();
+  },
 };
 
 export default api;

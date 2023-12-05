@@ -18,7 +18,7 @@ export default function SellExcess() {
       },
     );
     setBuyExcess(
-      formatted.sort((a: number[], b: number[]) => b[1] - a[1]).slice(0, 20),
+      formatted.sort((a: number[], b: number[]) => b[1] - a[1]).slice(0, 15),
     );
   };
 
