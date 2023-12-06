@@ -30,7 +30,7 @@ interface LoginState {
     email: string,
     password: string,
     name: string,
-    avatarFile: object,
+    avatarFile: File,
   ) => void;
   handleNativeLogin: (email: string, password: string) => void;
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -44,7 +44,7 @@ interface FavoriteArticlesState {
 const initialState = {
   isLogin: false,
   avatar: "",
-  avatarFile: {},
+  avatarFile: File,
 };
 
 const useLoginStore = create<LoginState>((set) => ({
@@ -53,6 +53,7 @@ const useLoginStore = create<LoginState>((set) => ({
   init: async () => {
     onAuthStateChanged(auth, (user) => {
       set({ isLogin: !!user });
+      localStorage.setItem("auth", auth.currentUser!.uid);
     });
   },
 
@@ -60,7 +61,7 @@ const useLoginStore = create<LoginState>((set) => ({
     email: string,
     password: string,
     name: string,
-    avatarFile: object,
+    avatarFile: File,
   ) => {
     const imageRef = ref(storage, `images/${avatarFile.name}`);
     const imgUploadBytes = await uploadBytes(imageRef, avatarFile);
@@ -120,6 +121,7 @@ const useLoginStore = create<LoginState>((set) => ({
 
   handleLogout: async () => {
     await signOut(auth);
+    localStorage.removeItem("auth");
   },
 
   handleAvatarChange: async (e) => {

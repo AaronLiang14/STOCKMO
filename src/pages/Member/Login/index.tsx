@@ -101,7 +101,12 @@ export default function Login() {
                   <div
                     className="flex w-full  justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 "
                     onClick={() => {
-                      handleNativeSignUp(email, password, name, avatarFile);
+                      handleNativeSignUp(
+                        email,
+                        password,
+                        name,
+                        avatarFile as File,
+                      );
                       navigate("/");
                     }}
                   >

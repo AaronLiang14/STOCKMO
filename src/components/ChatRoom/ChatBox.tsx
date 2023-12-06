@@ -8,6 +8,7 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 import Close from "~icons/ion/close-round";
 import { MyMessage, OtherMessage } from "./Messages";
 
@@ -28,21 +29,25 @@ export default function ChatBox({ dispatch }: ChatBoxProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
 
-  const newMessage = {
-    member_id: auth.currentUser!.uid,
-    text: input,
-    message_time: new Date(),
-    name: auth.currentUser?.displayName,
-    avatar: auth.currentUser?.photoURL,
-  };
-
   const handleSendMessage = async () => {
     if (input === "" || !id) return;
-    const chatRoomsRef = doc(db, "ChatRooms", id);
-    await updateDoc(chatRoomsRef, {
-      messages: arrayUnion(newMessage),
-    });
-    setInput("");
+
+    try {
+      const newMessage = {
+        member_id: auth.currentUser!.uid,
+        text: input,
+        message_time: new Date(),
+        name: auth.currentUser?.displayName,
+        avatar: auth.currentUser?.photoURL,
+      };
+      const chatRoomsRef = doc(db, "ChatRooms", id);
+      await updateDoc(chatRoomsRef, {
+        messages: arrayUnion(newMessage),
+      });
+      setInput("");
+    } catch (error) {
+      toast.error("請先登入");
+    }
   };
 
   const handleCheckBox = () => {

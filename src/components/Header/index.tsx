@@ -15,14 +15,14 @@ export default function Header() {
     if (location.pathname === "/login" || location.pathname === "/") {
       setBackgroundColor("");
     } else {
-      setBackgroundColor(" bg-gray-300");
+      setBackgroundColor("border border-b-2 border-gray-300 bg-white");
     }
   }, [location]);
 
   return (
     <>
       <header
-        className={`fixed z-50 flex h-24 w-full items-center ${backgroundColor} `}
+        className={`fixed z-50 flex h-24  w-full items-center ${backgroundColor} `}
       >
         <nav className=" mx-auto  w-10/12">
           <div className="flex items-center justify-between">

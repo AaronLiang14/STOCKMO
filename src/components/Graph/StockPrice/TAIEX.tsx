@@ -112,7 +112,10 @@ export default function LatestStockPrice() {
   };
 
   useEffect(() => {
-    getTaiwanStockKBar(timeSelector.endDate);
+    const currentHours = new Date().getHours();
+    const chartDay =
+      currentHours > 15 ? timeSelector.endDate : timeSelector.lastOpeningDate;
+    getTaiwanStockKBar(chartDay);
   }, []);
 
   return (

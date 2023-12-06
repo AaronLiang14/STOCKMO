@@ -98,6 +98,11 @@ export default function Articles() {
   return (
     <div>
       <SubmitArticles />
+      <div className="my-12">
+        <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
+          文章列表
+        </p>
+      </div>
       <div className="mx-auto my-12">
         <div className="grid gap-12 lg:max-w-none lg:grid-cols-4">
           {articles.map((post, index) => (
