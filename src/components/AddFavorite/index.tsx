@@ -1,3 +1,4 @@
+import TradesModal from "@/components/Modals/Trades";
 import { auth, db } from "@/config/firebase";
 import { Button } from "@nextui-org/react";
 import {
@@ -78,16 +79,18 @@ export default function AddFavoriteStocks() {
         </Button>
       )}
       {auth.currentUser ? (
-        <Button
-          color="danger"
-          onClick={() => navigate("/trades/order", { state: { stockID: id } })}
-        >
-          <span> 模擬下單</span>
-        </Button>
+        <TradesModal />
       ) : (
-        <Button color="danger" onClick={() => toast.error("請先登入")}>
-          <span>模擬下單</span>
-        </Button>
+        // <Button
+        //   color="danger"
+        //   onClick={() => navigate("/trades/order", { state: { stockID: id } })}
+        // >
+        //   <span> 模擬下單</span>
+        // </Button>
+        <TradesModal />
+        // <Button color="danger" onClick={() => toast.error("請先登入")}>
+        //   <span>模擬下單</span>
+        // </Button>
       )}
     </div>
   );

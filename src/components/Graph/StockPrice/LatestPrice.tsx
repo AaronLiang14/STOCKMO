@@ -30,7 +30,6 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
       const year = item.date.split("-")[0];
       const month = item.date.split("-")[1];
       const day = item.date.split("-")[2];
-      console.log(timeArray[0]);
       const dateTime = Date.UTC(
         parseInt(year),
         parseInt(month) - 1,

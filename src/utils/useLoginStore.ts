@@ -19,7 +19,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { auth, db, provider } from "../config/firebase";
-interface LoginState {
+interface LoginProps {
   avatarFile: object;
   avatar: string;
   isLogin: boolean;
@@ -47,7 +47,7 @@ const initialState = {
   avatarFile: File,
 };
 
-const useLoginStore = create<LoginState>((set) => ({
+const useLoginStore = create<LoginProps>((set) => ({
   ...initialState,
 
   init: async () => {

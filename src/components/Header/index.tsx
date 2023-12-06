@@ -34,7 +34,10 @@ export default function Header() {
               <div className="ml-10">
                 <Link
                   to="/industry"
-                  className="pb-4 text-base font-medium text-black hover:border-b-4 hover:border-gray-600 "
+                  className={`pb-4 text-base font-medium text-black ${
+                    location.pathname.split("/")[1] === "industry" &&
+                    "border-b-4 border-gray-600"
+                  } hover:border-b-4 hover:border-gray-600`}
                 >
                   產業類別
                 </Link>
@@ -42,7 +45,10 @@ export default function Header() {
               <div className="ml-10">
                 <Link
                   to="/dashboard"
-                  className="pb-4 text-base font-medium text-black hover:border-b-4 hover:border-gray-600"
+                  className={`pb-4 text-base font-medium text-black ${
+                    location.pathname.split("/")[1] === "dashboard" &&
+                    "border-b-4 border-gray-600"
+                  } hover:border-b-4 hover:border-gray-600`}
                 >
                   儀表板
                 </Link>
@@ -51,7 +57,10 @@ export default function Header() {
               <div className="ml-10">
                 <Link
                   to="/trades/order"
-                  className="pb-4 text-base font-medium text-black hover:border-b-4 hover:border-gray-600"
+                  className={`pb-4 text-base font-medium text-black ${
+                    location.pathname.split("/")[1] === "trades" &&
+                    "border-b-4 border-gray-600"
+                  } hover:border-b-4 hover:border-gray-600`}
                 >
                   模擬交易
                 </Link>

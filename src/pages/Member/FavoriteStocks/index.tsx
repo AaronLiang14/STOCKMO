@@ -106,8 +106,26 @@ export default function FavoriteStocks() {
       industry: industry,
       market: market,
       price: price,
-      changePrice: changePrice,
-      changeRate: changeRate + "%",
+      changePrice: (
+        <p className={`${changePrice > 0 ? "text-red-600" : "text-green-700"}`}>
+          {changePrice}
+        </p>
+      ),
+      changeRate: (
+        <div
+          className={`flex w-16 justify-center  ${
+            changeRate === 10 && "rounded-sm bg-red-200"
+          }`}
+        >
+          <p
+            className={`${
+              changePrice > 0 ? "text-red-600" : "text-green-700"
+            } ${changeRate === 10 && "rounded-lg bg-red-200"}`}
+          >
+            {changeRate} %
+          </p>
+        </div>
+      ),
       cancel: (
         <Button
           color="danger"
@@ -138,14 +156,18 @@ export default function FavoriteStocks() {
           <Table aria-label="我的最愛的股票" className="pr-8">
             <TableHeader columns={columns}>
               {(column) => (
-                <TableColumn key={column.key}>{column.label}</TableColumn>
+                <TableColumn key={column.key} className="text-base">
+                  {column.label}
+                </TableColumn>
               )}
             </TableHeader>
             <TableBody items={favoriteItems}>
               {(item) => (
                 <TableRow key={item.id}>
                   {(columnKey) => (
-                    <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                    <TableCell className=" text-base">
+                      {getKeyValue(item, columnKey)}
+                    </TableCell>
                   )}
                 </TableRow>
               )}

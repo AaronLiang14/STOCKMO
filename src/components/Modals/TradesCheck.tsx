@@ -10,19 +10,10 @@ import {
 
 import { auth, db } from "@/config/firebase";
 import api from "@/utils/api";
+import { useOrderStore } from "@/utils/useTradesStore.tsx";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
-interface Props {
-  unit: string;
-  stockID: string;
-  buySell: string;
-  tradingType: string;
-  orderType: string;
-  price: number;
-  volume: number;
-}
 
 interface memberStocksProps {
   stock_id: string;
@@ -30,20 +21,13 @@ interface memberStocksProps {
   average_price: number;
 }
 
-export default function CheckModal({
-  stockID,
-  buySell,
-  tradingType,
-  orderType,
-  price,
-  volume,
-  unit,
-}: Props) {
+export default function CheckModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate();
-
+  const { stockID, trade, order, buySell, unit, price, volume } =
+    useOrderStore();
   const ableToClick = () => {
-    if (stockID && buySell && tradingType && orderType && price && volume) {
+    if (stockID && buySell && trade && order && price && volume) {
       return false;
     } else {
       return true;
@@ -202,8 +186,8 @@ export default function CheckModal({
     const docRef = await addDoc(collection(db, "Trades"), {
       buy_or_sell: buySell,
       stock_id: stockID,
-      trade_type: tradingType,
-      order_type: orderType,
+      trade_type: trade,
+      order_type: order,
       member_id: auth.currentUser?.uid,
       status: "委託成功",
       order: {
@@ -229,7 +213,7 @@ export default function CheckModal({
 
   return (
     <>
-      <Button onPress={onOpen} isDisabled={ableToClick()}>
+      <Button onPress={onOpen} isDisabled={ableToClick()} color="primary">
         下單
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -237,13 +221,13 @@ export default function CheckModal({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                委託單號：123456789
+                委託單號：{Math.floor(Math.random() * 900000000) + 100000000}
               </ModalHeader>
               <ModalBody>
                 <p>標的：{stockID}</p>
                 <p>買/賣：{buySell}</p>
-                <p>交易類別：{tradingType}</p>
-                <p>委託條件：{orderType}</p>
+                <p>交易類別：{trade}</p>
+                <p>委託條件：{order}</p>
                 <p>委託價格：{price}</p>
                 <p>
                   委託股數：
