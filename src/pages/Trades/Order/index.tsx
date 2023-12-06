@@ -27,17 +27,13 @@ export default function Order() {
     setStockID,
     stockID,
     setTrade,
-    trade,
     setOrder,
-    order,
     setBuySell,
-    buySell,
     setUnit,
     unit,
     setPrice,
     price,
     setVolume,
-    volume,
     clear,
   } = useOrderStore();
 

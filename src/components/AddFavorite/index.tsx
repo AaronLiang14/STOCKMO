@@ -10,7 +10,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function AddFavoriteStocks() {
@@ -21,7 +21,6 @@ export default function AddFavoriteStocks() {
 
   const [favoriteStocks, setFavoriteStocks] = useState<string[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
-  const navigate = useNavigate();
 
   const handleFavorite = async () => {
     if (memberRef === null) return;
@@ -81,16 +80,9 @@ export default function AddFavoriteStocks() {
       {auth.currentUser ? (
         <TradesModal />
       ) : (
-        // <Button
-        //   color="danger"
-        //   onClick={() => navigate("/trades/order", { state: { stockID: id } })}
-        // >
-        //   <span> 模擬下單</span>
-        // </Button>
-        <TradesModal />
-        // <Button color="danger" onClick={() => toast.error("請先登入")}>
-        //   <span>模擬下單</span>
-        // </Button>
+        <Button color="danger" onClick={() => toast.error("請先登入")}>
+          <span>模擬下單</span>
+        </Button>
       )}
     </div>
   );
