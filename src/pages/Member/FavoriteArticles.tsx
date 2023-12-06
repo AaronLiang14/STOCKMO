@@ -1,5 +1,6 @@
-import { db } from "@/config/firebase";
-import useFavoritesStore from "@/utils/useFavoriteStore";
+import { auth, db } from "@/config/firebase";
+import { useFavoritesStore } from "@/utils/useLoginStore";
+import { Card, CardBody, Image } from "@nextui-org/react";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
@@ -24,38 +25,40 @@ export default function FavoriteArticles() {
       setArticles((articles) => [...articles, docSnap.data() as Article]);
     });
   };
-
-  const getDetail = async () => {
+  useEffect(() => {
     getFavoriteArticles();
-    getArticlesDetail();
-  };
+  }, [auth.currentUser]);
 
   useEffect(() => {
-    getDetail();
-  }, []);
+    getArticlesDetail();
+  }, [favoriteArticles]);
 
   return (
     <>
-      <div className="bg-white">
-        <div className="mx-auto max-w-2xl px-4  sm:px-6  lg:max-w-7xl lg:px-8">
-          <div className="mt-6 space-y-10 divide-y divide-gray-200 border-b border-t border-gray-200 pb-10">
-            {articles.map((article) => (
-              <div key={article.id} className="flex flex-row pt-10  ">
-                <img src={article.photo} className="mr-24 h-60 w-72"></img>
-                <div className="">
-                  <div className="mt-4 lg:mt-6 xl:col-span-2 xl:mt-0">
-                    <p className="text-2xl font-medium text-gray-900 ">
-                      {article.title}
-                    </p>
+      <div className="mx-auto mt-24 w-full pr-8">
+        <div className="space-y-10 ">
+          {articles.map((article) => (
+            <Card key={article.id} className="h-full">
+              <CardBody className="flex flex-row py-4">
+                <Image
+                  alt="articles photo"
+                  className=" object-cover"
+                  src={article.photo}
+                  height={400}
+                  width={400}
+                />
 
-                    <div className="mt-3 space-y-6 text-sm text-gray-500">
-                      {article.content}
-                    </div>
-                  </div>
+                <div className="ml-24 w-full">
+                  <p className=" text-2xl font-medium text-gray-900 ">
+                    {article.title}
+                  </p>
+                  <p className="mt-3 space-y-6 text-sm text-gray-500">
+                    {article.content}
+                  </p>
                 </div>
-              </div>
-            ))}
-          </div>
+              </CardBody>
+            </Card>
+          ))}
         </div>
       </div>
     </>

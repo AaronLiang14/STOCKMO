@@ -3,6 +3,7 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import timeSelector from "../TimeSelect";
 
 export default function BuyExcess() {
   const [buyExcess, setBuyExcess] = useState<[]>([]);
@@ -16,31 +17,17 @@ export default function BuyExcess() {
       },
     );
     setBuyExcess(
-      formatted.sort((a: number[], b: number[]) => b[1] - a[1]).slice(0, 20),
+      formatted.sort((a: number[], b: number[]) => b[1] - a[1]).slice(0, 15),
     );
   };
-  const lastOpeningDate =
-    new Date().getDay() === 0
-      ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
-          new Date().getDate() - 2
-        }`
-      : new Date().getDay() === 1
-        ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
-            new Date().getDate() - 3
-          }`
-        : `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
-            new Date().getDate() - 1
-          }`;
 
   useEffect(() => {
-    if (id) getTradingDailyReport(id, lastOpeningDate);
+    if (id) getTradingDailyReport(id, timeSelector.lastOpeningDate);
   }, [id]);
 
   const options = {
     chart: {
       type: "column",
-      height: 400,
-      width: 800,
     },
     title: {
       text: "券商買超排行",
@@ -57,7 +44,13 @@ export default function BuyExcess() {
     },
     yAxis: {
       title: {
-        text: "買超張數(張)",
+        text: "",
+      },
+    },
+    tooltip: {
+      split: true,
+      style: {
+        fontSize: "16px",
       },
     },
     credits: {
@@ -67,11 +60,15 @@ export default function BuyExcess() {
       {
         name: "買超張數",
         color: "#d28d71",
-
         data: buyExcess,
+        showInLegend: false,
       },
     ],
   };
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return (
+    <div className="w-full">
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </div>
+  );
 }

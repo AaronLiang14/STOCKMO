@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function NotFound() {
   return (
     <>
-      <main
+      <div
         className="min-h-full bg-cover bg-top sm:bg-top"
         style={{
           backgroundImage:
@@ -29,7 +29,7 @@ export default function NotFound() {
             </Link>
           </div>
         </div>
-      </main>
+      </div>
     </>
   );
 }

@@ -1,3 +1,4 @@
+import { auth, db } from "@/config/firebase";
 import {
   Table,
   TableBody,
@@ -7,6 +8,8 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
+import { doc, getDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 const columns = [
   {
@@ -24,18 +27,35 @@ const columns = [
 ];
 
 export default function Account() {
+  const [cash, setCash] = useState<number>(0);
+  const [securitiesAssets, setSecuritiesAssets] = useState<number>(0);
+
+  const getAssets = async () => {
+    if (!auth.currentUser) return;
+    const memberRef = doc(db, "Member", auth.currentUser.uid);
+    const memberDoc = await getDoc(memberRef);
+    const memberData = memberDoc.data();
+
+    setCash(memberData?.cash);
+    setSecuritiesAssets(memberData?.securities_assets);
+  };
+
+  useEffect(() => {
+    getAssets();
+  }, [auth.currentUser]);
+
   const rows = [
     {
       key: "cash",
-      cash: 100000,
-      securitiesAssets: 0,
-      netAssets: 0,
+      cash: cash.toLocaleString(),
+      securitiesAssets: securitiesAssets.toLocaleString(),
+      netAssets: (cash + securitiesAssets).toLocaleString(),
     },
   ];
 
   return (
     <>
-      <p>未實現</p>
+      <p>帳戶</p>
       <div className="flex flex-col gap-3">
         <Table
           aria-label="Rows actions table example with dynamic content"

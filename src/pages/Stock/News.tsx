@@ -1,4 +1,6 @@
+import timeSelect from "@/components/Graph/TimeSelect";
 import api from "@/utils/api";
+import { Card } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -15,7 +17,7 @@ export default function News() {
   const [news, setNews] = useState<News[]>([]);
 
   const getNews = async () => {
-    const res = await api.getStocksNews(id!, "2023-11-15");
+    const res = await api.getStocksNews(id!, timeSelect.lastOpeningDate);
     setNews(res.data);
   };
 
@@ -25,14 +27,14 @@ export default function News() {
 
   return (
     <div>
-      <div className="mx-auto mt-12 grid max-w-lg gap-5 lg:max-w-none lg:grid-cols-3">
+      <div className="mx-auto mt-12 grid grid-cols-1 gap-4">
         {news.reverse().map((post, index) => (
           <a href={post.link}>
-            <div
-              className="flex flex-col overflow-hidden rounded-lg shadow-lg"
+            <Card
+              className="flex flex-col overflow-hidden rounded-lg"
               key={index}
             >
-              <div className="flex flex-1 flex-col justify-between bg-white p-6">
+              <div className="flex flex-1 flex-col justify-between p-6">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-indigo-600">
                     {post.source}
@@ -42,14 +44,12 @@ export default function News() {
                   </p>
                 </div>
                 <div className="mt-6 flex items-center justify-end">
-                  <div className="ml-3">
-                    <div className="flex justify-end space-x-1 text-sm text-gray-500">
-                      <time>{post.date}</time>
-                    </div>
+                  <div className="flex justify-end space-x-1 text-sm text-gray-500">
+                    <div>{post.date}</div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
           </a>
         ))}
       </div>

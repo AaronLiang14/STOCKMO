@@ -1,9 +1,13 @@
+import LatestStockPriceCharts from "@/components/Graph/StockPrice/LastOpeningDay";
 import StockCode from "@/data/StockCode.json";
 import api from "@/utils/api";
+import { Card, CardBody } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 interface StockOfIndustryProps {
   industry: string;
+  market: string;
 }
 
 interface LatestStockPriceProps {
@@ -38,39 +42,50 @@ const LatestStockPrice = ({ stockID }: LatestStockPriceProps) => {
   );
 };
 
-export default function StockOfIndustry({ industry }: StockOfIndustryProps) {
+export default function StockOfIndustry({
+  industry,
+  market,
+}: StockOfIndustryProps) {
   const stockDependOnIndustry = StockCode.filter(
-    (stock) => stock.產業別 === industry,
+    (stock) =>
+      stock.industry === industry &&
+      (market === "全部" || stock.market === market),
   );
   const navigate = useNavigate();
+
   return (
-    <ul
-      role="list"
-      className="m-auto grid cursor-pointer grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:mt-6 lg:max-w-[1280px] lg:grid-cols-4"
-    >
-      {stockDependOnIndustry.map((stock) => (
-        <li
-          key={stock.證券代號}
-          className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-gray-100 text-center shadow"
-          onClick={() => navigate(`/stock/${stock.證券代號}`)}
-        >
-          <div className="flex flex-1 flex-col p-8">
-            <img className="mx-auto  flex-shrink-0 rounded-full" alt="" />
-            <h3 className="mt-6 text-sm font-medium text-gray-900">
-              {stock.證券名稱}
-              {stock.證券代號}
-            </h3>
-            <dl className="mt-1 flex flex-grow flex-col justify-between">
-              <dt className="sr-only">Title</dt>
-              <dd className="text-sm text-gray-500">{stock.市場別}</dd>
-              <dt className="sr-only">Role</dt>
-              <dd className="mt-3">
-                <LatestStockPrice stockID={stock.證券代號} />
-              </dd>
-            </dl>
+    <>
+      <div
+        role="list"
+        className="m-auto mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4"
+      >
+        {stockDependOnIndustry.map((stock) => (
+          <div
+            className="h-64"
+            onClick={() => navigate(`/stock/${stock.stockCode}/latest`)}
+          >
+            <Card
+              key={stock.stockCode}
+              className="h-full cursor-pointer rounded-lg hover:scale-105"
+            >
+              <LatestStockPriceCharts stockID={stock.stockCode.toString()} />
+
+              <CardBody className="z-20 flex flex-1 flex-col p-8">
+                <h3 className="mt-6 text-2xl font-medium text-gray-900">
+                  {stock.stockName}
+                  {stock.stockCode}
+                </h3>
+                <div className="mt-1 flex flex-grow flex-col justify-between">
+                  <p className="text-sm text-gray-500">{stock.market}</p>
+                  <div className="mt-3">
+                    <LatestStockPrice stockID={stock.stockCode} />
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
           </div>
-        </li>
-      ))}
-    </ul>
+        ))}
+      </div>
+    </>
   );
 }

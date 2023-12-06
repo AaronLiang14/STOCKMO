@@ -1,3 +1,4 @@
+import TradesModal from "@/components/Modals/Trades";
 import { auth, db } from "@/config/firebase";
 import { Button } from "@nextui-org/react";
 import {
@@ -9,17 +10,20 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function AddFavoriteStocks() {
   const { id } = useParams();
-  const memberRef = doc(db, "Member", auth.currentUser!.uid);
+
+  const userUid = auth?.currentUser?.uid;
+  const memberRef = userUid ? doc(db, "Member", userUid) : null;
+
   const [favoriteStocks, setFavoriteStocks] = useState<string[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
-  const navigate = useNavigate();
 
   const handleFavorite = async () => {
+    if (memberRef === null) return;
     const docSnap = await getDoc(memberRef);
 
     if (docSnap.exists()) {
@@ -39,6 +43,8 @@ export default function AddFavoriteStocks() {
   };
 
   const getFavoriteStocks = async () => {
+    if (memberRef === null) return;
+
     const docSnap = await getDoc(memberRef);
     if (docSnap.exists()) {
       setFavoriteStocks(docSnap.data().favorite_stocks);
@@ -46,13 +52,14 @@ export default function AddFavoriteStocks() {
   };
 
   useEffect(() => {
+    if (memberRef === null) return;
     onSnapshot(memberRef, () => {
       getFavoriteStocks();
     });
   }, [id]);
 
   useEffect(() => {
-    if (favoriteStocks.includes(id!)) {
+    if (favoriteStocks.includes(id!) && auth.currentUser) {
       setIsFavorite(true);
     } else {
       setIsFavorite(false);
@@ -60,17 +67,23 @@ export default function AddFavoriteStocks() {
   }, [favoriteStocks]);
 
   return (
-    <>
-      <Button onClick={handleFavorite} color="primary">
-        <span> {isFavorite ? "取消追蹤" : "加入追蹤"}</span>
-      </Button>
-
-      <Button
-        color="danger"
-        onClick={() => navigate("/trades/order", { state: { stockID: id } })}
-      >
-        <span> 模擬下單</span>
-      </Button>
-    </>
+    <div className="flex gap-4">
+      {auth.currentUser ? (
+        <Button onClick={handleFavorite} color="primary">
+          <span> {isFavorite ? "取消追蹤" : "加入追蹤"}</span>
+        </Button>
+      ) : (
+        <Button color="primary" onClick={() => toast.error("請先登入")}>
+          <span>加入追蹤</span>
+        </Button>
+      )}
+      {auth.currentUser ? (
+        <TradesModal />
+      ) : (
+        <Button color="danger" onClick={() => toast.error("請先登入")}>
+          <span>模擬下單</span>
+        </Button>
+      )}
+    </div>
   );
 }

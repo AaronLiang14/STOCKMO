@@ -1,137 +1,151 @@
-import { useState } from "react";
 import Enterprise from "~icons/carbon/enterprise";
-import Dashboard from "~icons/material-symbols/space-dashboard";
+import NewsPaper from "~icons/fluent-emoji-high-contrast/rolled-up-newspaper";
+import DownArrow from "~icons/mdi/arrow-down-bold";
+import UpArrow from "~icons/mdi/arrow-up-bold";
+
 import StockOutLined from "~icons/mdi/finance";
-import NewsPaper from "~icons/noto/rolled-up-newspaper";
 import Article from "~icons/ooui/articles-rtl";
 
 import AddFavoriteStocks from "@/components/AddFavorite";
 import ChatRoom from "@/components/ChatRoom";
-import FinanceData from "@/data/TWSE.json";
-import { Button } from "@nextui-org/react";
-import { useParams } from "react-router-dom";
-import { toast } from "sonner";
-import Articles from "./Articles";
-import BasicInformation from "./BasicInformation";
-import Latest from "./Latest";
-import News from "./News";
-import Report from "./Report";
+import FinanceData from "@/data/StockDetail.json";
+import api from "@/utils/api";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { auth } from "@/config/firebase";
+interface LatestInfoType {
+  close: number;
+  change_price: number;
+  change_rate: number;
+  high: number;
+  low: number;
+  total_volume: number;
+}
+
+const LatestPrice = () => {
+  const [latestInfo, setLatestInfo] = useState<LatestInfoType>(
+    {} as LatestInfoType,
+  );
+  const [rise, setRise] = useState<boolean>(false);
+  const { id } = useParams();
+
+  const getLatestPrice = async () => {
+    const res = await api.getTaiwanStockPriceTick(id!.toString());
+    setLatestInfo(res.data[0]);
+    if (res.data[0].change_rate > 0) setRise(true);
+    else setRise(false);
+  };
+
+  const colorDependOnRise = rise ? " text-red-600 " : "text-green-800 ";
+
+  useEffect(() => {
+    getLatestPrice();
+  }, [id]);
+
+  return (
+    <div className="flex flex-row justify-between">
+      <div
+        className={`rounded-full ${colorDependOnRise} px-2 pb-4 text-4xl font-medium`}
+      >
+        {latestInfo.close}
+        {rise ? (
+          <UpArrow className="inline-block" />
+        ) : (
+          <DownArrow className="inline-block transform" />
+        )}
+        <span className="ml-2 text-sm font-normal">
+          {latestInfo.change_price} ({latestInfo.change_rate}%)
+        </span>
+      </div>
+      <div className="flex flex-row gap-8">
+        <div className="flex flex-col">
+          <span className="ml-2 text-sm font-normal text-red-600">
+            {latestInfo.high}
+          </span>
+          <span className="text-co text-sm font-normal text-red-600">
+            最高價
+          </span>
+        </div>
+
+        <div className="flex flex-col">
+          <span className="ml-2 text-sm font-normal text-green-800">
+            {latestInfo.low}
+          </span>
+          <span className="text-sm font-normal text-green-800">最低價</span>
+        </div>
+
+        <div className="flex flex-col">
+          <span className="text-center text-sm font-normal text-gray-800">
+            {latestInfo.total_volume &&
+              latestInfo.total_volume.toLocaleString()}
+          </span>
+          <span className="text-sm font-normal text-gray-800">累積成交量</span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function Stock() {
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState<string>("latest");
-  const company = FinanceData.filter((item) => item.公司代號 === id);
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "latest":
-        return <Latest />;
-      case "Basic":
-        return <BasicInformation />;
-      case "dashboard":
-        return <Latest />;
-      case "finance":
-        return <Report />;
-      case "articles":
-        return <Articles />;
-      case "news":
-        return <News />;
-      default:
-        return null;
-    }
-  };
+  const location = useLocation();
+  const navigate = useNavigate();
+  const company = FinanceData.filter(
+    (item) => item.SecuritiesCompanyCode === id,
+  );
 
   const asideOptions = [
     {
       name: "最新動態",
       icon: <StockOutLined />,
-      option: "latest",
+      link: "latest",
     },
     {
       name: "基本資料",
       icon: <Enterprise />,
-      option: "Basic",
-    },
-    {
-      name: "儀表板",
-      icon: <Dashboard />,
-      option: "dashboard",
+      link: "basic",
     },
     {
       name: "文章分享",
       icon: <Article />,
       option: "articles",
+      link: "articles",
     },
     {
       name: "個股新聞",
       icon: <NewsPaper />,
-      option: "news",
+      link: "news",
     },
   ];
 
   return (
     <>
-      <button
-        data-drawer-target="default-sidebar"
-        data-drawer-toggle="default-sidebar"
-        aria-controls="default-sidebar"
-        type="button"
-        className="ms-3 mt-2 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 sm:hidden"
-      >
-        <span className="sr-only">Open sidebar</span>
-        <svg
-          className="h-6 w-6"
-          aria-hidden="true"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clipRule="evenodd"
-            fillRule="evenodd"
-            d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
-          ></path>
-        </svg>
-      </button>
-
-      <div className="flex flex-row">
-        <aside className="ml-8 mt-40 h-full w-60 shadow-lg transition-transform sm:translate-x-0">
-          <div className="rounded-lg bg-gray-300 px-3 py-4">
-            <ul className=" cursor-pointer space-y-2 font-medium">
-              {asideOptions.map((item, index) => (
-                <li key={index}>
-                  <div
-                    className={`group flex items-center rounded-lg p-2 text-gray-900 ${
-                      activeTab === item.option && "bg-gray-100"
-                    } dark:text-black`}
-                    onClick={() => setActiveTab(item.option)}
-                  >
-                    {item.icon}
-                    <span className="ms-3">{item.name}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
+      <div className="m-auto mb-24 flex min-h-[calc(100vh_-_120px)] w-11/12 flex-col  pt-24">
+        <div className=" m-auto mt-8 flex w-11/12 flex-col justify-center">
+          <div className="h-18 sticky top-24 z-40 mb-3 flex justify-between bg-white  py-6">
+            <p className="text-4xl font-medium text-gray-900 ">
+              {company[0].CompanyName}
+              {company[0].Symbol}
+            </p>
+            <AddFavoriteStocks />
           </div>
-        </aside>
-        <div className=" m-auto mt-16 flex w-[1280px] flex-col justify-center">
-          <div className="flex justify-between">
-            <h1 className="text-4xl font-semibold text-gray-900">
-              {company[0].公司代號}
-              {company[0].公司名稱}
-              {company[0].英文簡稱}
-            </h1>
-            {auth.currentUser ? (
-              <AddFavoriteStocks />
-            ) : (
-              <Button onClick={() => toast.error("請先登入")} color="primary">
-                <span>加入追蹤</span>
-              </Button>
-            )}
+          <LatestPrice />
+          <div className="flex justify-start gap-8 border-b-1 text-base">
+            {asideOptions.map((item) => (
+              <div
+                className={`flex cursor-pointer gap-3 pb-2 ${
+                  location.pathname.split("/")[3] === item.link &&
+                  "border-b-3 border-blue-800"
+                } hover:border-b-3 hover:border-blue-800`}
+                onClick={() => navigate(`/stock/${id}/${item.link}`)}
+                key={item.name}
+              >
+                {item.icon}
+                {item.name}
+              </div>
+            ))}
           </div>
-          {renderTabContent()}
+          <Outlet />
         </div>
       </div>
 
