@@ -3,7 +3,7 @@ import useLoginStore from "@/utils/useLoginStore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import LoginBackGroundImage from "./LoginBackgroundImage.jpg";
+import LoginBG from "./LoginBG.jpg";
 
 export default function Login() {
   const {
@@ -29,7 +29,7 @@ export default function Login() {
       <div
         className="flex h-[calc(100vh)] items-center justify-center bg-cover bg-top sm:bg-top"
         style={{
-          backgroundImage: `url(${LoginBackGroundImage})`,
+          backgroundImage: `url(${LoginBG})`,
         }}
       >
         <div className="m-auto w-8/12 max-w-md rounded-lg bg-white bg-opacity-80">

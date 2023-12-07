@@ -114,13 +114,13 @@ export default function LatestStockPrice() {
   useEffect(() => {
     const currentHours = new Date().getHours();
     const chartDay =
-      currentHours > 15 ? timeSelector.endDate : timeSelector.lastOpeningDate;
+      currentHours > 14 ? timeSelector.endDate : timeSelector.lastOpeningDate;
     getTaiwanStockKBar(chartDay);
   }, []);
 
   return (
     <>
-      <div className=" col-span-2 w-full">
+      <div className=" col-span-2 w-11/12">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </>

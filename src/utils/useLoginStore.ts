@@ -70,7 +70,7 @@ const useLoginStore = create<LoginProps>((set) => ({
     await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(auth.currentUser!, { displayName: name });
     await updateProfile(auth.currentUser!, { photoURL: imgUrl });
-    await setDoc(doc(db, "Member", email), {
+    await setDoc(doc(db, "Member", auth.currentUser!.uid), {
       avatar: imgUrl,
       email: email,
       name: name,

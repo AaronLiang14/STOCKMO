@@ -19,7 +19,7 @@ export default function Trades() {
         <div className=" flex w-full flex-row justify-center gap-10">
           {Object.keys(Bar).map((item) => (
             <div
-              className={`flex cursor-pointer gap-3 pb-2 ${
+              className={`flex w-20 cursor-pointer justify-center pb-2 ${
                 location.pathname.split("/")[2] === Bar[item] &&
                 "border-b-3 border-blue-800"
               } text-lg hover:border-b-3 hover:border-blue-800`}

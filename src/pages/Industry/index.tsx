@@ -33,9 +33,10 @@ export default function Industry() {
             onChange={(e) => {
               setIndustryChosen(e.target.value);
             }}
+            color="primary"
           >
             {(industry) => (
-              <SelectItem key={industry.industryName}>
+              <SelectItem key={industry.industryName} color="primary">
                 {industry.industryName}
               </SelectItem>
             )}
@@ -49,9 +50,10 @@ export default function Industry() {
             onChange={(e) => {
               setMarketChosen(e.target.value);
             }}
+            color="primary"
           >
             {(market) => (
-              <SelectItem key={market.marketName}>
+              <SelectItem key={market.marketName} color="primary">
                 {market.marketName}
               </SelectItem>
             )}
