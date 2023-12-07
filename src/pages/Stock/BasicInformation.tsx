@@ -200,12 +200,12 @@ export default function BasicInformation() {
         </p>
       </div>
       <div className="mt-12 flex w-full flex-row">
-        <EPS />
-        <PER />
+        <EPS id={id!.toString()} />
+        <PER id={id!.toString()} />
       </div>
       <div className="mt-12 flex w-full flex-row">
-        <Revenue />
-        <Revenue />
+        <Revenue id={id!.toString()} />
+        <Revenue id={id!.toString()} />
       </div>
       <div className="mt-12">
         <div className="sm:flex sm:items-center">

@@ -2,6 +2,7 @@ import api from "@/utils/api";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import timeSelector from "../TimeSelect";
 
 interface PERProps {
@@ -14,7 +15,7 @@ export default function LatestStockPrice() {
   const [formattedData, setFormattedData] = useState<
     { x: number; y: number }[]
   >([]);
-
+  const location = useLocation();
   const [rise, setRise] = useState<boolean>(false);
   const [date, setDate] = useState<string>("");
   const chartsColor = rise ? "rgba(255, 0, 0, 0.5)" : "rgb(201,228,222)";
@@ -120,8 +121,16 @@ export default function LatestStockPrice() {
 
   return (
     <>
-      <div className=" col-span-2 w-11/12">
-        <HighchartsReact highcharts={Highcharts} options={options} />
+      <div className=" col-span-2 h-full w-full">
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={options}
+          containerProps={
+            location.pathname.split("/")[1] === "dashboard" && {
+              style: { height: "100%", width: "100%" },
+            }
+          }
+        />
       </div>
     </>
   );

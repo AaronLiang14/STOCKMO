@@ -3,7 +3,6 @@ import { Select, SelectItem } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import timeSelector from "../TimeSelect";
 
 interface PERProps {
@@ -11,8 +10,7 @@ interface PERProps {
   PER: number;
 }
 
-export default function PER() {
-  const { id } = useParams<string>();
+export default function PER({ id }: { id: string }) {
   const [formattedData, setFormattedData] = useState<
     { x: number; y: number }[]
   >([]);
@@ -52,7 +50,7 @@ export default function PER() {
       type: "line",
     },
     title: {
-      text: "本益比",
+      text: `本益比（${id}）`,
     },
     xAxis: {
       type: "datetime",
@@ -72,9 +70,6 @@ export default function PER() {
         type: "line",
         name: "本益比",
         data: formattedData,
-        color: "green",
-        upColor: "red",
-        upLineColor: "red",
         showInLegend: false,
       },
     ],
@@ -86,7 +81,7 @@ export default function PER() {
 
   return (
     <>
-      <div className="flex w-full flex-col items-end">
+      <div className="flex h-full w-full flex-col items-end">
         <Select
           items={chartsTime}
           label="選擇時段"
@@ -101,8 +96,12 @@ export default function PER() {
             <SelectItem key={item.value}>{item.label}</SelectItem>
           ))}
         </Select>
-        <div className="w-full">
-          <HighchartsReact highcharts={Highcharts} options={options} />{" "}
+        <div className="h-full w-full">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={{ style: { height: "100%", width: "100%" } }}
+          />{" "}
         </div>
       </div>
     </>

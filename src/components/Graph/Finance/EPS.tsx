@@ -3,11 +3,9 @@ import { Select, SelectItem } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import timeSelector from "../TimeSelect";
 
-export default function EPS() {
-  const { id } = useParams<string>();
+export default function EPS({ id }: { id: string }) {
   const [formattedData, setFormattedData] = useState<
     { x: number; y: number }[]
   >([]);
@@ -53,7 +51,7 @@ export default function EPS() {
       type: "line",
     },
     title: {
-      text: "EPS",
+      text: `EPS（${id}）`,
     },
     xAxis: {
       type: "datetime",
@@ -84,7 +82,7 @@ export default function EPS() {
 
   return (
     <>
-      <div className="flex w-full flex-col items-end">
+      <div className="flex h-full w-full flex-col items-end">
         <Select
           items={chartsTime}
           label="選擇時段"
@@ -99,8 +97,12 @@ export default function EPS() {
             <SelectItem key={item.value}>{item.label}</SelectItem>
           ))}
         </Select>
-        <div className="w-full">
-          <HighchartsReact highcharts={Highcharts} options={options} />{" "}
+        <div className="h-full w-full">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={{ style: { height: "100%", width: "100%" } }}
+          />{" "}
         </div>
       </div>
     </>

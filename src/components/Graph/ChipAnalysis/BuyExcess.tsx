@@ -1,13 +1,12 @@
 import api from "@/utils/api";
+import { Card } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import timeSelector from "../TimeSelect";
 
-export default function BuyExcess() {
+export default function BuyExcess({ id }: { id: string }) {
   const [buyExcess, setBuyExcess] = useState<[]>([]);
-  const { id } = useParams();
 
   const getTradingDailyReport = async (id: string, startDate: string) => {
     const res = await api.getTradingDailyReport(id, startDate);
@@ -30,7 +29,7 @@ export default function BuyExcess() {
       type: "column",
     },
     title: {
-      text: "券商買超排行",
+      text: `券商買超排行（${id}）`,
     },
     xAxis: {
       type: "category",
@@ -67,8 +66,12 @@ export default function BuyExcess() {
   };
 
   return (
-    <div className="w-full">
-      <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
+    <Card className="h-full w-full">
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        containerProps={{ style: { height: "100%", width: "100%" } }}
+      />
+    </Card>
   );
 }
