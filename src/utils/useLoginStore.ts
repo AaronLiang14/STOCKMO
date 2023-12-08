@@ -80,6 +80,7 @@ const useLoginStore = create<LoginProps>((set) => ({
       unrealized: [],
       cash: 100000,
       securities_assets: 0,
+      dashboard_layout: [],
     });
     toast.success("註冊成功");
   },
@@ -111,6 +112,7 @@ const useLoginStore = create<LoginProps>((set) => ({
         unrealized: [],
         cash: 100000,
         securities_assets: 0,
+        dashboard_layout: [],
       });
 
       toast.success("登入成功");

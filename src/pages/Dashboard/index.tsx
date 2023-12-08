@@ -8,29 +8,21 @@ import Unemployment from "@/components/Graph/Macro/Unemployment";
 import HistoryPrice from "@/components/Graph/StockPrice/HistoryPrice";
 import LatestPrice from "@/components/Graph/StockPrice/LatestPrice";
 import TAIEX from "@/components/Graph/StockPrice/TAIEX";
-import { SetStateAction, useState } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { SetStateAction, useEffect, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import "../../../node_modules/react-grid-layout/css/styles.css";
 import "../../../node_modules/react-resizable/css/styles.css";
 import ChartsOptions from "./ChartsOptions";
+
+import { auth, db } from "@/config/firebase";
+import { getDoc } from "firebase/firestore";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function Dashboard() {
   const [id, setId] = useState("2330");
-  const initialLayout = [
-    { i: "GDP", x: 0, y: 0, w: 6, h: 1 },
-    { i: "Unemployment", x: 6, y: 0, w: 6, h: 1 },
-    { i: "BuyExcess", x: 0, y: 0, w: 6, h: 1 },
-    { i: "HistoryPrice", x: 6, y: 0, w: 6, h: 2 },
-    { i: "SellExcess", x: 0, y: 0, w: 6, h: 1 },
-    { i: "TAIEX", x: 6, y: 0, w: 6, h: 1 },
-    { i: "LatestPrice", x: 0, y: 0, w: 6, h: 1 },
-    { i: "EPS", x: 6, y: 0, w: 6, h: 1 },
-    { i: "PER", x: 0, y: 0, w: 6, h: 1 },
-    { i: "Revenue", x: 6, y: 0, w: 6, h: 1 },
-  ];
 
-  const [layout, setLayout] = useState(initialLayout);
+  const [layout, setLayout] = useState([]);
 
   const handleLayoutChange = (
     layout: SetStateAction<
@@ -39,6 +31,38 @@ export default function Dashboard() {
   ) => {
     setLayout(layout);
   };
+
+  const charts: { [key: string]: JSX.Element } = {
+    gdp: <GDP />,
+    unemployment: <Unemployment />,
+    buyExcess: <BuyExcess id={id} />,
+    historyPrice: <HistoryPrice id={id} />,
+    sellExcess: <SellExcess id={id} />,
+    TAIEX: <TAIEX />,
+    latestPrice: <LatestPrice id={id} />,
+    eps: <EPS id={id} />,
+    per: <PER id={id} />,
+    revenue: <Revenue id={id} />,
+  };
+
+  const getLatestLayout = async () => {
+    if (!auth.currentUser) return;
+    const memberRef = doc(db, "Member", auth.currentUser!.uid);
+    const layout = await getDoc(memberRef);
+    setLayout(layout.data()!.dashboard_layout.map((item) => item.position));
+  };
+  console.log(layout);
+  useEffect(() => {
+    if (!auth.currentUser) return;
+    const memberRef = doc(db, "Member", auth.currentUser!.uid);
+    onSnapshot(memberRef, () => {
+      getLatestLayout();
+    });
+  }, [auth.currentUser]);
+
+  useEffect(() => {
+    getLatestLayout();
+  }, [auth.currentUser]);
 
   return (
     <>
@@ -53,23 +77,16 @@ export default function Dashboard() {
             width={1200}
             isDroppable={true}
             resizeHandles={["se"]}
-            className="layout  bg-blue-100 "
+            className="layout  rounded-xl border-2 border-gray-300 p-1"
             onLayoutChange={(layout) => handleLayoutChange(layout)}
           >
-            {layout.map((item) => (
-              <div key={item.i} className=" rounded-xl bg-white">
-                {item.i === "GDP" && <GDP />}
-                {item.i === "Unemployment" && <Unemployment />}
-                {item.i === "BuyExcess" && <BuyExcess id={id} />}
-                {item.i === "HistoryPrice" && <HistoryPrice id={id} />}
-                {item.i === "SellExcess" && <SellExcess id={id} />}
-                {item.i === "TAIEX" && <TAIEX />}
-                {item.i === "LatestPrice" && <LatestPrice id={id} />}
-                {item.i === "EPS" && <EPS id={id} />}
-                {item.i === "PER" && <PER id={id} />}
-                {item.i === "Revenue" && <Revenue id={id} />}
-              </div>
-            ))}
+            {layout.map((item) => {
+              return (
+                <div key={item.i} className=" rounded-xl bg-white">
+                  {charts[item.i]}
+                </div>
+              );
+            })}
           </ResponsiveGridLayout>
         </div>
       </div>

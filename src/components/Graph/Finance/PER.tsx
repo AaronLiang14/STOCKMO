@@ -1,5 +1,5 @@
 import api from "@/utils/api";
-import { Select, SelectItem } from "@nextui-org/react";
+import { Card, Select, SelectItem } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
@@ -81,7 +81,7 @@ export default function PER({ id }: { id: string }) {
 
   return (
     <>
-      <div className="flex h-full w-full flex-col items-end">
+      <Card className="flex h-full w-full flex-col items-end">
         <Select
           items={chartsTime}
           label="選擇時段"
@@ -103,7 +103,7 @@ export default function PER({ id }: { id: string }) {
             containerProps={{ style: { height: "100%", width: "100%" } }}
           />{" "}
         </div>
-      </div>
+      </Card>
     </>
   );
 }

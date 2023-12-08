@@ -1,4 +1,5 @@
 import api from "@/utils/api";
+import { Card } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
@@ -119,13 +120,13 @@ export default function LatestStockPrice({ id }: { id: string }) {
 
   return (
     <>
-      <div className="h-full w-full">
+      <Card className="h-full w-full">
         <HighchartsReact
           highcharts={Highcharts}
           options={options}
           containerProps={{ style: { height: "100%", width: "100%" } }}
         />
-      </div>
+      </Card>
     </>
   );
 }
