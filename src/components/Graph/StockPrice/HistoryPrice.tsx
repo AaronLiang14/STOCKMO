@@ -170,12 +170,12 @@ export default function StockChart({ id }: { id: string }) {
 
   return (
     <>
-      <Card className="flex h-full w-full flex-col items-end">
+      <Card className="flex h-full w-full flex-col items-start">
         <Select
           items={chartsTime}
           label="選擇時段"
           placeholder="一個月"
-          className="mb-4 flex max-w-xs justify-end"
+          className="mb-4 flex max-w-xs justify-end pl-4 pt-4"
           value={time}
           onChange={(e) => {
             setTime(e.target.value);

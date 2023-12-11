@@ -88,21 +88,16 @@ export default function ChartsOptions() {
     const newLayout = [
       ...latestLayout,
       {
-        position: {
-          i: chart,
-          x: 0,
-          y: 0,
-          w: 6,
-          h: 1,
-        },
-        stockID: stockID,
-        chartID: Math.floor(Math.random() * 900) + 100,
+        i: chart + "/" + stockID,
+        x: 0,
+        y: 0,
+        w: 6,
+        h: 4,
       },
     ];
     await updateDoc(memberRef, {
       dashboard_layout: newLayout,
     });
-    setSelectedCharts("");
     setStockID("");
   };
 
@@ -115,7 +110,7 @@ export default function ChartsOptions() {
   }, [selectedCharts, stockID]);
   return (
     <>
-      <div className=" m-auto flex h-24 w-11/12 items-center justify-end gap-4 rounded-lg border-1  ">
+      <div className=" m-auto flex h-24 w-11/12 items-center justify-end gap-4 rounded-lg   ">
         <Select
           key={123}
           label={"請選擇圖表"}
