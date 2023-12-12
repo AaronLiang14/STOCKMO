@@ -6,6 +6,7 @@ import { useDashboardStore } from "@/utils/useLoginStore";
 import { Input } from "@nextui-org/react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const charts: { [key: string]: string } = {
   gdp: "GDP",
@@ -84,7 +85,10 @@ export default function ChartsOptions() {
   };
 
   const addChart = async (chart: string, stockID: string) => {
-    if (!auth.currentUser) return;
+    if (!auth.currentUser) {
+      toast.error("請先登入");
+      return;
+    }
     const memberRef = doc(db, "Member", auth.currentUser?.uid);
     const memberData = await getDoc(memberRef);
     const latestLayout = memberData.data()?.dashboard_layout;

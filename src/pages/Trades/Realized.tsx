@@ -113,6 +113,10 @@ export default function Realized() {
             )}
           </TableBody>
         </Table>
+
+        {realizedStocks.length === 0 && (
+          <p className="m-auto mt-12 text-2xl">查無資料</p>
+        )}
       </div>
     </>
   );

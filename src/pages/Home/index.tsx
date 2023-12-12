@@ -9,7 +9,7 @@ export default function Home() {
           backgroundImage: `url(${indexBG})`,
         }}
       >
-        <div className=" absolute left-48 top-80">
+        <div className=" absolute left-48 top-52">
           <p className=" text-8xl">Decode.</p>
           <p className=" mt-8 text-8xl">Invest.</p>
           <p className=" mt-8 text-8xl">Prosper.</p>

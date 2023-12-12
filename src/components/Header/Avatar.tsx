@@ -43,7 +43,6 @@ export default function AvatarComponent() {
             >
               文章收藏
             </DropdownItem>
-            <DropdownItem key="system">設定</DropdownItem>
             <DropdownItem
               key="logout"
               color="danger"

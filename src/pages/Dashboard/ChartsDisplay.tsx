@@ -81,7 +81,7 @@ export default function ChartsDisplay() {
 
   return (
     <>
-      <div className="m-auto min-h-[calc(100vh_-_264px)] w-11/12">
+      <div className="m-auto min-h-[calc(100vh_-_280px)] w-11/12">
         {layout.length === 0 ? (
           <NoChartsChosen />
         ) : (

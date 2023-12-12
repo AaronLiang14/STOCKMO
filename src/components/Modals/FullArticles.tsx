@@ -23,7 +23,9 @@ export default function FullArticlesModal({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <>
-      <Button onPress={onOpen}>檢視全文</Button>
+      <Button onPress={onOpen} size="sm">
+        檢視全文
+      </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
         <ModalContent>
           {(onClose) => (

@@ -30,7 +30,7 @@ export default function ChatBox({ dispatch }: ChatBoxProps) {
 
   return (
     <>
-      <div className="fixed bottom-12 right-32 z-50 w-96">
+      <div className="fixed bottom-10 right-32 z-50 w-96">
         <div className="w-full max-w-lg rounded-lg bg-white shadow-md">
           <div className="flex items-center justify-between rounded-t-lg border-b bg-cyan-800 p-4 text-white">
             {isIndependentRoom ? (

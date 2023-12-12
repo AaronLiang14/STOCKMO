@@ -10,6 +10,7 @@ import AddFavoriteStocks from "@/components/AddFavorite";
 import ChatRoom from "@/components/ChatRoom";
 import FinanceData from "@/data/StockDetail.json";
 import api from "@/utils/api";
+import { Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -28,12 +29,19 @@ const LatestPrice = () => {
   );
   const [rise, setRise] = useState<boolean>(false);
   const { id } = useParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getLatestPrice = async () => {
-    const res = await api.getTaiwanStockPriceTick(id!.toString());
-    setLatestInfo(res.data[0]);
-    if (res.data[0].change_rate > 0) setRise(true);
-    else setRise(false);
+    try {
+      const res = await api.getTaiwanStockPriceTick(id!.toString());
+      setLatestInfo(res.data[0]);
+      if (res.data[0].change_rate > 0) setRise(true);
+      else setRise(false);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const colorDependOnRise = rise ? " text-red-600 " : "text-green-800 ";
@@ -53,32 +61,50 @@ const LatestPrice = () => {
         ) : (
           <DownArrow className="inline-block transform" />
         )}
-        <span className="ml-2 text-sm font-normal">
-          {latestInfo.change_price} ({latestInfo.change_rate}%)
-        </span>
+        {isLoading ? (
+          <Spinner size="sm" />
+        ) : (
+          <span className="ml-2 text-sm font-normal">
+            {latestInfo.change_price} ({latestInfo.change_rate}%)
+          </span>
+        )}
       </div>
       <div className="flex flex-row gap-8">
         <div className="flex flex-col">
-          <span className="ml-2 text-sm font-normal text-red-600">
-            {latestInfo.high}
-          </span>
+          {isLoading ? (
+            <Spinner size="sm" />
+          ) : (
+            <span className="ml-2 text-sm font-normal text-red-600">
+              {latestInfo.high}
+            </span>
+          )}
+
           <span className="text-co text-sm font-normal text-red-600">
             最高價
           </span>
         </div>
 
         <div className="flex flex-col">
-          <span className="ml-2 text-sm font-normal text-green-800">
-            {latestInfo.low}
-          </span>
+          {isLoading ? (
+            <Spinner size="sm" />
+          ) : (
+            <span className="ml-2 text-sm font-normal text-green-800">
+              {latestInfo.low}
+            </span>
+          )}
           <span className="text-sm font-normal text-green-800">最低價</span>
         </div>
 
         <div className="flex flex-col">
-          <span className="text-center text-sm font-normal text-gray-800">
-            {latestInfo.total_volume &&
-              latestInfo.total_volume.toLocaleString()}
-          </span>
+          {isLoading ? (
+            <Spinner size="sm" />
+          ) : (
+            <span className="text-center text-sm font-normal text-gray-800">
+              {latestInfo.total_volume &&
+                latestInfo.total_volume.toLocaleString()}
+            </span>
+          )}
+
           <span className="text-sm font-normal text-gray-800">累積成交量</span>
         </div>
       </div>

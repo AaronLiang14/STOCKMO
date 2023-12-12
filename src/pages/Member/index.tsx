@@ -2,7 +2,6 @@ import ChatRoom from "@/components/ChatRoom";
 import { Outlet } from "react-router";
 import { useLocation, useNavigate } from "react-router-dom";
 import StockIcon from "~icons/ant-design/stock-outlined";
-import Setting from "~icons/material-symbols/settings";
 import PencilIcon from "~icons/mdi/lead-pencil";
 
 export default function Member() {
@@ -20,11 +19,6 @@ export default function Member() {
       name: "文章收藏",
       icon: <PencilIcon />,
       option: "favoriteArticles",
-    },
-    {
-      name: "會員設定",
-      icon: <Setting />,
-      option: "setting",
     },
   ];
 

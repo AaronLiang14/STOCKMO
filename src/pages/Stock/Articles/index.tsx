@@ -134,11 +134,12 @@ export default function Articles() {
                   </div>
                   <div className="relative mt-6 flex items-center justify-between">
                     <AuthorAvatar id={post.author_id} />
-                    <div className="flex">
+                    <div className="flex gap-4">
                       <Button
                         type="button"
                         color="primary"
                         onClick={() => handleArticleFavorite(post.id)}
+                        size="sm"
                       >
                         {favoriteArticles.includes(post.id)
                           ? "取消收藏"

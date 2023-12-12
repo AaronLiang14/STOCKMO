@@ -1,6 +1,8 @@
+import { auth } from "@/config/firebase";
 import { useChatRoomStore } from "@/utils/useLoginStore";
 import { useReducer } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 import ChatIcons from "~icons/ph/chat-circle-text-fill";
 import ChatBox from "./ChatBox";
 
@@ -29,6 +31,11 @@ export default function ChatRoom() {
   } = useChatRoomStore();
 
   const handleCheckBox = () => {
+    if (!auth.currentUser) {
+      toast.error("登入後即可使用聊天室");
+
+      return;
+    }
     if (isAllRoom || isIndependentRoom) {
       changeIsAllRoom(false);
       changeIsIndependentRoom(false);
@@ -46,7 +53,7 @@ export default function ChatRoom() {
   return (
     <>
       <div className="fixed bottom-10 right-10 z-50" onClick={handleCheckBox}>
-        <ChatIcons className=" h-16 w-16 cursor-pointer text-cyan-800 " />
+        <ChatIcons className=" h-16 w-16 cursor-pointer rounded-lg border-2 bg-white text-cyan-800 shadow-xl " />
       </div>
       {state.isOpen && <ChatBox dispatch={dispatch} />}
     </>
