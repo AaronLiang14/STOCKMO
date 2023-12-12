@@ -57,7 +57,7 @@ export default function StockOfIndustry({
     <>
       <div
         role="list"
-        className="m-auto mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4"
+        className="m-auto mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-3"
       >
         {stockDependOnIndustry.map((stock) => (
           <div

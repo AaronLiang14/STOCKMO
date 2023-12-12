@@ -1,3 +1,4 @@
+import ChatRoom from "@/components/ChatRoom";
 import TAIEX from "@/components/Graph/StockPrice/TAIEX";
 import industry from "@/data/Industry.json";
 import { Select, SelectItem } from "@nextui-org/react";
@@ -33,10 +34,9 @@ export default function Industry() {
             onChange={(e) => {
               setIndustryChosen(e.target.value);
             }}
-            color="primary"
           >
             {(industry) => (
-              <SelectItem key={industry.industryName} color="primary">
+              <SelectItem key={industry.industryName}>
                 {industry.industryName}
               </SelectItem>
             )}
@@ -50,10 +50,9 @@ export default function Industry() {
             onChange={(e) => {
               setMarketChosen(e.target.value);
             }}
-            color="primary"
           >
             {(market) => (
-              <SelectItem key={market.marketName} color="primary">
+              <SelectItem key={market.marketName}>
                 {market.marketName}
               </SelectItem>
             )}
@@ -61,6 +60,7 @@ export default function Industry() {
         </div>
         <StockOfIndustry industry={industryChosen} market={marketChosen} />
       </div>
+      <ChatRoom />
     </>
   );
 }

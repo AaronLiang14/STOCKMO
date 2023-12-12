@@ -84,7 +84,7 @@ export default function SearchBox() {
               }
             }}
           />
-          <div className="absolute z-10 mt-2 w-full rounded-lg bg-gray-100">
+          <div className="absolute z-10 mt-2 w-full rounded-lg bg-gray-100 pl-2">
             {search && filterOptions.length > 0 && (
               <ul className="max-h-60  overflow-y-scroll py-2 text-sm text-gray-700 dark:text-gray-200">
                 {filterOptions.map((item, index) => (

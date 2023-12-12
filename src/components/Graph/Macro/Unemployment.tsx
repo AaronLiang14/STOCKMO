@@ -53,12 +53,13 @@ export default function Unemployment() {
         type: "line",
         name: "失業率",
         data: UnemploymentRate,
+        showInLegend: false,
       },
     ],
   };
 
   return (
-    <Card className="h-full w-full">
+    <Card className="h-full w-full p-4">
       <HighchartsReact
         highcharts={Highcharts}
         options={options}

@@ -8,7 +8,9 @@ export default function Latest() {
   const { id } = useParams();
   return (
     <>
-      <LatestPrice id={id!.toString()} />
+      <div className="mt-12">
+        <LatestPrice id={id!.toString()} />
+      </div>
       <div className="my-12">
         <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
           最新分點籌碼資訊

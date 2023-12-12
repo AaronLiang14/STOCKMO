@@ -82,7 +82,7 @@ export default function EPS({ id }: { id: string }) {
 
   return (
     <>
-      <Card className="flex h-full w-full flex-col items-start">
+      <Card className="flex h-full w-full flex-col items-start p-4">
         <Select
           items={chartsTime}
           label="選擇時段"

@@ -1,3 +1,4 @@
+import ChatRoom from "@/components/ChatRoom";
 import { Outlet } from "react-router";
 import { useLocation, useNavigate } from "react-router-dom";
 import StockIcon from "~icons/ant-design/stock-outlined";
@@ -54,6 +55,7 @@ export default function Member() {
         </div>
         <Outlet />
       </div>
+      <ChatRoom />
     </>
   );
 }

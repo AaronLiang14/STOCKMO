@@ -121,9 +121,9 @@ export default function Stock() {
   return (
     <>
       <div className="m-auto mb-24 flex min-h-[calc(100vh_-_120px)] w-11/12 flex-col  pt-24">
-        <div className=" m-auto mt-8 flex w-11/12 flex-col justify-center">
+        <div className="mx-auto flex w-11/12 flex-col justify-center">
           <div className="h-18 sticky top-24 z-40 mb-3 flex justify-between bg-white  py-6">
-            <p className="text-4xl font-medium text-gray-900 ">
+            <p className="text-3xl font-medium text-gray-900 ">
               {company[0].CompanyName}
               {company[0].Symbol}
             </p>

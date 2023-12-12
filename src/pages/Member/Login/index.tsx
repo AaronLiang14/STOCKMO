@@ -32,7 +32,8 @@ export default function Login() {
           backgroundImage: `url(${LoginBG})`,
         }}
       >
-        <div className="m-auto w-8/12 max-w-md rounded-lg bg-white bg-opacity-80">
+        <div className=" absolute inset-0 z-10 h-full w-full bg-black/30"></div>
+        <div className="relative z-20 m-auto w-8/12 max-w-md rounded-lg bg-white bg-opacity-80">
           <div className="rounded-lg px-10 py-8 shadow">
             {isSignUp && <ChangeAvatar />}
             <form className="space-y-6" action="#" method="POST">
@@ -99,7 +100,7 @@ export default function Login() {
               {isSignUp ? (
                 <div className="flex w-full gap-4">
                   <div
-                    className="flex w-full  justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 "
+                    className="flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 "
                     onClick={() => {
                       handleNativeSignUp(
                         email,
@@ -116,7 +117,7 @@ export default function Login() {
               ) : (
                 <div className="flex w-full gap-4">
                   <div
-                    className="flex w-full  justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 "
+                    className="flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 "
                     onClick={() => {
                       handleNativeLogin(email, password);
                       toast.success("登入成功");

@@ -2,6 +2,7 @@ import { Button, Select, SelectItem } from "@nextui-org/react";
 
 import { auth, db } from "@/config/firebase";
 import stockCode from "@/data/StockCode.json";
+import { useDashboardStore } from "@/utils/useLoginStore";
 import { Input } from "@nextui-org/react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -25,6 +26,8 @@ export default function ChartsOptions() {
   const [selectedCharts, setSelectedCharts] = useState<string>("");
   const [isInputDisabled, setInputDisabled] = useState<boolean>(true);
   const [isButtonDisabled, setButtonDisabled] = useState<boolean>(true);
+  const { getLatestLayout } = useDashboardStore();
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStockID(e.target.value);
 
@@ -90,7 +93,7 @@ export default function ChartsOptions() {
       {
         i: chart + "/" + stockID,
         x: 0,
-        y: 0,
+        y: -1,
         w: 6,
         h: 4,
       },
@@ -98,6 +101,7 @@ export default function ChartsOptions() {
     await updateDoc(memberRef, {
       dashboard_layout: newLayout,
     });
+    getLatestLayout();
     setStockID("");
   };
 
@@ -108,9 +112,10 @@ export default function ChartsOptions() {
   useEffect(() => {
     buttonAvailable();
   }, [selectedCharts, stockID]);
+
   return (
     <>
-      <div className=" m-auto flex h-24 w-11/12 items-center justify-end gap-4 rounded-lg   ">
+      <div className=" m-auto mb-4 flex h-24 w-11/12 items-center justify-end gap-4 rounded-lg">
         <Select
           key={123}
           label={"請選擇圖表"}
@@ -145,7 +150,7 @@ export default function ChartsOptions() {
                     <div
                       className="block px-4 py-2  text-black hover:rounded-lg hover:bg-gray-200"
                       onClick={() => {
-                        setStockID(item);
+                        setStockID(item.split("/")[0]);
                         setFilterOptions([]);
                       }}
                     >

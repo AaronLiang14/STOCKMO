@@ -9,8 +9,9 @@ import HistoryPrice from "@/components/Graph/StockPrice/HistoryPrice";
 import LatestPrice from "@/components/Graph/StockPrice/LatestPrice";
 import TAIEX from "@/components/Graph/StockPrice/TAIEX";
 import { auth, db } from "@/config/firebase";
-import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useDashboardStore } from "@/utils/useLoginStore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { useEffect } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import CrossIcon from "~icons/maki/cross";
 import "../../../node_modules/react-grid-layout/css/styles.css";
@@ -27,13 +28,11 @@ interface layoutProps {
 }
 
 export default function ChartsDisplay() {
-  const [layout, setLayout] = useState<layoutProps[]>([]);
+  const { getLatestLayout, layout } = useDashboardStore();
 
   const handleLayoutChange = async (layout: layoutProps[]) => {
     if (!auth.currentUser) return;
     const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const memberData = await getDoc(memberRef);
-    console.log(memberData.data()?.dashboard_layout);
     const newLayout = layout.map((item) => {
       return {
         i: item.i,
@@ -46,6 +45,7 @@ export default function ChartsDisplay() {
     await updateDoc(memberRef, {
       dashboard_layout: newLayout,
     });
+    getLatestLayout();
   };
 
   const handleDelete = async (id: string) => {
@@ -59,6 +59,7 @@ export default function ChartsDisplay() {
     await updateDoc(memberRef, {
       dashboard_layout: newLayout,
     });
+    getLatestLayout();
   };
 
   const charts: { [key: string]: (stockID: string) => JSX.Element } = {
@@ -73,21 +74,6 @@ export default function ChartsDisplay() {
     per: (stockID: string) => <PER id={stockID} />,
     revenue: (stockID: string) => <Revenue id={stockID} />,
   };
-
-  const getLatestLayout = async () => {
-    if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const layout = await getDoc(memberRef);
-    setLayout(layout.data()!.dashboard_layout.map((item: layoutProps) => item));
-  };
-
-  useEffect(() => {
-    if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    onSnapshot(memberRef, () => {
-      getLatestLayout();
-    });
-  }, [auth.currentUser]);
 
   useEffect(() => {
     getLatestLayout();

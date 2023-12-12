@@ -89,7 +89,6 @@ export default function Unrealized() {
   };
 
   const rows = unrealizedStocks.map((stock) => {
-    console.log(stock);
     if (stock.volume === 0) return;
     const marketPrice = stockPrice[stock.stock_id] || 0;
     const averagePrice = stock.average_price || 0;
@@ -131,7 +130,6 @@ export default function Unrealized() {
 
   return (
     <>
-      <p>未實現</p>
       <div className="flex flex-col gap-3">
         <Table
           aria-label="Rows actions table example with dynamic content"

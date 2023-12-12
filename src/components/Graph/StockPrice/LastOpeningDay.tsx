@@ -106,14 +106,14 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
   useEffect(() => {
     const currentHours = new Date().getHours();
     const chartDay =
-      currentHours > 14 ? timeSelector.endDate : timeSelector.lastOpeningDate;
+      currentHours > 16 ? timeSelector.endDate : timeSelector.lastOpeningDate;
     if (stockID) getTaiwanStockKBar(stockID, chartDay);
     getLatestInfo();
   }, [stockID]);
 
   return (
     <>
-      <div className=" absolute inset-0 z-10 scale-y-50">
+      <div className=" absolute inset-0 z-10 scale-y-50 ">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </>

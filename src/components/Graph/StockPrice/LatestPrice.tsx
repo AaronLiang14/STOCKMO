@@ -120,7 +120,7 @@ export default function LatestStockPrice({ id }: { id: string }) {
 
   return (
     <>
-      <Card className="h-full w-full">
+      <Card className="h-full w-full p-4">
         <HighchartsReact
           highcharts={Highcharts}
           options={options}

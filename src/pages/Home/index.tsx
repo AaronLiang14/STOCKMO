@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <>
       <div
-        className="relative flex h-[calc(100vh)] items-center justify-center bg-cover bg-top sm:bg-top"
+        className="relative flex h-[calc(100vh)] bg-cover bg-top  sm:bg-top"
         style={{
           backgroundImage: `url(${indexBG})`,
         }}

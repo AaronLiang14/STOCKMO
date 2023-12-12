@@ -91,7 +91,6 @@ export default function Realized() {
 
   return (
     <>
-      <p>已實現</p>
       <div className="flex flex-col gap-3">
         <Table
           aria-label="Rows actions table example with dynamic content"
