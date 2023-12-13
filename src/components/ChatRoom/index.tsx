@@ -1,5 +1,5 @@
 import { auth } from "@/config/firebase";
-import { useChatRoomStore } from "@/utils/useLoginStore";
+import useChatRoomStore from "@/utils/useChatRoomStore";
 import { useReducer } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -52,8 +52,11 @@ export default function ChatRoom() {
 
   return (
     <>
-      <div className="fixed bottom-10 right-10 z-50" onClick={handleCheckBox}>
-        <ChatIcons className=" h-16 w-16 cursor-pointer rounded-lg border-2 bg-white text-cyan-800 shadow-xl " />
+      <div
+        className="fixed bottom-10 right-10 z-50  rounded-lg border bg-white shadow-inner"
+        onClick={handleCheckBox}
+      >
+        <ChatIcons className=" h-16 w-16 cursor-pointer  text-cyan-800 " />
       </div>
       {state.isOpen && <ChatBox dispatch={dispatch} />}
     </>

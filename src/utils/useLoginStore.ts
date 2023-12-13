@@ -37,32 +37,14 @@ interface LoginProps {
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-interface FavoriteArticlesProps {
-  favoriteArticles: string[];
-  getFavoriteArticles: (callback: void) => void;
-}
-
-interface layoutProps {
-  i: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
-interface DashboardProps {
-  layout: layoutProps[];
-  getLatestLayout: () => void;
-}
-
-const initialState = {
+const loginInitialState = {
   isLogin: false,
   avatar: "",
   avatarFile: File,
 };
 
 const useLoginStore = create<LoginProps>((set) => ({
-  ...initialState,
+  ...loginInitialState,
 
   init: async () => {
     onAuthStateChanged(auth, (user) => {
@@ -155,6 +137,11 @@ const useLoginStore = create<LoginProps>((set) => ({
   },
 }));
 
+interface FavoriteArticlesProps {
+  favoriteArticles: string[];
+  getFavoriteArticles: (callback: void) => void;
+}
+
 const useFavoritesStore = create<FavoriteArticlesProps>((set) => ({
   favoriteArticles: [],
   getFavoriteArticles: async () => {
@@ -167,51 +154,6 @@ const useFavoritesStore = create<FavoriteArticlesProps>((set) => ({
   },
 }));
 
-const useDashboardStore = create<DashboardProps>((set) => ({
-  layout: [],
-  getLatestLayout: async () => {
-    if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const layout = await getDoc(memberRef);
-    if (layout.exists()) {
-      set({
-        layout: layout
-          .data()!
-          .dashboard_layout.map((item: layoutProps) => item),
-      });
-    }
-  },
-}));
-
-const chatRoomInitialState = {
-  roomID: "1102",
-  isAllRoom: false,
-  isIndependentRoom: false,
-};
-
-interface ChatRoomProps {
-  roomID: string;
-  isAllRoom: boolean;
-  isIndependentRoom: boolean;
-  changeRoomID: (id: string) => void;
-  changeIsAllRoom: (boolean: boolean) => void;
-  changeIsIndependentRoom: (boolean: boolean) => void;
-}
-
-const useChatRoomStore = create<ChatRoomProps>((set) => ({
-  ...chatRoomInitialState,
-  changeRoomID: (id: string) => {
-    set({ roomID: id });
-  },
-
-  changeIsAllRoom: (boolean) => {
-    set({ isAllRoom: boolean });
-  },
-
-  changeIsIndependentRoom: (boolean) => {
-    set({ isIndependentRoom: boolean });
-  },
-}));
 export default useLoginStore;
 
-export { useChatRoomStore, useDashboardStore, useFavoritesStore };
+export { useFavoritesStore };

@@ -84,14 +84,14 @@ export default function SearchBox() {
               }
             }}
           />
-          <div className="absolute z-10 mt-2 w-full rounded-lg bg-gray-100 pl-2">
+          <div className="absolute z-10 mt-2 w-full rounded-lg bg-gray-200 ">
             {search && filterOptions.length > 0 && (
-              <ul className="max-h-60  overflow-y-scroll py-2 text-sm text-gray-700 dark:text-gray-200">
+              <ul className="max-h-60  overflow-y-scroll px-1 py-2 text-sm text-gray-700 dark:text-gray-200">
                 {filterOptions.map((item, index) => (
                   <li key={index}>
                     <Link
                       to={`/stock/${item.split("/")[0]}/latest`}
-                      className="block px-4 py-2  text-black hover:rounded-lg hover:bg-gray-200"
+                      className="block px-4 py-2  text-black hover:rounded-lg hover:bg-gray-100"
                       onClick={() => {
                         setFilterOptions([]);
                         setSearch("");

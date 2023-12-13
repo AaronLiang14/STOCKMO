@@ -70,11 +70,11 @@ const LatestPrice = () => {
         )}
       </div>
       <div className="flex flex-row gap-8">
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center">
           {isLoading ? (
             <Spinner size="sm" />
           ) : (
-            <span className="ml-2 text-sm font-normal text-red-600">
+            <span className="  text-sm font-normal text-red-600">
               {latestInfo.high}
             </span>
           )}
@@ -84,11 +84,11 @@ const LatestPrice = () => {
           </span>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col  items-center">
           {isLoading ? (
             <Spinner size="sm" />
           ) : (
-            <span className="ml-2 text-sm font-normal text-green-800">
+            <span className=" text-sm font-normal text-green-800">
               {latestInfo.low}
             </span>
           )}

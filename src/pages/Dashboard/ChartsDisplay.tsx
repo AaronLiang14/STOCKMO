@@ -9,7 +9,7 @@ import HistoryPrice from "@/components/Graph/StockPrice/HistoryPrice";
 import LatestPrice from "@/components/Graph/StockPrice/LatestPrice";
 import TAIEX from "@/components/Graph/StockPrice/TAIEX";
 import { auth, db } from "@/config/firebase";
-import { useDashboardStore } from "@/utils/useLoginStore";
+import useDashboardStore from "@/utils/useDashboardStore";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";

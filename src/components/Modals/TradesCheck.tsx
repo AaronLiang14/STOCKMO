@@ -10,7 +10,7 @@ import {
 
 import { auth, db } from "@/config/firebase";
 import api from "@/utils/api";
-import { useOrderStore } from "@/utils/useTradesStore.tsx";
+import { useOrderStore } from "@/utils/useTradesStore.ts";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";

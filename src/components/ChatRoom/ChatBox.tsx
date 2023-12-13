@@ -1,5 +1,5 @@
 import StockCode from "@/data/StockCode.json";
-import { useChatRoomStore } from "@/utils/useLoginStore";
+import useChatRoomStore from "@/utils/useChatRoomStore";
 import { useParams } from "react-router-dom";
 import ReturnIcon from "~icons/ion/arrow-return-left";
 import Close from "~icons/ion/close-round";

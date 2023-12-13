@@ -75,7 +75,7 @@ export default function SubmitArticles() {
       </div>
       <div className="mt-12 flex justify-end">
         <Button
-          onPress={auth.currentUser && onOpen}
+          onPress={onOpen}
           color="primary"
           onClick={() => !auth.currentUser && toast.error("請先登入")}
         >

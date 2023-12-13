@@ -34,7 +34,31 @@ export default function LatestStockPrice() {
       if (res.data[0].TAIEX < res.data[res.data.length - 1].TAIEX)
         setRise(true);
 
-      const newData = res.data.map((item: PERProps) => {
+      const chartsData = res.data.filter((item: PERProps) => {
+        if (res.data.indexOf(item) % 10 === 0) {
+          setDate(item.date.split(" ")[0]);
+          const timeArray = item.date.split(" ");
+          const year = timeArray[0].split("-")[0];
+          const month = timeArray[0].split("-")[1];
+          const day = timeArray[0].split("-")[2];
+          const time = timeArray[1].split(":");
+          const dateTime = Date.UTC(
+            parseInt(year),
+            parseInt(month) - 1,
+            parseInt(day),
+            parseInt(time[0]),
+            parseInt(time[1]),
+            parseInt(time[2]),
+          );
+
+          return {
+            x: dateTime,
+            y: item.TAIEX,
+          };
+        }
+      });
+
+      const newData = chartsData.map((item: PERProps) => {
         setDate(item.date.split(" ")[0]);
         const timeArray = item.date.split(" ");
         const year = timeArray[0].split("-")[0];
@@ -60,7 +84,7 @@ export default function LatestStockPrice() {
       setIsLoading(false);
     }
   };
-
+  console.log(formattedData);
   const options = {
     chart: {
       type: "area",

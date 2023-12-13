@@ -7,7 +7,7 @@ import {
 } from "@nextui-org/react";
 
 import TradesCheck from "@/components/Modals/TradesCheck.tsx";
-import { useOrderStore } from "@/utils/useTradesStore.tsx";
+import { useOrderStore } from "@/utils/useTradesStore.ts";
 import { useEffect, useState } from "react";
 
 import stockCode from "@/data/StockCode.json";
@@ -78,50 +78,53 @@ export default function Order() {
 
   return (
     <>
-      <div className="m-auto flex flex-col items-center justify-center gap-3">
-        <div className="relative">
-          <Input
-            type="text"
-            id="simple-search"
-            isClearable
-            placeholder="股票代碼/股票名稱"
-            value={stockID}
-            onChange={handleInputChange}
-            onClear={() => setStockID("")}
-          />
-          <div className="absolute z-50 mt-2 w-full rounded-lg bg-gray-100">
-            {stockID && filterOptions.length > 0 && (
-              <ul className="max-h-60  overflow-y-scroll py-2 text-sm text-gray-700 dark:text-gray-200">
-                {filterOptions.map((item, index) => (
-                  <li key={index}>
-                    <div
-                      className="block px-4 py-2  text-black hover:rounded-lg hover:bg-gray-200"
-                      onClick={() => {
-                        setStockID(item);
-                        setFilterOptions([]);
-                      }}
-                    >
-                      {item}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+      <div className="m-auto flex flex-col items-center justify-center gap-3 ">
+        <div className="flex w-80 flex-row items-center gap-4">
+          <div className="relative">
+            <Input
+              type="text"
+              id="simple-search"
+              isClearable
+              placeholder="股票代碼/股票名稱"
+              value={stockID}
+              onChange={handleInputChange}
+              onClear={() => setStockID("")}
+              className="max-w-xs"
+            />
+            <div className="absolute z-50 mt-2 w-full rounded-lg bg-gray-200">
+              {stockID && filterOptions.length > 0 && (
+                <ul className="max-h-60  overflow-y-scroll px-1 py-2 text-sm text-gray-700 dark:text-gray-200">
+                  {filterOptions.map((item, index) => (
+                    <li key={index}>
+                      <div
+                        className="block cursor-pointer px-4 py-2 text-black hover:rounded-lg hover:bg-gray-100"
+                        onClick={() => {
+                          setStockID(item.split("/")[0]);
+                          setFilterOptions([]);
+                        }}
+                      >
+                        {item}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
-        </div>
 
-        <RadioGroup
-          label="買/賣"
-          orientation="horizontal"
-          defaultValue="買"
-          onChange={(e) => setBuySell(e.target.value)}
-        >
-          {buyOrSell.map((type, index) => (
-            <Radio key={index} value={type}>
-              {type}
-            </Radio>
-          ))}
-        </RadioGroup>
+          <RadioGroup
+            label=""
+            orientation="horizontal"
+            defaultValue="買"
+            onChange={(e) => setBuySell(e.target.value)}
+          >
+            {buyOrSell.map((type, index) => (
+              <Radio key={index} value={type}>
+                {type}
+              </Radio>
+            ))}
+          </RadioGroup>
+        </div>
 
         <Select
           label="請選擇交易類別"

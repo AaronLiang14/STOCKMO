@@ -1,6 +1,7 @@
 import { auth, db } from "@/config/firebase";
-import { useChatRoomStore } from "@/utils/useLoginStore";
+import useChatRoomStore from "@/utils/useChatRoomStore";
 import {
+  Timestamp,
   arrayUnion,
   doc,
   onSnapshot,
@@ -13,7 +14,7 @@ import { MyMessage, OtherMessage } from "./Messages";
 interface Message {
   member_id: string;
   text: string;
-  message_time: Date;
+  message_time: Timestamp;
   name: string;
   avatar: string;
 }

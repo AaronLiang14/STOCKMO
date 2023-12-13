@@ -2,7 +2,7 @@ import { Button, Select, SelectItem } from "@nextui-org/react";
 
 import { auth, db } from "@/config/firebase";
 import stockCode from "@/data/StockCode.json";
-import { useDashboardStore } from "@/utils/useLoginStore";
+import useDashboardStore from "@/utils/useDashboardStore";
 import { Input } from "@nextui-org/react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -146,13 +146,13 @@ export default function ChartsOptions() {
             onClear={() => setStockID("")}
             isDisabled={isInputDisabled}
           />
-          <div className="absolute z-10 mt-2 w-full rounded-lg bg-gray-100">
+          <div className="absolute z-10 mt-2 w-full rounded-lg bg-gray-200">
             {stockID && filterOptions.length > 0 && (
-              <ul className="max-h-60  overflow-y-scroll py-2 text-sm text-gray-700 dark:text-gray-200">
+              <ul className="max-h-60  overflow-y-scroll px-1 py-2 text-sm text-gray-700 dark:text-gray-100">
                 {filterOptions.map((item, index) => (
                   <li key={index}>
                     <div
-                      className="block px-4 py-2  text-black hover:rounded-lg hover:bg-gray-200"
+                      className="block px-4 py-2  text-black hover:rounded-lg hover:bg-gray-100"
                       onClick={() => {
                         setStockID(item.split("/")[0]);
                         setFilterOptions([]);

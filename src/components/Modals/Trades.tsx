@@ -14,7 +14,7 @@ import {
 } from "@nextui-org/react";
 
 import TradesCheck from "@/components/Modals/TradesCheck.tsx";
-import { useOrderStore } from "@/utils/useTradesStore.tsx";
+import { useOrderStore } from "@/utils/useTradesStore.ts";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
