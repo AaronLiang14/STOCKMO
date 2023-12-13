@@ -41,7 +41,7 @@ export default function News() {
       ) : (
         <div className="mx-auto mt-12 grid grid-cols-1 gap-4">
           {news.reverse().map((post, index) => (
-            <a href={post.link}>
+            <a href={post.link} target="_blank">
               <Card
                 className="flex flex-col overflow-hidden rounded-lg"
                 key={index}

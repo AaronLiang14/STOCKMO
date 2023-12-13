@@ -1,4 +1,5 @@
 import api from "@/utils/api";
+import { Spinner } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
@@ -13,26 +14,31 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
   const [formattedData, setFormattedData] = useState<
     { x: number; y: number }[]
   >([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getTaiwanStockKBar = async (id: string, startDate: string) => {
-    const res = await api.getTaiwanStockKBar(id, startDate);
-    const newData = res.data.map((item: PERProps) => {
-      const timeArray = item.minute.split(":");
-      const dateTime = Date.UTC(
-        2023,
-        0,
-        1,
-        parseInt(timeArray[0]),
-        parseInt(timeArray[1]),
-        parseInt(timeArray[2]),
-      );
+    try {
+      const res = await api.getTaiwanStockKBar(id, startDate);
+      const newData = res.data.map((item: PERProps) => {
+        const timeArray = item.minute.split(":");
+        const dateTime = Date.UTC(
+          2023,
+          0,
+          1,
+          parseInt(timeArray[0]),
+          parseInt(timeArray[1]),
+          parseInt(timeArray[2]),
+        );
 
-      return {
-        x: dateTime,
-        y: item.close,
-      };
-    });
-    setFormattedData(newData);
+        return {
+          x: dateTime,
+          y: item.close,
+        };
+      });
+      setFormattedData(newData);
+    } finally {
+      setIsLoading(false);
+    }
   };
   const [rise, setRise] = useState<boolean>(false);
 
@@ -113,9 +119,15 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
 
   return (
     <>
-      <div className=" absolute inset-0 z-10 scale-y-50 ">
-        <HighchartsReact highcharts={Highcharts} options={options} />
-      </div>
+      {isLoading ? (
+        <div className="absolute left-48 top-28 z-10 ">
+          <Spinner />
+        </div>
+      ) : (
+        <div className=" absolute inset-0 z-10 scale-y-50 ">
+          <HighchartsReact highcharts={Highcharts} options={options} />
+        </div>
+      )}
     </>
   );
 }

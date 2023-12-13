@@ -150,8 +150,7 @@ export default function Stock() {
         <div className="mx-auto flex w-11/12 flex-col justify-center">
           <div className="h-18 sticky top-24 z-40 mb-3 flex justify-between bg-white  py-6">
             <p className="text-3xl font-medium text-gray-900 ">
-              {company[0].CompanyName}
-              {company[0].Symbol}
+              {company[0].CompanyName} {company[0].Symbol}
             </p>
             <AddFavoriteStocks />
           </div>

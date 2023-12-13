@@ -1,5 +1,5 @@
 import api from "@/utils/api";
-import { Card } from "@nextui-org/react";
+import { Card, Spinner } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
@@ -19,6 +19,8 @@ export default function LatestStockPrice() {
   const location = useLocation();
   const [rise, setRise] = useState<boolean>(false);
   const [date, setDate] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const chartsColor = rise ? "rgba(255, 0, 0, 0.5)" : "rgb(201,228,222)";
   const chartsBorderColor = rise ? "rgb(242,53,69)" : "#0A9981";
 
@@ -27,30 +29,36 @@ export default function LatestStockPrice() {
     : "rgba(39, 208, 115, 0.1)";
 
   const getTaiwanStockKBar = async (startDate: string) => {
-    const res = await api.getTaiwanVariousIndicators5Seconds(startDate);
-    if (res.data[0].TAIEX < res.data[res.data.length - 1].TAIEX) setRise(true);
-    const newData = res.data.map((item: PERProps) => {
-      setDate(item.date.split(" ")[0]);
-      const timeArray = item.date.split(" ");
-      const year = timeArray[0].split("-")[0];
-      const month = timeArray[0].split("-")[1];
-      const day = timeArray[0].split("-")[2];
-      const time = timeArray[1].split(":");
-      const dateTime = Date.UTC(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(time[0]),
-        parseInt(time[1]),
-        parseInt(time[2]),
-      );
+    try {
+      const res = await api.getTaiwanVariousIndicators5Seconds(startDate);
+      if (res.data[0].TAIEX < res.data[res.data.length - 1].TAIEX)
+        setRise(true);
 
-      return {
-        x: dateTime,
-        y: item.TAIEX,
-      };
-    });
-    setFormattedData(newData);
+      const newData = res.data.map((item: PERProps) => {
+        setDate(item.date.split(" ")[0]);
+        const timeArray = item.date.split(" ");
+        const year = timeArray[0].split("-")[0];
+        const month = timeArray[0].split("-")[1];
+        const day = timeArray[0].split("-")[2];
+        const time = timeArray[1].split(":");
+        const dateTime = Date.UTC(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          parseInt(time[0]),
+          parseInt(time[1]),
+          parseInt(time[2]),
+        );
+
+        return {
+          x: dateTime,
+          y: item.TAIEX,
+        };
+      });
+      setFormattedData(newData);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const options = {
@@ -123,15 +131,19 @@ export default function LatestStockPrice() {
   return (
     <>
       <Card className=" col-span-2 h-full w-full p-4">
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          containerProps={
-            location.pathname.split("/")[1] === "dashboard" && {
-              style: { height: "100%", width: "100%" },
+        {isLoading ? (
+          <Spinner className="h-[400px]" />
+        ) : (
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={
+              location.pathname.split("/")[1] === "dashboard" && {
+                style: { height: "100%", width: "100%" },
+              }
             }
-          }
-        />
+          />
+        )}
       </Card>
     </>
   );

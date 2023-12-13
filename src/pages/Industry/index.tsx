@@ -6,7 +6,7 @@ import { useState } from "react";
 import StockOfIndustry from "./StockOfIndustry";
 
 export default function Industry() {
-  const [industryChosen, setIndustryChosen] = useState<string>("水泥工業");
+  const [industryChosen, setIndustryChosen] = useState<string>("食品工業");
   const [marketChosen, setMarketChosen] = useState<string>("全部");
 
   const market = [
@@ -27,8 +27,8 @@ export default function Industry() {
         <div className="m-auto mt-12 flex w-full justify-end gap-5">
           <Select
             items={industry}
-            aria-label="水泥工業"
-            placeholder="水泥工業"
+            aria-label="食品工業"
+            placeholder="食品工業"
             className="max-w-xs"
             value={industryChosen}
             onChange={(e) => {

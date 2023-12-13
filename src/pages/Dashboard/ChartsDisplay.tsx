@@ -81,7 +81,7 @@ export default function ChartsDisplay() {
 
   return (
     <>
-      <div className="m-auto min-h-[calc(100vh_-_280px)] w-11/12">
+      <div className="m-auto min-h-[calc(100vh_-_280px)] w-11/12 ">
         {layout.length === 0 ? (
           <NoChartsChosen />
         ) : (
@@ -93,7 +93,7 @@ export default function ChartsDisplay() {
             width={1200}
             isDroppable={true}
             resizeHandles={["se"]}
-            className="layout  rounded-xl border-2 border-gray-300 p-1"
+            className="layout rounded-xl border-2 border-gray-300 "
             onLayoutChange={(layout) => handleLayoutChange(layout)}
           >
             {layout.map((item) => {
@@ -101,7 +101,7 @@ export default function ChartsDisplay() {
               const chartName = id.split("/")[0];
               const stockID = id.split("/")[1];
               return (
-                <div key={id} className="relative rounded-xl bg-white">
+                <div key={id} className="relative rounded-xl bg-white pb-1">
                   {charts[chartName](stockID)}
                   <CrossIcon
                     className="absolute right-5 top-3 z-50 cursor-pointer"

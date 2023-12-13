@@ -57,7 +57,14 @@ export default function EngageChatRooms() {
                 changeIsAllRoom(false);
               }}
             >
-              <Avatar showFallback name={stockID} />
+              <Avatar
+                showFallback
+                name={stockID}
+                classNames={{
+                  base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]",
+                  icon: "text-black/80",
+                }}
+              />
               <div className="ml-4 text-xs ">
                 <p className="text-base font-medium">
                   {stockName[0].stockName}

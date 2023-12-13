@@ -1,5 +1,5 @@
 import api from "@/utils/api";
-import { Card } from "@nextui-org/react";
+import { Card, Spinner } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
@@ -17,6 +17,8 @@ export default function LatestStockPrice({ id }: { id: string }) {
   >([]);
 
   const [rise, setRise] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const chartsColor = rise ? "rgba(255, 0, 0, 0.5)" : "rgb(201,228,222)";
   const chartsBorderColor = rise ? "rgb(242,53,69)" : "#0A9981";
 
@@ -25,27 +27,33 @@ export default function LatestStockPrice({ id }: { id: string }) {
     : "rgba(39, 208, 115, 0.1)";
 
   const getTaiwanStockKBar = async (id: string, startDate: string) => {
-    const res = await api.getTaiwanStockKBar(id, startDate);
-    const newData = res.data.map((item: PERProps) => {
-      const timeArray = item.minute.split(":");
-      const year = item.date.split("-")[0];
-      const month = item.date.split("-")[1];
-      const day = item.date.split("-")[2];
-      const dateTime = Date.UTC(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(timeArray[0]),
-        parseInt(timeArray[1]),
-        parseInt(timeArray[2]),
-      );
+    try {
+      const res = await api.getTaiwanStockKBar(id, startDate);
+      const newData = res.data.map((item: PERProps) => {
+        const timeArray = item.minute.split(":");
+        const year = item.date.split("-")[0];
+        const month = item.date.split("-")[1];
+        const day = item.date.split("-")[2];
+        const dateTime = Date.UTC(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          parseInt(timeArray[0]),
+          parseInt(timeArray[1]),
+          parseInt(timeArray[2]),
+        );
 
-      return {
-        x: dateTime,
-        y: item.close,
-      };
-    });
-    setFormattedData(newData);
+        return {
+          x: dateTime,
+          y: item.close,
+        };
+      });
+      setFormattedData(newData);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const judgeRiseOrFall = async () => {
@@ -121,11 +129,15 @@ export default function LatestStockPrice({ id }: { id: string }) {
   return (
     <>
       <Card className="h-full w-full p-4">
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          containerProps={{ style: { height: "100%", width: "100%" } }}
-        />
+        {isLoading ? (
+          <Spinner className="h-[400px]" />
+        ) : (
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={{ style: { height: "100%", width: "100%" } }}
+          />
+        )}
       </Card>
     </>
   );
