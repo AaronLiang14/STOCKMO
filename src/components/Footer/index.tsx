@@ -1,6 +1,20 @@
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
 export default function Footer() {
+  const location = useLocation();
+
+  const [backgroundColor, setBackgroundColor] = useState("");
+  useEffect(() => {
+    if (location.pathname === "/login" || location.pathname === "/") {
+      setBackgroundColor("bg-transparent bg-opacity-0 absolute");
+    } else {
+      setBackgroundColor("bg-gray-100");
+    }
+  }, [location]);
+
   return (
-    <footer className=" bottom-0 w-full bg-gray-200">
+    <footer className={`bottom-0 w-full ${backgroundColor}`}>
       <div className="flex flex-col items-end justify-start text-gray-500">
         <div>
           <p>

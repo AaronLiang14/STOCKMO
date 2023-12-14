@@ -1,6 +1,6 @@
 import { NextUIProvider } from "@nextui-org/react";
 import { useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import Footer from "./components/Footer/index.tsx";
 import Header from "./components/Header";
@@ -26,6 +26,16 @@ import Unrealized from "./pages/Trades/Unrealized";
 import Trades from "./pages/Trades/index.tsx";
 import useLoginStore from "./utils/useLoginStore";
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   const { init } = useLoginStore();
   useEffect(() => {
@@ -36,6 +46,8 @@ function App() {
     <>
       <NextUIProvider>
         <BrowserRouter>
+          <ScrollToTop />
+
           <Toaster position="top-center" />
           <Header />
           <Routes>

@@ -1,3 +1,4 @@
+import { Card } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 
@@ -27,8 +28,6 @@ export default function Unemployment() {
   const options = {
     chart: {
       type: "line",
-      height: 400,
-      width: 800,
     },
     title: {
       text: "失業率(%)",
@@ -46,14 +45,26 @@ export default function Unemployment() {
         text: "失業率(%)",
       },
     },
+    credits: {
+      enabled: false,
+    },
     series: [
       {
         type: "line",
         name: "失業率",
         data: UnemploymentRate,
+        showInLegend: false,
       },
     ],
   };
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return (
+    <Card className="h-full w-full p-4">
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        containerProps={{ style: { height: "100%", width: "100%" } }}
+      />
+    </Card>
+  );
 }

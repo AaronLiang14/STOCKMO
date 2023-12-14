@@ -199,13 +199,13 @@ export default function BasicInformation() {
           最新財務資訊
         </p>
       </div>
-      <div className="mt-12 flex w-full flex-row">
-        <EPS />
-        <PER />
+      <div className="mt-12 flex w-full flex-row gap-4">
+        <EPS id={id!.toString()} />
+        <PER id={id!.toString()} />
       </div>
-      <div className="mt-12 flex w-full flex-row">
-        <Revenue />
-        <Revenue />
+      <div className="mt-12 flex w-full flex-row  gap-4">
+        <Revenue id={id!.toString()} />
+        <Revenue id={id!.toString()} />
       </div>
       <div className="mt-12">
         <div className="sm:flex sm:items-center">

@@ -11,6 +11,7 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   query,
   setDoc,
   where,
@@ -36,19 +37,14 @@ interface LoginProps {
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-interface FavoriteArticlesState {
-  favoriteArticles: string[];
-  getFavoriteArticles: (callback: void) => void;
-}
-
-const initialState = {
+const loginInitialState = {
   isLogin: false,
   avatar: "",
   avatarFile: File,
 };
 
 const useLoginStore = create<LoginProps>((set) => ({
-  ...initialState,
+  ...loginInitialState,
 
   init: async () => {
     onAuthStateChanged(auth, (user) => {
@@ -70,7 +66,7 @@ const useLoginStore = create<LoginProps>((set) => ({
     await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(auth.currentUser!, { displayName: name });
     await updateProfile(auth.currentUser!, { photoURL: imgUrl });
-    await setDoc(doc(db, "Member", email), {
+    await setDoc(doc(db, "Member", auth.currentUser!.uid), {
       avatar: imgUrl,
       email: email,
       name: name,
@@ -80,6 +76,7 @@ const useLoginStore = create<LoginProps>((set) => ({
       unrealized: [],
       cash: 100000,
       securities_assets: 0,
+      dashboard_layout: [],
     });
     toast.success("註冊成功");
   },
@@ -100,7 +97,8 @@ const useLoginStore = create<LoginProps>((set) => ({
         collection(db, "Member"),
         where("email", "==", auth.currentUser?.email),
       );
-      if (member) return;
+      const querySnapshot = await getDocs(member);
+      if (!querySnapshot.empty) return;
       await setDoc(doc(db, "Member", auth.currentUser!.uid), {
         avatar: auth.currentUser?.photoURL,
         email: auth.currentUser?.email,
@@ -111,8 +109,9 @@ const useLoginStore = create<LoginProps>((set) => ({
         unrealized: [],
         cash: 100000,
         securities_assets: 0,
+        dashboard_layout: [],
       });
-
+      console.log("notmember");
       toast.success("登入成功");
     } catch (e) {
       toast.error("登入失敗");
@@ -138,7 +137,12 @@ const useLoginStore = create<LoginProps>((set) => ({
   },
 }));
 
-const useFavoritesStore = create<FavoriteArticlesState>((set) => ({
+interface FavoriteArticlesProps {
+  favoriteArticles: string[];
+  getFavoriteArticles: (callback: void) => void;
+}
+
+const useFavoritesStore = create<FavoriteArticlesProps>((set) => ({
   favoriteArticles: [],
   getFavoriteArticles: async () => {
     if (!auth.currentUser) return;

@@ -1,3 +1,4 @@
+import { Card } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 
@@ -20,8 +21,9 @@ export default function GDP() {
   const options = {
     chart: {
       type: "line",
-      height: 400,
-      width: 800,
+    },
+    rangeSelector: {
+      selected: 1,
     },
     title: {
       text: "名目GDP",
@@ -31,8 +33,7 @@ export default function GDP() {
       labels: {
         rotation: 0,
         style: {
-          fontSize: "14px", // Adjust the font size as needed
-          fontFamily: "Verdana, sans-serif",
+          fontSize: "14px",
         },
       },
       tickInterval: 2, // Set to 4 to display labels once per year
@@ -54,9 +55,18 @@ export default function GDP() {
         type: "line",
         name: "名目GDP",
         data: GDPData,
+        showInLegend: false,
       },
     ],
   };
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return (
+    <Card className="h-full w-full p-4">
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        containerProps={{ style: { height: "100%", width: "100%" } }}
+      />
+    </Card>
+  );
 }

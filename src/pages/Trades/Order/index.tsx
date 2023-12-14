@@ -7,17 +7,17 @@ import {
 } from "@nextui-org/react";
 
 import TradesCheck from "@/components/Modals/TradesCheck.tsx";
-import { useOrderStore } from "@/utils/useTradesStore.tsx";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useOrderStore } from "@/utils/useTradesStore.ts";
+import { useEffect, useState } from "react";
 
+import stockCode from "@/data/StockCode.json";
 const orderType = ["ROD", "IOC", "FOK"];
 const tradeType = ["現股", "融資", "融券"];
 const unitType = ["整股", "零股"];
 const buyOrSell = ["買", "賣"];
 
 export default function Order() {
-  const { state } = useLocation();
+  const [filterOptions, setFilterOptions] = useState<string[]>([]);
 
   const {
     getHistoryData,
@@ -45,6 +45,28 @@ export default function Order() {
     平盤: flatPrice,
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStockID(e.target.value);
+    setPrice(0);
+    if (isNaN(parseInt(e.target.value))) {
+      const filter = stockCode.filter((item) => {
+        return item.stockName.includes(e.target.value);
+      });
+      setFilterOptions(
+        filter.map((item) => item.stockCode + "/" + item.stockName),
+      );
+    }
+
+    if (!isNaN(parseInt(e.target.value))) {
+      const filter = stockCode.filter((item) => {
+        return item.stockCode.toString().includes(e.target.value);
+      });
+      setFilterOptions(
+        filter.map((item) => item.stockCode + "/" + item.stockName),
+      );
+    }
+  };
+
   useEffect(() => {
     getHistoryData(stockID);
     getMarketPrice(stockID);
@@ -56,30 +78,53 @@ export default function Order() {
 
   return (
     <>
-      <div className="m-auto flex flex-col items-center justify-center gap-3">
-        <Input
-          type="stock"
-          label="請輸入標的"
-          className=" max-w-xs"
-          defaultValue={state ? state.stockID : ""}
-          onChange={(e) => {
-            setStockID(e.target.value);
-            setPrice(0);
-          }}
-        />
+      <div className="m-auto flex flex-col items-center justify-center gap-3 ">
+        <div className="flex w-80 flex-row items-center gap-4">
+          <div className="relative">
+            <Input
+              type="text"
+              id="simple-search"
+              isClearable
+              placeholder="股票代碼/股票名稱"
+              value={stockID}
+              onChange={handleInputChange}
+              onClear={() => setStockID("")}
+              className="max-w-xs"
+            />
+            <div className="absolute z-50 mt-2 w-full rounded-lg bg-gray-200">
+              {stockID && filterOptions.length > 0 && (
+                <ul className="max-h-60  overflow-y-scroll px-1 py-2 text-sm text-gray-700 dark:text-gray-200">
+                  {filterOptions.map((item, index) => (
+                    <li key={index}>
+                      <div
+                        className="block cursor-pointer px-4 py-2 text-black hover:rounded-lg hover:bg-gray-100"
+                        onClick={() => {
+                          setStockID(item.split("/")[0]);
+                          setFilterOptions([]);
+                        }}
+                      >
+                        {item}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
 
-        <RadioGroup
-          label="買/賣"
-          orientation="horizontal"
-          defaultValue="買"
-          onChange={(e) => setBuySell(e.target.value)}
-        >
-          {buyOrSell.map((type, index) => (
-            <Radio key={index} value={type}>
-              {type}
-            </Radio>
-          ))}
-        </RadioGroup>
+          <RadioGroup
+            label=""
+            orientation="horizontal"
+            defaultValue="買"
+            onChange={(e) => setBuySell(e.target.value)}
+          >
+            {buyOrSell.map((type, index) => (
+              <Radio key={index} value={type}>
+                {type}
+              </Radio>
+            ))}
+          </RadioGroup>
+        </div>
 
         <Select
           label="請選擇交易類別"

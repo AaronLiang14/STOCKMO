@@ -10,6 +10,7 @@ import AddFavoriteStocks from "@/components/AddFavorite";
 import ChatRoom from "@/components/ChatRoom";
 import FinanceData from "@/data/StockDetail.json";
 import api from "@/utils/api";
+import { Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -28,12 +29,19 @@ const LatestPrice = () => {
   );
   const [rise, setRise] = useState<boolean>(false);
   const { id } = useParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getLatestPrice = async () => {
-    const res = await api.getTaiwanStockPriceTick(id!.toString());
-    setLatestInfo(res.data[0]);
-    if (res.data[0].change_rate > 0) setRise(true);
-    else setRise(false);
+    try {
+      const res = await api.getTaiwanStockPriceTick(id!.toString());
+      setLatestInfo(res.data[0]);
+      if (res.data[0].change_rate > 0) setRise(true);
+      else setRise(false);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const colorDependOnRise = rise ? " text-red-600 " : "text-green-800 ";
@@ -53,32 +61,50 @@ const LatestPrice = () => {
         ) : (
           <DownArrow className="inline-block transform" />
         )}
-        <span className="ml-2 text-sm font-normal">
-          {latestInfo.change_price} ({latestInfo.change_rate}%)
-        </span>
+        {isLoading ? (
+          <Spinner size="sm" />
+        ) : (
+          <span className="ml-2 text-sm font-normal">
+            {latestInfo.change_price} ({latestInfo.change_rate}%)
+          </span>
+        )}
       </div>
       <div className="flex flex-row gap-8">
-        <div className="flex flex-col">
-          <span className="ml-2 text-sm font-normal text-red-600">
-            {latestInfo.high}
-          </span>
+        <div className="flex flex-col items-center">
+          {isLoading ? (
+            <Spinner size="sm" />
+          ) : (
+            <span className="  text-sm font-normal text-red-600">
+              {latestInfo.high}
+            </span>
+          )}
+
           <span className="text-co text-sm font-normal text-red-600">
             最高價
           </span>
         </div>
 
-        <div className="flex flex-col">
-          <span className="ml-2 text-sm font-normal text-green-800">
-            {latestInfo.low}
-          </span>
+        <div className="flex flex-col  items-center">
+          {isLoading ? (
+            <Spinner size="sm" />
+          ) : (
+            <span className=" text-sm font-normal text-green-800">
+              {latestInfo.low}
+            </span>
+          )}
           <span className="text-sm font-normal text-green-800">最低價</span>
         </div>
 
         <div className="flex flex-col">
-          <span className="text-center text-sm font-normal text-gray-800">
-            {latestInfo.total_volume &&
-              latestInfo.total_volume.toLocaleString()}
-          </span>
+          {isLoading ? (
+            <Spinner size="sm" />
+          ) : (
+            <span className="text-center text-sm font-normal text-gray-800">
+              {latestInfo.total_volume &&
+                latestInfo.total_volume.toLocaleString()}
+            </span>
+          )}
+
           <span className="text-sm font-normal text-gray-800">累積成交量</span>
         </div>
       </div>
@@ -121,11 +147,10 @@ export default function Stock() {
   return (
     <>
       <div className="m-auto mb-24 flex min-h-[calc(100vh_-_120px)] w-11/12 flex-col  pt-24">
-        <div className=" m-auto mt-8 flex w-11/12 flex-col justify-center">
+        <div className="mx-auto flex w-11/12 flex-col justify-center">
           <div className="h-18 sticky top-24 z-40 mb-3 flex justify-between bg-white  py-6">
-            <p className="text-4xl font-medium text-gray-900 ">
-              {company[0].CompanyName}
-              {company[0].Symbol}
+            <p className="text-3xl font-medium text-gray-900 ">
+              {company[0].CompanyName} {company[0].Symbol}
             </p>
             <AddFavoriteStocks />
           </div>

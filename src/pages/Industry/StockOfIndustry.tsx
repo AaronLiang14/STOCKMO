@@ -3,7 +3,7 @@ import StockCode from "@/data/StockCode.json";
 import api from "@/utils/api";
 import { Card, CardBody } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface StockOfIndustryProps {
   industry: string;
@@ -51,19 +51,15 @@ export default function StockOfIndustry({
       stock.industry === industry &&
       (market === "全部" || stock.market === market),
   );
-  const navigate = useNavigate();
 
   return (
     <>
       <div
         role="list"
-        className="m-auto mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4"
+        className="m-auto mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-3"
       >
         {stockDependOnIndustry.map((stock) => (
-          <div
-            className="h-64"
-            onClick={() => navigate(`/stock/${stock.stockCode}/latest`)}
-          >
+          <Link className="h-64" to={`/stock/${stock.stockCode}/latest`}>
             <Card
               key={stock.stockCode}
               className="h-full cursor-pointer rounded-lg hover:scale-105"
@@ -83,7 +79,7 @@ export default function StockOfIndustry({
                 </div>
               </CardBody>
             </Card>
-          </div>
+          </Link>
         ))}
       </div>
     </>

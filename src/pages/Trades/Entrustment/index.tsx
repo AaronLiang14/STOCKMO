@@ -1,5 +1,4 @@
 import { auth, db } from "@/config/firebase";
-import StockCode from "@/data/StockCode.json";
 import api from "@/utils/api";
 import { DocumentData } from "@firebase/firestore";
 import {
@@ -88,23 +87,23 @@ export default function Entrustment() {
   };
 
   const rows = entrustment.map((item) => {
-    const stockName =
-      StockCode.find((stock) => stock.stockCode === parseInt(item.stock_id))
-        ?.stockName || "";
-    if (item.status !== "已成交")
-      return {
-        key: item.id,
-        stockID: item.stock_id + " / " + stockName,
-        buyOrSell: item.buy_or_sell,
-        status: item.status,
-        tradeType: item.trade_type,
-        orderType: item.order_type,
-        orderVolumePrice: item.order.volume + "股/" + item.order.price,
-        time: item.order.time.toDate().toLocaleString(),
-        cancel: item.status === "委託成功" && (
-          <CancelModal cancelEntrustment={() => cancelEntrustment(item.id)} />
-        ),
-      };
+    // const stockName =
+    //   StockCode.find((stock) => stock.stockCode === parseInt(item.stock_id))
+    //     ?.stockName || "";
+    if (item.status !== "已成交") console.log(item);
+    return {
+      key: item.id,
+      stockID: item.stock_id,
+      buyOrSell: item.buy_or_sell,
+      status: item.status,
+      tradeType: item.trade_type,
+      orderType: item.order_type,
+      orderVolumePrice: item.order.volume + "股/" + item.order.price,
+      time: item.order.time.toDate().toLocaleString(),
+      cancel: item.status === "委託成功" && (
+        <CancelModal cancelEntrustment={() => cancelEntrustment(item.id)} />
+      ),
+    };
   });
 
   const matchmaking = async () => {
@@ -164,6 +163,10 @@ export default function Entrustment() {
           )}
         </TableBody>
       </Table>
+
+      {entrustment.length === 0 && (
+        <p className="m-auto mt-12 text-2xl">查無資料</p>
+      )}
     </div>
   );
 }

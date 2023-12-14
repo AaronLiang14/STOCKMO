@@ -1,3 +1,4 @@
+import FullArticle from "@/components/Modals/FullArticles";
 import { auth, db } from "@/config/firebase";
 import { useFavoritesStore } from "@/utils/useLoginStore";
 import { Button, Card } from "@nextui-org/react";
@@ -59,6 +60,10 @@ export default function Articles() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   const handleArticleFavorite = async (id: string) => {
+    if (!auth.currentUser) {
+      toast.error("請先登入");
+      return;
+    }
     const memberRef = doc(db, "Member", auth.currentUser!.uid);
     const docSnap = await getDoc(memberRef);
 
@@ -98,46 +103,55 @@ export default function Articles() {
   return (
     <div>
       <SubmitArticles />
-      <div className="my-12">
-        <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
-          文章列表
-        </p>
-      </div>
       <div className="mx-auto my-12">
-        <div className="grid gap-12 lg:max-w-none lg:grid-cols-4">
-          {articles.map((post, index) => (
-            <Card
-              className="flex flex-col overflow-hidden rounded-lg "
-              key={index}
-            >
-              <div>
-                <img
-                  className="h-48 w-full object-cover"
-                  src={post.photo}
-                  alt={post.title}
-                />
-              </div>
-              <div className="flex flex-1 flex-col justify-between p-6">
+        <div
+          className={`grid gap-12 lg:max-w-none ${
+            articles.length > 0 && "lg:grid-cols-3"
+          }`}
+        >
+          {articles.length === 0 ? (
+            <div className="flex items-center justify-center">
+              <p className="text-2xl">目前沒有文章，點擊右上方按鈕來發表！</p>
+            </div>
+          ) : (
+            articles.map((post, index) => (
+              <Card
+                className="flex flex-col overflow-hidden rounded-lg "
+                key={index}
+              >
                 <div>
-                  <p className="text-xl font-semibold text-gray-900">
-                    {post.title}
-                  </p>
+                  <img
+                    className="h-48 w-full object-cover"
+                    src={post.photo}
+                    alt={post.title}
+                  />
                 </div>
-                <div className="mt-6 flex items-center justify-between">
-                  <AuthorAvatar id={post.author_id} />
-                  <Button
-                    type="button"
-                    color="primary"
-                    onClick={() => handleArticleFavorite(post.id)}
-                  >
-                    {favoriteArticles.includes(post.id)
-                      ? "取消收藏"
-                      : "收藏文章"}
-                  </Button>
+                <div className="flex flex-1 flex-col justify-between p-6">
+                  <div>
+                    <p className="text-xl font-semibold text-gray-900">
+                      {post.title}
+                    </p>
+                  </div>
+                  <div className="relative mt-6 flex items-center justify-between">
+                    <AuthorAvatar id={post.author_id} />
+                    <div className="flex gap-4">
+                      <Button
+                        type="button"
+                        color="primary"
+                        onClick={() => handleArticleFavorite(post.id)}
+                        size="sm"
+                      >
+                        {favoriteArticles.includes(post.id)
+                          ? "取消收藏"
+                          : "收藏文章"}
+                      </Button>
+                      <FullArticle article={post} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
 import { auth, db } from "@/config/firebase";
 import { useFavoritesStore } from "@/utils/useLoginStore";
-import { Card, CardBody, Image } from "@nextui-org/react";
+import { Button, Card, CardBody, Image } from "@nextui-org/react";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 interface Article {
   id: string;
   title: string;
@@ -59,6 +59,12 @@ export default function FavoriteArticles() {
               </CardBody>
             </Card>
           ))}
+        </div>
+        <div className="mt-8 flex flex-col items-center justify-center gap-12">
+          <p className="text-2xl">目前沒有收藏的文章，到文章頁面看看吧</p>
+          <Link to="/stock/2330/articles">
+            <Button color="primary">前往文章頁面</Button>
+          </Link>
         </div>
       </div>
     </>

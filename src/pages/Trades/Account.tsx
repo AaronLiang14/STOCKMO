@@ -55,7 +55,6 @@ export default function Account() {
 
   return (
     <>
-      <p>帳戶</p>
       <div className="flex flex-col gap-3">
         <Table
           aria-label="Rows actions table example with dynamic content"

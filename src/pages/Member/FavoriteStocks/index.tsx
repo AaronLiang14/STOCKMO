@@ -153,26 +153,35 @@ export default function FavoriteStocks() {
     <>
       <div className="mt-24 w-full">
         <div>
-          <Table aria-label="我的最愛的股票" className="pr-8">
-            <TableHeader columns={columns}>
-              {(column) => (
-                <TableColumn key={column.key} className="text-base">
-                  {column.label}
-                </TableColumn>
-              )}
-            </TableHeader>
-            <TableBody items={favoriteItems}>
-              {(item) => (
-                <TableRow key={item.id}>
-                  {(columnKey) => (
-                    <TableCell className=" text-base">
-                      {getKeyValue(item, columnKey)}
-                    </TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          {favoriteItems.length > 0 ? (
+            <Table aria-label="我的最愛的股票" className="pr-8">
+              <TableHeader columns={columns}>
+                {(column) => (
+                  <TableColumn key={column.key} className="text-base">
+                    {column.label}
+                  </TableColumn>
+                )}
+              </TableHeader>
+              <TableBody items={favoriteItems}>
+                {(item) => (
+                  <TableRow key={item.id}>
+                    {(columnKey) => (
+                      <TableCell className=" text-base">
+                        {getKeyValue(item, columnKey)}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="mt-8 flex flex-col items-center justify-center gap-12">
+              <p className="text-2xl">目前沒有收藏的股票，到個股頁面看看吧</p>
+              <Link to="/stock/2330/latest">
+                <Button color="primary">前往個股頁面</Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </>

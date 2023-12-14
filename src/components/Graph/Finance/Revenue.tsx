@@ -1,9 +1,8 @@
 import api from "@/utils/api";
-import { Select, SelectItem } from "@nextui-org/react";
+import { Card, Select, SelectItem } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import timeSelector from "../TimeSelect";
 
 interface PERProps {
@@ -11,8 +10,7 @@ interface PERProps {
   revenue: number;
 }
 
-export default function Revenue() {
-  const { id } = useParams<string>();
+export default function Revenue({ id }: { id: string }) {
   const [formattedData, setFormattedData] = useState<
     { x: number; y: number }[]
   >([]);
@@ -53,7 +51,7 @@ export default function Revenue() {
       type: "line",
     },
     title: {
-      text: "月營收",
+      text: `月營收（${id}）`,
     },
     xAxis: {
       type: "datetime",
@@ -114,12 +112,12 @@ export default function Revenue() {
 
   return (
     <>
-      <div className="flex w-full flex-col items-end">
+      <Card className="flex h-full w-full flex-col items-start p-4">
         <Select
           items={chartsTime}
           label="選擇時段"
           placeholder="一年"
-          className="flex w-full max-w-xs justify-end"
+          className="mb-4 flex max-w-xs  pl-4 pt-4"
           value={time}
           onChange={(e) => {
             setTime(e.target.value);
@@ -129,10 +127,14 @@ export default function Revenue() {
             <SelectItem key={item.value}>{item.label}</SelectItem>
           ))}
         </Select>
-        <div className="w-full">
-          <HighchartsReact highcharts={Highcharts} options={options} />
+        <div className="h-full w-full">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={{ style: { height: "100%", width: "100%" } }}
+          />
         </div>
-      </div>
+      </Card>
     </>
   );
 }

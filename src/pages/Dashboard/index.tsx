@@ -1,13 +1,17 @@
-import GDP from "@/components/Graph/Macro/GDP";
-import Unemployment from "@/components/Graph/Macro/Unemployment";
+import ChatRoom from "@/components/ChatRoom";
+import "../../../node_modules/react-grid-layout/css/styles.css";
+import "../../../node_modules/react-resizable/css/styles.css";
+import ChartsDisplay from "./ChartsDisplay";
+import ChartsOptions from "./ChartsOptions";
 
 export default function Dashboard() {
   return (
     <>
-      <div className="mb-24 min-h-[calc(100vh_-_120px)]  pt-24">
-        <GDP />
-        <Unemployment />
+      <div className="m-auto flex w-11/12 flex-col pt-36">
+        <ChartsOptions />
+        <ChartsDisplay />
       </div>
+      <ChatRoom />
     </>
   );
 }

@@ -67,61 +67,75 @@ export default function SubmitArticles() {
   };
 
   return (
-    <div className="mt-12 flex justify-end">
-      <Button onPress={onOpen} color="primary">
-        發表文章
-      </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">發文章</ModalHeader>
-              <ModalBody>
-                <form>
-                  <Textarea
-                    label="文章標題"
-                    variant="bordered"
-                    placeholder="文章標題"
-                    disableAnimation
-                    disableAutosize
-                    className="mb-4 h-10 w-full"
-                    onChange={(e) => setTitle(e.target.value)}
-                    value={title}
-                  />
-                  <Textarea
-                    variant="bordered"
-                    className=" w-full  "
-                    placeholder="寫下你的想法吧..."
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    required
-                  ></Textarea>
+    <div className="flex flex-row justify-between">
+      <div className="my-12">
+        <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
+          文章列表
+        </p>
+      </div>
+      <div className="mt-12 flex justify-end">
+        <Button
+          onPress={onOpen}
+          color="primary"
+          onClick={() => !auth.currentUser && toast.error("請先登入")}
+        >
+          發表文章
+        </Button>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  發文章
+                </ModalHeader>
+                <ModalBody>
+                  <form>
+                    <Textarea
+                      label="文章標題"
+                      variant="bordered"
+                      placeholder="文章標題"
+                      disableAnimation
+                      disableAutosize
+                      className="mb-4 h-10 w-full"
+                      onChange={(e) => setTitle(e.target.value)}
+                      value={title}
+                    />
+                    <Textarea
+                      variant="bordered"
+                      className=" w-full  "
+                      placeholder="寫下你的想法吧..."
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      required
+                    ></Textarea>
 
-                  <Input
-                    className="mt-12 w-full max-w-xs cursor-pointer"
-                    id="file_input"
-                    type="file"
-                    ref={uploadImgRef}
-                  />
-                </form>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button
-                  type="submit"
-                  onClick={handleArticlesSubmit}
-                  color="primary"
-                  isDisabled={!title || !content || !uploadImgRef}
-                >
-                  Submit
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+                    <Input
+                      className="mt-12 w-full max-w-xs cursor-pointer"
+                      id="file_input"
+                      type="file"
+                      ref={uploadImgRef}
+                    />
+                  </form>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Close
+                  </Button>
+                  <Button
+                    type="submit"
+                    onClick={handleArticlesSubmit}
+                    color="primary"
+                    onPress={onClose}
+                    isDisabled={!title || !content || !uploadImgRef}
+                  >
+                    Submit
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      </div>
     </div>
   );
 }

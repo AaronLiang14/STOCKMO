@@ -1,9 +1,8 @@
 import api from "@/utils/api";
-import { Select, SelectItem } from "@nextui-org/react";
+import { Card, Select, SelectItem, Spinner } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import timeSelector from "../TimeSelect";
 
 interface StockPriceProps {
@@ -20,11 +19,11 @@ interface StockVolumeProps {
   Trading_Volume: number;
 }
 
-export default function StockChart() {
-  const { id } = useParams<string>();
+export default function StockChart({ id }: { id: string }) {
   const [stockPrice, setStockPrice] = useState<[]>([]);
   const [volume, setVolume] = useState<[]>([]);
   const [time, setTime] = useState<string>(timeSelector.oneMonth);
+  const [isLoading, setIsLoading] = useState(true);
 
   const chartsTime = [
     {
@@ -59,16 +58,14 @@ export default function StockChart() {
   ];
 
   const options = {
-    chart: {
-      height: 700,
-    },
+    chart: {},
 
     rangeSelector: {
       selected: 2,
     },
 
     title: {
-      text: `歷史股價`,
+      text: `歷史股價（${id}）`,
     },
 
     xAxis: {
@@ -151,21 +148,27 @@ export default function StockChart() {
     startDate: string,
     endDate: string,
   ) => {
-    const res = await api.getStockPrice(id, startDate, endDate);
-    const formattedData = res.data.map((item: StockPriceProps) => {
-      return [
-        new Date(item.date).getTime(),
-        item.open,
-        item.max,
-        item.min,
-        item.close,
-      ];
-    });
-    const formattedVolume = res.data.map((item: StockVolumeProps) => {
-      return [new Date(item.date).getTime(), item.Trading_Volume];
-    });
-    setVolume(formattedVolume);
-    setStockPrice(formattedData);
+    try {
+      const res = await api.getStockPrice(id, startDate, endDate);
+      const formattedData = res.data.map((item: StockPriceProps) => {
+        return [
+          new Date(item.date).getTime(),
+          item.open,
+          item.max,
+          item.min,
+          item.close,
+        ];
+      });
+      const formattedVolume = res.data.map((item: StockVolumeProps) => {
+        return [new Date(item.date).getTime(), item.Trading_Volume];
+      });
+      setVolume(formattedVolume);
+      setStockPrice(formattedData);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -174,25 +177,33 @@ export default function StockChart() {
 
   return (
     <>
-      <div className="flex flex-col items-end">
-        <Select
-          items={chartsTime}
-          label="選擇時段"
-          placeholder="一個月"
-          className="flex  max-w-xs justify-end"
-          value={time}
-          onChange={(e) => {
-            setTime(e.target.value);
-          }}
-        >
-          {chartsTime.map((item) => (
-            <SelectItem key={item.value}>{item.label}</SelectItem>
-          ))}
-        </Select>
-        <div className=" w-full">
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        </div>
-      </div>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <Card className="flex h-full w-full flex-col items-start p-4">
+          <Select
+            items={chartsTime}
+            label="選擇時段"
+            placeholder="一個月"
+            className="mb-4 flex max-w-xs justify-end pl-4 pt-4"
+            value={time}
+            onChange={(e) => {
+              setTime(e.target.value);
+            }}
+          >
+            {chartsTime.map((item) => (
+              <SelectItem key={item.value}>{item.label}</SelectItem>
+            ))}
+          </Select>
+          <div className="h-full w-full">
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={options}
+              containerProps={{ style: { height: "100%", width: "100%" } }}
+            />
+          </div>
+        </Card>
+      )}
     </>
   );
 }
