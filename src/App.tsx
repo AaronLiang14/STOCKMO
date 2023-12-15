@@ -10,6 +10,8 @@ import Industry from "./pages/Industry/index.tsx";
 import FavoriteArticles from "./pages/Member/FavoriteArticles.tsx";
 import FavoriteStocks from "./pages/Member/FavoriteStocks";
 import Login from "./pages/Member/Login";
+import SignIn from "./pages/Member/Login/SignIn";
+import SignUp from "./pages/Member/Login/SignUp";
 import Member from "./pages/Member/index.tsx";
 import NotFound from "./pages/NotFound/index.tsx";
 import Articles from "./pages/Stock/Articles";
@@ -47,7 +49,6 @@ function App() {
       <NextUIProvider>
         <BrowserRouter>
           <ScrollToTop />
-
           <Toaster position="top-center" />
           <Header />
           <Routes>
@@ -56,7 +57,10 @@ function App() {
               <Route path="favoriteArticles" element={<FavoriteArticles />} />
               <Route path="favoriteStocks" element={<FavoriteStocks />} />
             </Route>
-            <Route path="login" element={<Login />} />
+            <Route path="login" element={<Login />}>
+              <Route path="signIn" element={<SignIn />} />
+              <Route path="signUp" element={<SignUp />} />
+            </Route>
             <Route path="industry" element={<Industry />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="stock/:id" element={<Stock />}>

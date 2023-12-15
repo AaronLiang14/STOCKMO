@@ -16,7 +16,10 @@ export default function Header() {
   useEffect(() => {
     if (location.pathname === "/") {
       setBackgroundColor("");
-    } else if (location.pathname === "/login") {
+    } else if (
+      location.pathname === "/login/signIn" ||
+      location.pathname === "/login/signUp"
+    ) {
       setBackgroundColor("bg-white/60 backdrop-blur-sm");
     } else {
       setBackgroundColor("bg-white border-b-2");

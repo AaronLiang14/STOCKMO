@@ -6,18 +6,18 @@ export default function ChangeAvatar() {
 
   return (
     <>
-      <label htmlFor="file_input">
-        <div className="flex  items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-4">
+        <label htmlFor="file_input">
           <Avatar
             src={avatar || undefined}
             className="h-24 w-24 cursor-pointer text-large"
             alt="previewIMG"
           />
-        </div>
-      </label>
+        </label>
+      </div>
 
       <input
-        className="my-4 block hidden cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none "
+        className="my-4 hidden cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none "
         id="file_input"
         name="file_input"
         type="file"

@@ -60,7 +60,7 @@ export default function AvatarComponent() {
             <DropdownItem
               key="profile"
               className="gap-2"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/login/signIn")}
             >
               <p className="font-semibold">登入 OR 註冊</p>
             </DropdownItem>

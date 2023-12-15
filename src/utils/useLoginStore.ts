@@ -32,6 +32,7 @@ interface LoginProps {
     password: string,
     name: string,
     avatarFile: File,
+    success: () => void,
   ) => void;
   handleNativeLogin: (email: string, password: string) => void;
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -58,27 +59,43 @@ const useLoginStore = create<LoginProps>((set) => ({
     password: string,
     name: string,
     avatarFile: File,
+    success: () => void,
   ) => {
-    const imageRef = ref(storage, `images/${avatarFile.name}`);
-    const imgUploadBytes = await uploadBytes(imageRef, avatarFile);
-    const imgUrl = await getDownloadURL(imgUploadBytes.ref);
+    try {
+      const imageRef = ref(storage, `images/${avatarFile.name}`);
+      const imgUploadBytes = await uploadBytes(imageRef, avatarFile);
+      const imgUrl = await getDownloadURL(imgUploadBytes.ref);
 
-    await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(auth.currentUser!, { displayName: name });
-    await updateProfile(auth.currentUser!, { photoURL: imgUrl });
-    await setDoc(doc(db, "Member", auth.currentUser!.uid), {
-      avatar: imgUrl,
-      email: email,
-      name: name,
-      favorite_articles: [],
-      favorite_stocks: [],
-      realized: [],
-      unrealized: [],
-      cash: 100000,
-      securities_assets: 0,
-      dashboard_layout: [],
-    });
-    toast.success("註冊成功");
+      await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(auth.currentUser!, { displayName: name });
+      await updateProfile(auth.currentUser!, { photoURL: imgUrl });
+      await setDoc(doc(db, "Member", auth.currentUser!.uid), {
+        avatar: imgUrl,
+        email: email,
+        name: name,
+        favorite_articles: [],
+        favorite_stocks: [],
+        realized: [],
+        unrealized: [],
+        cash: 100000,
+        securities_assets: 0,
+        dashboard_layout: [],
+      });
+      toast.success("註冊成功");
+      if (success) success();
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e.message);
+        if (e.message.includes("auth/email-already-in-use")) {
+          return toast.error("此信箱已被註冊過");
+        }
+        toast.error("錯誤：" + e.message);
+        throw new Error(e.message);
+      } else {
+        console.error("An unknown error occurred");
+        throw new Error("An unknown error occurred");
+      }
+    }
   },
 
   handleNativeLogin: async (email: string, password: string) => {
