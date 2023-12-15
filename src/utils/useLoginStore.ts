@@ -34,7 +34,11 @@ interface LoginProps {
     avatarFile: File,
     success: () => void,
   ) => void;
-  handleNativeLogin: (email: string, password: string) => void;
+  handleNativeLogin: (
+    email: string,
+    password: string,
+    success: () => void,
+  ) => void;
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -98,11 +102,17 @@ const useLoginStore = create<LoginProps>((set) => ({
     }
   },
 
-  handleNativeLogin: async (email: string, password: string) => {
+  handleNativeLogin: async (
+    email: string,
+    password: string,
+    success: () => void,
+  ) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      toast.success("登入成功");
+      if (success) success();
     } catch (e) {
-      toast.error("無此帳號，登入失敗");
+      toast.error("帳號或密碼錯誤，登入失敗");
       return;
     }
   },
