@@ -3,13 +3,12 @@ import { Avatar } from "@nextui-org/react";
 
 export default function ChangeAvatar() {
   const { avatar, handleAvatarChange } = useLoginStore();
-
   return (
     <>
       <div className="flex items-center justify-center gap-4">
         <label htmlFor="file_input">
           <Avatar
-            src={avatar || undefined}
+            src={avatar}
             className="h-24 w-24 cursor-pointer text-large"
             alt="previewIMG"
           />

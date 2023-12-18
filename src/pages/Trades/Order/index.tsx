@@ -1,4 +1,5 @@
 import {
+  Card,
   Input,
   Radio,
   RadioGroup,
@@ -7,10 +8,13 @@ import {
 } from "@nextui-org/react";
 
 import TradesCheck from "@/components/Modals/TradesCheck.tsx";
+import { auth } from "@/config/firebase";
+import stockCode from "@/data/StockCode.json";
 import { useOrderStore } from "@/utils/useTradesStore.ts";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import WarningIcon from "~icons/ph/warning-fill";
 
-import stockCode from "@/data/StockCode.json";
 const orderType = ["ROD", "IOC", "FOK"];
 const tradeType = ["現股", "融資", "融券"];
 const unitType = ["整股", "零股"];
@@ -18,6 +22,7 @@ const buyOrSell = ["買", "賣"];
 
 export default function Order() {
   const [filterOptions, setFilterOptions] = useState<string[]>([]);
+  const location = useLocation();
 
   const {
     getHistoryData,
@@ -74,11 +79,21 @@ export default function Order() {
 
   useEffect(() => {
     clear();
+    if (location.state && location.state.stockID) {
+      setStockID(location.state.stockID);
+      setBuySell("賣");
+    }
   }, []);
 
   return (
     <>
-      <div className="m-auto flex flex-col items-center justify-center gap-3 ">
+      {!auth.currentUser && (
+        <div className=" mb-4 flex items-center justify-center gap-3">
+          <WarningIcon className=" text-red-600 " />
+          <p className=" text-red-600">登入後即可進行模擬交易</p>
+        </div>
+      )}
+      <Card className="m-auto flex w-96 flex-col items-center justify-center gap-3 py-4 ">
         <div className="flex w-80 flex-row items-center gap-4">
           <div className="relative">
             <Input
@@ -115,7 +130,7 @@ export default function Order() {
           <RadioGroup
             label=""
             orientation="horizontal"
-            defaultValue="買"
+            defaultValue={location.state ? "賣" : "買"}
             onChange={(e) => setBuySell(e.target.value)}
           >
             {buyOrSell.map((type, index) => (
@@ -153,11 +168,15 @@ export default function Order() {
         </Select>
 
         <Input
-          type="price"
+          type="number"
+          step="0.01"
+          inputMode="decimal"
           label="請輸入價格"
           className=" max-w-xs"
           value={isNaN(price) ? "" : price.toString()}
-          onChange={(e) => setPrice(parseInt(e.target.value))}
+          onChange={(e) => {
+            setPrice(parseFloat(e.target.value));
+          }}
         />
 
         <RadioGroup orientation="horizontal">
@@ -191,9 +210,9 @@ export default function Order() {
           onChange={(e) => setVolume(parseInt(e.target.value))}
           endContent={`${unit === "整股" ? "張" : "股"}`}
         />
-      </div>
+      </Card>
 
-      <div className="mt-12 flex justify-center">
+      <div className="mt-4 flex justify-center">
         <TradesCheck />
       </div>
     </>

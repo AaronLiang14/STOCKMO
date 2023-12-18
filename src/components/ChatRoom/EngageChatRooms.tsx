@@ -4,6 +4,7 @@ import useChatRoomStore from "@/utils/useChatRoomStore";
 import { Avatar, Spinner } from "@nextui-org/react";
 import { Timestamp, collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface ChatRoomMessage {
   member_id: string;
@@ -60,7 +61,7 @@ export default function EngageChatRooms() {
                 chatRoom[chatRoom.length - 1].message_time;
               return (
                 <div
-                  className="m-1 flex cursor-pointer border p-2"
+                  className="relative m-1 flex cursor-pointer border p-2"
                   key={stockID}
                   onClick={() => {
                     changeRoomID(stockID);
@@ -75,6 +76,7 @@ export default function EngageChatRooms() {
                       base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]",
                       icon: "text-black/80",
                     }}
+                    className="min-w-unit-10"
                   />
                   <div className="ml-4 text-xs ">
                     <p className="text-base font-medium">
@@ -83,8 +85,8 @@ export default function EngageChatRooms() {
                     <p>{latestMessage}</p>
                   </div>
 
-                  <div className="ml-auto">
-                    <p className="text-xs">
+                  <div className="absolute right-5 top-3 ml-auto">
+                    <p className="min-w-unit-20 text-end text-xs">
                       {latestMessageTime.toDate().toLocaleTimeString()}
                     </p>
                   </div>
@@ -93,7 +95,11 @@ export default function EngageChatRooms() {
             })
           ) : (
             <div className="flex h-full items-center justify-center text-gray-400">
-              請先至個股頁面傳遞訊息來加入聊天室
+              <p> 請先至個股頁面</p>
+              <Link to="/stock/2330/latest" className="text-blue-500">
+                個股頁面
+              </Link>
+              <p>傳遞訊息來加入聊天室</p>
             </div>
           )}
         </div>

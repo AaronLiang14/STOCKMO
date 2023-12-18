@@ -119,6 +119,7 @@ export default function Unrealized() {
       ),
     };
   });
+  console.log(unrealizedStocks);
 
   useEffect(() => {
     getUnrealizedStocks();
@@ -135,7 +136,6 @@ export default function Unrealized() {
           aria-label="Rows actions table example with dynamic content"
           selectionMode="multiple"
           selectionBehavior="replace"
-          onRowAction={(key) => alert(`Opening item ${key}...`)}
         >
           <TableHeader columns={columns}>
             {(column) => (

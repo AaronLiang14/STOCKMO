@@ -1,6 +1,6 @@
 import timeSelect from "@/components/Graph/TimeSelect";
 import api from "@/utils/api";
-import { Card } from "@nextui-org/react";
+import { Card, Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -35,8 +35,9 @@ export default function News() {
   return (
     <div>
       {loading ? (
-        <div className="mt-48 flex items-center justify-center">
-          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900"></div>
+        <div className="mt-48 flex flex-col items-center justify-center gap-4">
+          <Spinner />
+          <p className="text-lg">讀取中{"        "}...</p>
         </div>
       ) : (
         <div className="mx-auto mt-12 grid grid-cols-1 gap-4">

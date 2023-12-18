@@ -11,10 +11,10 @@ const OtherMessage = (
   const timeString = time.split(":");
   return (
     <div className="flex flex-row" key={index} ref={ref}>
-      <Avatar src={avatar} />
+      <Avatar src={avatar} className=" min-w-unit-10" />
       <div className="mb-2 ml-2">
         <p className="mb-1 ml-1 text-xs">{name}</p>
-        <p className="inline-block rounded-lg bg-gray-200 px-4 py-2 text-gray-700">
+        <p className="rounded-lg bg-gray-200 px-4 py-2  text-gray-700">
           {message}
         </p>
       </div>
@@ -48,11 +48,11 @@ const MyMessage = (
 
       <div className="mb-2 mr-2 text-right" key={index}>
         <p className="mb-1 mr-1 text-xs">{name}</p>
-        <p className="inline-block rounded-lg bg-cyan-800 px-4 py-2 text-white">
+        <p className=" rounded-lg bg-cyan-800 px-4 py-2 text-start text-white">
           {message}
         </p>
       </div>
-      <Avatar src={avatar} />
+      <Avatar src={avatar} className=" min-w-unit-10" />
     </div>
   );
 };

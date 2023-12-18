@@ -24,8 +24,9 @@ interface memberStocksProps {
 export default function CheckModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate();
-  const { stockID, trade, order, buySell, unit, price, volume } =
+  const { stockID, trade, order, buySell, unit, price, volume, flatPrice } =
     useOrderStore();
+
   const ableToClick = () => {
     if (stockID && buySell && trade && order && price && volume) {
       return false;
@@ -117,6 +118,14 @@ export default function CheckModal() {
         const newUnrealized = unrealized.filter(
           (stock: memberStocksProps) => stock.stock_id !== stockID,
         );
+        if (newHold === 0) {
+          await updateDoc(memberRef, {
+            unrealized: [...newUnrealized],
+            cash: memberData?.cash + price * units - fee - tax,
+            securities_assets: price * units - memberData?.securities_assets,
+          });
+          return;
+        }
         await updateDoc(memberRef, {
           unrealized: [
             ...newUnrealized,
@@ -127,21 +136,7 @@ export default function CheckModal() {
             },
           ],
           cash: memberData?.cash + price * units - fee - tax,
-          securities_assets: price * units - memberData?.securities_assets,
-        });
-      }
-      if (!isExist) {
-        await updateDoc(memberRef, {
-          unrealized: [
-            ...unrealized,
-            {
-              stock_id: stockID,
-              average_price: newAveragePrice,
-              volume: newHold,
-            },
-          ],
-          cash: memberData?.cash + price * units - fee - tax,
-          securities_assets: price * units - memberData?.securities_assets,
+          securities_assets: memberData?.securities_assets - price * units,
         });
       }
     }
@@ -182,7 +177,41 @@ export default function CheckModal() {
   };
 
   const handleTrade = async () => {
-    if (!auth.currentUser) return;
+    if (!auth.currentUser) {
+      toast.error("登入後即可進行模擬交易");
+      return;
+    }
+    const memberRef = doc(db, "Member", auth.currentUser?.uid);
+    const memberDoc = await getDoc(memberRef);
+    const memberData = memberDoc.data();
+
+    if (buySell === "賣") {
+      const stockHolding = memberData?.unrealized;
+      let volume = 0;
+      stockHolding.find((stock: memberStocksProps) => {
+        if (stock.stock_id === stockID) {
+          volume = stock.volume;
+        }
+      });
+      if (volume < units) {
+        toast.error("持有股數不足，請重新輸入");
+        return;
+      }
+    }
+
+    if (
+      price > parseInt((flatPrice * 1.1).toFixed(2)) ||
+      price < parseInt((flatPrice * 0.9).toFixed(2))
+    ) {
+      toast.error("盤中委託價超過漲跌停價，請重新輸入");
+      return;
+    }
+
+    const cash = memberData?.cash;
+    if (price * units > cash) {
+      toast.error("總預估金額大於現金餘額，請重新選擇交易選項");
+      return;
+    }
     const docRef = await addDoc(collection(db, "Trades"), {
       buy_or_sell: buySell,
       stock_id: stockID,
@@ -209,6 +238,23 @@ export default function CheckModal() {
     updateMemberRealizedProfitLoss();
     toast.success("下單成功");
     navigate("/trades/entrustment");
+  };
+
+  const determineIfPriceReasonable = () => {
+    const judgePrice = parseInt((price * 100).toFixed());
+    console.log(judgePrice);
+    if (
+      (price >= 1000 && price % 5 === 0) ||
+      (price < 1000 && price >= 500 && judgePrice % 100 === 0) ||
+      (price < 500 && price >= 100 && judgePrice % 50 === 0) ||
+      (price < 100 && price >= 50 && judgePrice % 10 === 0) ||
+      (price < 50 && price >= 10 && judgePrice % 5 === 0) ||
+      (price < 10 && price >= 0 && judgePrice % 1 === 0)
+    ) {
+      handleTrade();
+    } else {
+      toast.error("此價格不在升降單位範圍，請重新輸入");
+    }
   };
 
   return (
@@ -243,7 +289,9 @@ export default function CheckModal() {
                 <Button
                   color="primary"
                   onPress={onClose}
-                  onClick={() => handleTrade()}
+                  onClick={() => {
+                    determineIfPriceReasonable();
+                  }}
                 >
                   下單
                 </Button>

@@ -76,7 +76,7 @@ export default function IndependentChatRoom({ id }: { id: string }) {
 
   return (
     <div className=" rounded-b-lg border-1 bg-white shadow-lg">
-      <div className="h-80 overflow-y-auto p-4">
+      <div className="h-80 overflow-y-auto p-4 ">
         {messages.map((message, index) => {
           if (message.member_id === auth.currentUser!.uid) {
             return MyMessage(

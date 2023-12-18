@@ -29,7 +29,6 @@ export default function Login() {
     mode: "onBlur",
   });
   const navigate = useNavigate();
-
   const onSubmit: SubmitHandler<ValidationSchema> = (data) => {
     handleNativeSignUp(
       data.email,

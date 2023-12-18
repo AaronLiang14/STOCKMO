@@ -20,6 +20,7 @@ export default function AddFavoriteStocks() {
   const memberRef = userUid ? doc(db, "Member", userUid) : null;
   const [favoriteStocks, setFavoriteStocks] = useState<string[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
+
   const handleFavorite = async () => {
     if (memberRef === null) return;
     const docSnap = await getDoc(memberRef);
@@ -53,10 +54,10 @@ export default function AddFavoriteStocks() {
     onSnapshot(memberRef, () => {
       getFavoriteStocks();
     });
-  }, [id]);
+  }, [id, auth.currentUser]);
 
   useEffect(() => {
-    if (favoriteStocks.includes(id!) && auth.currentUser) {
+    if (favoriteStocks.includes(id!)) {
       setIsFavorite(true);
     } else {
       setIsFavorite(false);

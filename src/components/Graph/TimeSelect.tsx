@@ -15,16 +15,14 @@ const endDate = `${new Date().getFullYear()}-${
 }-${new Date().getDate()}`;
 
 const halfYear = `${new Date().getFullYear()}-${
-  new Date().getMonth() - 6
+  new Date().getMonth() - 5
 }-${new Date().getDate()}`;
 
 const threeMonths = `${new Date().getFullYear()}-${
-  new Date().getMonth() - 3
+  new Date().getMonth() - 2
 }-${new Date().getDate()}`;
 
-const oneMonth = `${new Date().getFullYear()}-${
-  new Date().getMonth() - 1
-}-${new Date().getDate()}`;
+const oneMonth = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
 
 const fiveDays = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
   new Date().getDate() - 7

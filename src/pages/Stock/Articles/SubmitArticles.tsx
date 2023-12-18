@@ -75,7 +75,7 @@ export default function SubmitArticles() {
       </div>
       <div className="mt-12 flex justify-end">
         <Button
-          onPress={onOpen}
+          onPress={() => auth.currentUser && onOpen()}
           color="primary"
           onClick={() => !auth.currentUser && toast.error("請先登入")}
         >
@@ -94,25 +94,27 @@ export default function SubmitArticles() {
                       label="文章標題"
                       variant="bordered"
                       placeholder="文章標題"
-                      disableAnimation
-                      disableAutosize
-                      className="mb-4 h-10 w-full"
+                      className="mb-4 w-full"
                       onChange={(e) => setTitle(e.target.value)}
                       value={title}
+                      required
+                      minRows={1}
                     />
                     <Textarea
                       variant="bordered"
-                      className=" w-full  "
+                      className="w-full"
                       placeholder="寫下你的想法吧..."
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
                       required
+                      minRows={6}
                     ></Textarea>
 
                     <Input
                       className="mt-12 w-full max-w-xs cursor-pointer"
                       id="file_input"
                       type="file"
+                      accept="image/*"
                       ref={uploadImgRef}
                     />
                   </form>

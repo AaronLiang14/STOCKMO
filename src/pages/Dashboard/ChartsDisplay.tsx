@@ -28,7 +28,8 @@ interface layoutProps {
 }
 
 export default function ChartsDisplay() {
-  const { getLatestLayout, layout } = useDashboardStore();
+  const { getLatestLayout, layout, unLoginLayout, deleteUnLoginLayout } =
+    useDashboardStore();
 
   const handleLayoutChange = async (layout: layoutProps[]) => {
     if (!auth.currentUser) return;
@@ -49,7 +50,10 @@ export default function ChartsDisplay() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!auth.currentUser) return;
+    if (!auth.currentUser) {
+      deleteUnLoginLayout(id);
+      return;
+    }
     const memberRef = doc(db, "Member", auth.currentUser!.uid);
     const layout = await getDoc(memberRef);
     const newLayout = layout
@@ -83,7 +87,36 @@ export default function ChartsDisplay() {
     <>
       <div className="m-auto min-h-[calc(100vh_-_280px)] w-11/12 ">
         {layout.length === 0 ? (
-          <NoChartsChosen />
+          unLoginLayout.length === 0 ? (
+            <NoChartsChosen />
+          ) : (
+            <ResponsiveGridLayout
+              layouts={{ lg: unLoginLayout }}
+              breakpoints={{ lg: 1200, md: 996, sm: 768 }}
+              cols={{ lg: 12, md: 10, sm: 6 }}
+              rowHeight={100}
+              width={1200}
+              isDroppable={true}
+              resizeHandles={["se"]}
+              className="layout rounded-xl border-2 border-gray-300 "
+              onLayoutChange={(layout) => handleLayoutChange(layout)}
+            >
+              {unLoginLayout.map((item) => {
+                const id = item.i;
+                const chartName = id.split("/")[0];
+                const stockID = id.split("/")[1];
+                return (
+                  <div key={id} className="relative rounded-xl bg-white pb-1">
+                    {charts[chartName](stockID)}
+                    <CrossIcon
+                      className="absolute right-5 top-3 z-50 cursor-pointer"
+                      onClick={() => handleDelete(id)}
+                    />
+                  </div>
+                );
+              })}
+            </ResponsiveGridLayout>
+          )
         ) : (
           <ResponsiveGridLayout
             layouts={{ lg: layout }}

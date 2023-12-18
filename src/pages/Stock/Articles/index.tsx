@@ -98,7 +98,7 @@ export default function Articles() {
 
   useEffect(() => {
     getFavoriteArticles();
-  }, [favoriteArticles]);
+  }, [favoriteArticles, auth.currentUser]);
 
   return (
     <div>

@@ -6,7 +6,7 @@ import useDashboardStore from "@/utils/useDashboardStore";
 import { Input } from "@nextui-org/react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import WarningIcon from "~icons/ph/warning-fill";
 
 const charts: { [key: string]: string } = {
   gdp: "GDP",
@@ -27,7 +27,8 @@ export default function ChartsOptions() {
   const [selectedCharts, setSelectedCharts] = useState<string>("");
   const [isInputDisabled, setInputDisabled] = useState<boolean>(true);
   const [isButtonDisabled, setButtonDisabled] = useState<boolean>(true);
-  const { getLatestLayout } = useDashboardStore();
+  const { getLatestLayout, setUnLogInLayout, unLoginLayout } =
+    useDashboardStore();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStockID(e.target.value);
@@ -50,6 +51,7 @@ export default function ChartsOptions() {
       );
     }
   };
+  console.log(isInputDisabled);
 
   const buttonAvailable = () => {
     if (
@@ -86,7 +88,17 @@ export default function ChartsOptions() {
 
   const addChart = async (chart: string, stockID: string) => {
     if (!auth.currentUser) {
-      toast.error("請先登入");
+      const newUnLoginLayout = [
+        ...unLoginLayout,
+        {
+          i: chart + "/" + stockID,
+          x: 0,
+          y: -1,
+          w: 6,
+          h: 4,
+        },
+      ];
+      setUnLogInLayout(newUnLoginLayout);
       return;
     }
     const memberRef = doc(db, "Member", auth.currentUser?.uid);
@@ -114,12 +126,23 @@ export default function ChartsOptions() {
   }, [selectedCharts]);
 
   useEffect(() => {
+    setInputDisabled(true);
+  }, []);
+
+  useEffect(() => {
     buttonAvailable();
   }, [selectedCharts, stockID]);
 
   return (
     <>
       <div className=" m-auto mb-4 flex h-24 w-11/12 items-center justify-end gap-4 rounded-lg">
+        {unLoginLayout.length > 0 && !auth.currentUser && (
+          <div className="mr-auto flex items-center gap-3">
+            <WarningIcon className=" text-red-600 " />
+            <p className=" text-red-600">登入後即可儲存圖表位置及大小</p>
+          </div>
+        )}
+
         <Select
           key={123}
           label={"請選擇圖表"}
@@ -135,7 +158,7 @@ export default function ChartsOptions() {
           ))}
         </Select>
 
-        <div className="relative">
+        <div className={`relative  ${isInputDisabled && "hidden"}`}>
           <Input
             type="text"
             id="simple-search"
@@ -144,7 +167,6 @@ export default function ChartsOptions() {
             value={stockID}
             onChange={handleInputChange}
             onClear={() => setStockID("")}
-            isDisabled={isInputDisabled}
           />
           <div className="absolute z-10 mt-2 w-full rounded-lg bg-gray-200">
             {stockID && filterOptions.length > 0 && (

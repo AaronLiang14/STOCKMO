@@ -56,6 +56,7 @@ const useOrderStore = create<OrderProps>((set) => ({
       set({ marketPrice: res.data[0].close });
     }
   },
+
   setStockID: (stockID: string) => set({ stockID: stockID }),
   setTrade: (trade: string) => set({ trade: trade }),
   setOrder: (order: string) => set({ order: order }),

@@ -1,10 +1,8 @@
 import logo from "@/assets/logo.png";
 import { Link } from "react-router-dom";
 
-import { auth } from "@/config/firebase";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { toast } from "sonner";
 import Avatar from "./Avatar";
 import SearchBox from "./SearchBox";
 
@@ -45,21 +43,11 @@ export default function Header() {
                 <p className="text-black">STOCK.MO</p>
               </Link>
               {Object.keys(headerOption).map((item) => {
-                const Links =
-                  item === "trades"
-                    ? auth.currentUser
-                      ? "trades/order"
-                      : "login"
-                    : item;
+                const Links = item === "trades" ? "trades/order" : item;
                 return (
                   <div className="ml-10" key={item}>
                     <Link
                       to={`/${Links}`}
-                      onClick={() => {
-                        if (item === "trades" && !auth.currentUser) {
-                          toast.error("請先登入");
-                        }
-                      }}
                       className={`pb-4 text-base font-medium text-black ${
                         location.pathname.split("/")[1] === item &&
                         "border-b-4 border-gray-600"

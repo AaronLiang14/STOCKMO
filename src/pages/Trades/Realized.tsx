@@ -96,7 +96,6 @@ export default function Realized() {
           aria-label="Rows actions table example with dynamic content"
           selectionMode="multiple"
           selectionBehavior="replace"
-          onRowAction={(key) => alert(`Opening item ${key}...`)}
         >
           <TableHeader columns={columns}>
             {(column) => (

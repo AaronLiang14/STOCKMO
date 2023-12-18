@@ -158,7 +158,7 @@ export default function Stock() {
           <div className="flex justify-start gap-8 border-b-1 text-base">
             {asideOptions.map((item) => (
               <div
-                className={`flex cursor-pointer gap-3 pb-2 ${
+                className={`flex cursor-pointer items-center gap-3 pb-2 ${
                   location.pathname.split("/")[3] === item.link &&
                   "border-b-3 border-blue-800"
                 } hover:border-b-3 hover:border-blue-800`}
