@@ -119,7 +119,6 @@ export default function Unrealized() {
       ),
     };
   });
-  console.log(unrealizedStocks);
 
   useEffect(() => {
     getUnrealizedStocks();

@@ -15,6 +15,7 @@ import SignUp from "./pages/Member/Login/SignUp";
 import Member from "./pages/Member/index.tsx";
 import NotFound from "./pages/NotFound/index.tsx";
 import Articles from "./pages/Stock/Articles";
+import IndependentArticles from "./pages/Stock/Articles/IndependentArticles.tsx";
 import BasicInformation from "./pages/Stock/BasicInformation";
 import Latest from "./pages/Stock/Latest.tsx";
 import News from "./pages/Stock/News";
@@ -68,6 +69,10 @@ function App() {
               <Route path="basic" element={<BasicInformation />} />
               <Route path="news" element={<News />} />
               <Route path="articles" element={<Articles />} />
+              <Route
+                path="articles/:articleID"
+                element={<IndependentArticles />}
+              />
             </Route>
             <Route path="trades" element={<Trades />}>
               <Route path="order" element={<Order />} />

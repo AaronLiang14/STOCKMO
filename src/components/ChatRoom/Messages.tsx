@@ -20,8 +20,7 @@ const OtherMessage = (
       </div>
       <div className="mb-2 mr-1 flex items-end">
         <p className="mb-1 ml-1 text-xs">
-          {timeString[0]}:{timeString[1]}
-          {timeString[2].split(" ")[1]}
+          {timeString[0]}:{timeString[1]} {timeString[2].split(" ")[1]}
         </p>
       </div>
     </div>
@@ -41,8 +40,7 @@ const MyMessage = (
     <div className="flex flex-row justify-end" key={index} ref={ref}>
       <div className="mb-2 mr-1 flex items-end">
         <p className="mb-1 mr-1 text-xs">
-          {timeString[0]}:{timeString[1]}
-          {timeString[2].split(" ")[1]}
+          {timeString[0]}:{timeString[1]} {timeString[2].split(" ")[1]}
         </p>
       </div>
 

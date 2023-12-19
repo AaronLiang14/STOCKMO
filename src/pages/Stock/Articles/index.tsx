@@ -1,8 +1,8 @@
-import FullArticle from "@/components/Modals/FullArticles";
 import { auth, db } from "@/config/firebase";
 import { useFavoritesStore } from "@/utils/useLoginStore";
 import { Button, Card } from "@nextui-org/react";
 import {
+  Timestamp,
   arrayRemove,
   arrayUnion,
   collection,
@@ -15,19 +15,16 @@ import {
   where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import SubmitArticles from "./SubmitArticles";
+import Tiptap from "./Tiptap";
 
 interface Article {
   author_id: string;
   author_name: string;
   content: string;
-  created_time: Date;
+  created_time: Timestamp;
   industry: string;
-  number_of_favorite: number;
-  photo: string;
-  reply: string[];
   stock_code: string;
   title: string;
   id: string;
@@ -47,7 +44,7 @@ const AuthorAvatar = ({ id }: { id: string }) => {
   getAuthorAvatar();
 
   return (
-    <div className="flex flex-shrink-0 flex-row items-end">
+    <div className="flex flex-shrink-0 flex-row items-center">
       <img className="h-10 w-10 rounded-full" src={avatar} alt="" />
       <p className="pl-2"> {name}</p>
     </div>
@@ -102,58 +99,74 @@ export default function Articles() {
 
   return (
     <div>
-      <SubmitArticles />
+      <div className="my-12">
+        <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
+          文章列表
+        </p>
+      </div>
       <div className="mx-auto my-12">
-        <div
-          className={`grid gap-12 lg:max-w-none ${
-            articles.length > 0 && "lg:grid-cols-3"
-          }`}
-        >
+        <div className={` grid gap-12 lg:max-w-none`}>
           {articles.length === 0 ? (
             <div className="flex items-center justify-center">
-              <p className="text-2xl">目前沒有文章，點擊右上方按鈕來發表！</p>
+              <p className="text-2xl">
+                目前沒有文章，滾動至下方來撰寫一篇文章吧
+              </p>
             </div>
           ) : (
             articles.map((post, index) => (
-              <Card
-                className="flex flex-col overflow-hidden rounded-lg "
-                key={index}
-              >
-                <div>
-                  <img
-                    className="h-48 w-full object-cover"
-                    src={post.photo}
-                    alt={post.title}
-                  />
-                </div>
-                <div className="flex flex-1 flex-col justify-between p-6">
-                  <div>
-                    <p className="text-xl font-semibold text-gray-900">
-                      {post.title}
-                    </p>
-                  </div>
-                  <div className="relative mt-6 flex items-center justify-between">
-                    <AuthorAvatar id={post.author_id} />
-                    <div className="flex gap-4">
-                      <Button
-                        type="button"
-                        color="primary"
-                        onClick={() => handleArticleFavorite(post.id)}
-                        size="sm"
-                      >
-                        {favoriteArticles.includes(post.id)
-                          ? "取消收藏"
-                          : "收藏文章"}
-                      </Button>
-                      <FullArticle article={post} />
+              <Link to={`./${post.id}`}>
+                <Card
+                  className="flex h-40 flex-col overflow-hidden rounded-lg"
+                  key={index}
+                >
+                  <div className="relative flex flex-1 flex-col justify-between p-6">
+                    <div className="flex-1">
+                      <p className="mb-12 text-xl  font-semibold text-gray-900">
+                        {post.title}
+                      </p>
+                      <AuthorAvatar id={post.author_id} />
+                    </div>
+                    <Button
+                      type="button"
+                      color="primary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleArticleFavorite(post.id);
+                      }}
+                      size="sm"
+                      className="absolute right-10 top-5"
+                    >
+                      {favoriteArticles.includes(post.id)
+                        ? "取消收藏"
+                        : "收藏文章"}
+                    </Button>
+                    <div className="absolute bottom-5 right-10 text-sm text-gray-500">
+                      {post.created_time.toDate().toLocaleDateString()}{" "}
+                      {post.created_time.toDate().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              </Link>
             ))
           )}
         </div>
       </div>
+      <div className="my-12">
+        <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
+          撰寫文章
+        </p>
+      </div>
+      {!auth.currentUser ? (
+        <div className="flex items-center justify-center">
+          <p className="text-2xl">登入後即可撰寫文章</p>
+        </div>
+      ) : (
+        <Tiptap />
+      )}
     </div>
   );
 }

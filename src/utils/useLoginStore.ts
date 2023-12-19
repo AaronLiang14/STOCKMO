@@ -138,7 +138,6 @@ const useLoginStore = create<LoginProps>((set) => ({
         securities_assets: 0,
         dashboard_layout: [],
       });
-      console.log("notmember");
       toast.success("登入成功");
     } catch (e) {
       toast.error("登入失敗");

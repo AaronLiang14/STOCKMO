@@ -68,11 +68,6 @@ export default function SubmitArticles() {
 
   return (
     <div className="flex flex-row justify-between">
-      <div className="my-12">
-        <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
-          文章列表
-        </p>
-      </div>
       <div className="mt-12 flex justify-end">
         <Button
           onPress={() => auth.currentUser && onOpen()}

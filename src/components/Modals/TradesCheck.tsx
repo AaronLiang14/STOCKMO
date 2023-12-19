@@ -242,7 +242,6 @@ export default function CheckModal() {
 
   const determineIfPriceReasonable = () => {
     const judgePrice = parseInt((price * 100).toFixed());
-    console.log(judgePrice);
     if (
       (price >= 1000 && price % 5 === 0) ||
       (price < 1000 && price >= 500 && judgePrice % 100 === 0) ||

@@ -61,7 +61,7 @@ export default function EngageChatRooms() {
                 chatRoom[chatRoom.length - 1].message_time;
               return (
                 <div
-                  className="relative m-1 flex cursor-pointer border p-2"
+                  className="relative m-1 flex cursor-pointer rounded border p-2"
                   key={stockID}
                   onClick={() => {
                     changeRoomID(stockID);
@@ -73,7 +73,7 @@ export default function EngageChatRooms() {
                     showFallback
                     name={stockID}
                     classNames={{
-                      base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]",
+                      base: "bg-slate-300",
                       icon: "text-black/80",
                     }}
                     className="min-w-unit-10"
@@ -87,7 +87,25 @@ export default function EngageChatRooms() {
 
                   <div className="absolute right-5 top-3 ml-auto">
                     <p className="min-w-unit-20 text-end text-xs">
-                      {latestMessageTime.toDate().toLocaleTimeString()}
+                      {
+                        latestMessageTime
+                          .toDate()
+                          .toLocaleTimeString()
+                          .split(":")[0]
+                      }
+                      :
+                      {
+                        latestMessageTime
+                          .toDate()
+                          .toLocaleTimeString()
+                          .split(":")[1]
+                      }{" "}
+                      {
+                        latestMessageTime
+                          .toDate()
+                          .toLocaleTimeString()
+                          .split(" ")[1]
+                      }
                     </p>
                   </div>
                 </div>

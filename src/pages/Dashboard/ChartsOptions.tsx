@@ -51,7 +51,6 @@ export default function ChartsOptions() {
       );
     }
   };
-  console.log(isInputDisabled);
 
   const buttonAvailable = () => {
     if (

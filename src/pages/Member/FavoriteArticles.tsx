@@ -1,17 +1,17 @@
 import { auth, db } from "@/config/firebase";
-import { Button, Card, CardBody, Image } from "@nextui-org/react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { Button, Card } from "@nextui-org/react";
+import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
 interface Article {
-  id: string;
-  title: string;
-  content: string;
+  author_id: string;
   author_name: string;
-  datetime: string;
-  date: string;
-  photo: string;
+  content: string;
+  created_time: Timestamp;
+  industry: string;
+  stock_code: string;
+  title: string;
+  id: string;
 }
 
 export default function FavoriteArticles() {
@@ -25,6 +25,27 @@ export default function FavoriteArticles() {
     setFavoriteArticles(docSnap.data()!.favorite_articles || []);
   };
 
+  const AuthorAvatar = ({ id }: { id: string }) => {
+    const [avatar, setAvatar] = useState<string>("");
+    const [name, setName] = useState<string>("");
+    const getAuthorAvatar = async () => {
+      const memberRef = doc(db, "Member", id);
+      const docSnap = await getDoc(memberRef);
+      if (docSnap.exists()) {
+        setAvatar(docSnap.data().avatar);
+        setName(docSnap.data().name);
+      }
+    };
+    getAuthorAvatar();
+
+    return (
+      <div className="flex flex-shrink-0 flex-row items-center">
+        <img className="h-10 w-10 rounded-full" src={avatar} alt="" />
+        <p className="pl-2"> {name}</p>
+      </div>
+    );
+  };
+
   const getArticlesDetail = async () => {
     setArticles([]);
     favoriteArticles.map(async (item) => {
@@ -34,10 +55,8 @@ export default function FavoriteArticles() {
     });
   };
 
-  const handleRemoveFavorite = async () => {
-    const newFavoriteArticles = favoriteArticles.filter(
-      (item) => item !== articles[0].id,
-    );
+  const handleRemoveFavorite = async (id: string) => {
+    const newFavoriteArticles = favoriteArticles.filter((item) => item !== id);
     const memberRef = doc(db, "Member", auth.currentUser!.uid);
     await updateDoc(memberRef, {
       favorite_articles: newFavoriteArticles,
@@ -47,7 +66,7 @@ export default function FavoriteArticles() {
 
   useEffect(() => {
     getFavoriteArticles();
-  }, []);
+  }, [auth.currentUser]);
 
   useEffect(() => {
     getArticlesDetail();
@@ -57,36 +76,46 @@ export default function FavoriteArticles() {
     <>
       <div className="mx-auto mt-24 w-full pr-8">
         {articles.length > 0 ? (
-          <div className="space-y-10 ">
-            {articles.map((article) => (
-              <Card key={article.id} className="h-full">
-                <CardBody className="flex flex-row py-4">
-                  <Image
-                    alt="articles photo"
-                    className=" object-cover"
-                    src={article.photo}
-                    height={200}
-                    width={200}
-                  />
+          <div className=" space-y-10">
+            {articles.map((post, index) => (
+              <Link
+                to={`/../stock/${post.stock_code}/articles/${post.id}`}
+                key={index}
+              >
+                <Card
+                  className="mb-4 flex h-40 flex-col overflow-hidden rounded-lg"
+                  key={index}
+                >
+                  <div className="relative flex flex-1 flex-col justify-between p-6">
+                    <div className="flex-1">
+                      <p className="mb-12 text-xl  font-semibold text-gray-900">
+                        {post.title}
+                      </p>
 
-                  <div className="ml-6 w-full">
-                    <p className=" text-2xl font-medium text-gray-900 ">
-                      {article.title}
-                    </p>
-                    <p className="mt-3 space-y-6 text-sm text-gray-500">
-                      {article.content}
-                    </p>
+                      <AuthorAvatar id={post.author_id} />
+                    </div>
+                    <Button
+                      color="danger"
+                      className="absolute right-4 top-4"
+                      size="sm"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleRemoveFavorite(post.id);
+                      }}
+                    >
+                      移除收藏
+                    </Button>
+                    <div className="absolute bottom-5 right-10 text-sm text-gray-500">
+                      {post.created_time.toDate().toLocaleDateString()}{" "}
+                      {post.created_time.toDate().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
                   </div>
-                  <Button
-                    color="danger"
-                    className="absolute right-4 top-4"
-                    size="sm"
-                    onClick={() => handleRemoveFavorite()}
-                  >
-                    移除收藏
-                  </Button>
-                </CardBody>
-              </Card>
+                </Card>
+              </Link>
             ))}
           </div>
         ) : (

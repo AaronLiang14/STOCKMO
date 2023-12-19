@@ -52,15 +52,6 @@ export default function StockChart({ id }: { id: string }) {
     },
   ];
 
-  console.log(timeSelector.oneYear);
-
-  const groupingUnits = [
-    ["week", [1]],
-    ["month", [1, 2, 3, 4, 6]],
-  ];
-
-  console.log(new Date().getMonth());
-
   const options = {
     chart: {},
 
@@ -117,14 +108,6 @@ export default function StockChart({ id }: { id: string }) {
       },
     },
 
-    // plotOptions: {
-    //   series: {
-    //     dataGrouping: {
-    //       units: groupingUnits,
-    //     },
-    //   },
-    // },
-
     series: [
       {
         type: "candlestick",
@@ -166,8 +149,6 @@ export default function StockChart({ id }: { id: string }) {
       const formattedVolume = res.data.map((item: StockVolumeProps) => {
         return [new Date(item.date).getTime(), item.Trading_Volume];
       });
-      console.log(res.data);
-      console.log(formattedVolume);
       setVolume(formattedVolume);
       setStockPrice(formattedData);
     } catch (err) {
