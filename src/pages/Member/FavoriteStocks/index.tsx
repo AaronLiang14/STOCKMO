@@ -11,7 +11,7 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -81,6 +81,7 @@ export default function FavoriteStocks() {
     await updateDoc(memberRef, {
       favorite_stocks: favoriteStocks.filter((item) => item !== id),
     });
+    getMemberInfo();
   };
 
   const favoriteItems = favoriteStocks.map((item) => {
@@ -139,11 +140,8 @@ export default function FavoriteStocks() {
   });
 
   useEffect(() => {
-    if (auth.currentUser)
-      onSnapshot(doc(db, "Member", auth.currentUser.uid), () => {
-        getMemberInfo();
-      });
-  }, [auth.currentUser]);
+    getMemberInfo();
+  }, []);
 
   useEffect(() => {
     getStockPrice();

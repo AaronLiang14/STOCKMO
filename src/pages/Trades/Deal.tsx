@@ -10,13 +10,7 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import {
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const columns = [
@@ -86,9 +80,7 @@ export default function Deal() {
   });
 
   useEffect(() => {
-    onSnapshot(orderQuery, () => {
-      getOrders();
-    });
+    getOrders();
   }, [auth.currentUser]);
 
   return (

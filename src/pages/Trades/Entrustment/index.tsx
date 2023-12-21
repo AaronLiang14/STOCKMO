@@ -134,6 +134,7 @@ export default function Entrustment() {
     onSnapshot(orderQuery, () => {
       getOrders();
     });
+    console.log("entrustment");
   }, [auth.currentUser]);
 
   useEffect(() => {

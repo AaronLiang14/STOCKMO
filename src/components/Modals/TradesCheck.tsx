@@ -208,7 +208,7 @@ export default function CheckModal() {
     }
 
     const cash = memberData?.cash;
-    if (price * units > cash) {
+    if (price * units > cash && buySell === "買") {
       toast.error("總預估金額大於現金餘額，請重新選擇交易選項");
       return;
     }
