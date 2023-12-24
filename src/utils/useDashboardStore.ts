@@ -1,5 +1,4 @@
 import { doc, getDoc } from "firebase/firestore";
-import { ColorString } from "highcharts";
 import { create } from "zustand";
 import { auth, db } from "../config/firebase";
 
@@ -15,7 +14,7 @@ interface DashboardProps {
   unLoginLayout: layoutProps[];
   getLatestLayout: () => void;
   setUnLogInLayout: (layout: layoutProps[]) => void;
-  deleteUnLoginLayout: (id: ColorString) => void;
+  deleteUnLoginLayout: (id: string, layout: layoutProps[]) => void;
 }
 
 const initialState = {
@@ -42,10 +41,8 @@ const useDashboardStore = create<DashboardProps>((set) => ({
     set({ unLoginLayout: layout });
   },
 
-  deleteUnLoginLayout: (id: ColorString) => {
-    const newLayout = initialState.unLoginLayout.filter(
-      (item: layoutProps) => item.i !== id,
-    );
+  deleteUnLoginLayout: (id: string, layout: layoutProps[]) => {
+    const newLayout = layout.filter((item: layoutProps) => item.i !== id);
     set({ unLoginLayout: newLayout });
   },
 }));

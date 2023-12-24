@@ -1,5 +1,5 @@
 import { auth, db } from "@/config/firebase";
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { DocumentData } from "@firebase/firestore";
 import {
   Spinner,
@@ -47,7 +47,10 @@ export default function Account() {
     const memberRef = doc(db, "Member", auth.currentUser!.uid);
     const memberDoc = await getDoc(memberRef);
 
-    if (!memberDoc.exists()) return;
+    if (!memberDoc.exists()) {
+      console.error("無持有股份");
+      return;
+    }
     setUnrealizedStocks(memberDoc.data().unrealized);
   };
 

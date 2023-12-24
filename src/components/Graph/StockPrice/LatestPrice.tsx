@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Card, Spinner } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
@@ -59,7 +59,7 @@ export default function LatestStockPrice({ id }: { id: string }) {
   const judgeRiseOrFall = async () => {
     const res = await api.getTaiwanStockPriceTick(id.toString());
     if (res.data[0].change_rate > 0) setRise(true);
-    else setRise(true);
+    else setRise(false);
   };
 
   const options = {
@@ -87,8 +87,8 @@ export default function LatestStockPrice({ id }: { id: string }) {
             y2: 1,
           },
           stops: [
-            [0, chartsColor], // 開始顏色
-            [1, chartsTransparentColor], // 结束颜色，透明
+            [0, chartsColor],
+            [1, chartsTransparentColor],
           ],
         },
         marker: {
@@ -104,7 +104,7 @@ export default function LatestStockPrice({ id }: { id: string }) {
       },
     },
     credits: {
-      enabled: false, // 刪除 Highcharts 連結
+      enabled: false,
     },
     series: [
       {

@@ -1,5 +1,5 @@
 import { auth, db } from "@/config/firebase";
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { DocumentData } from "@firebase/firestore";
 import {
   Table,

@@ -55,7 +55,9 @@ export default function Realized() {
   const [realizedStocks, setRealizedStocks] = useState<DocumentData[]>([]);
 
   const getRealizedStocks = async () => {
-    if (!auth.currentUser) return;
+    if (!auth.currentUser) {
+      console.error("尚未登入，使用者不存在");
+    }
     const memberRef = doc(db, "Member", auth.currentUser!.uid);
     const memberDoc = await getDoc(memberRef);
     if (!memberDoc.exists()) return;

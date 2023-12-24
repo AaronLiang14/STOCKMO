@@ -1,6 +1,6 @@
 import { auth, db } from "@/config/firebase";
 import StockCode from "@/data/StockCode.json";
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import {
   Button,
   Table,
@@ -149,13 +149,16 @@ export default function FavoriteStocks() {
 
   return (
     <>
-      <div className="mt-24 w-full">
+      <div className="mx-auto mt-12 w-11/12 ">
         <div>
           {favoriteItems.length > 0 ? (
-            <Table aria-label="我的最愛的股票" className="pr-8">
+            <Table aria-label="股票收藏">
               <TableHeader columns={columns}>
                 {(column) => (
-                  <TableColumn key={column.key} className="text-base">
+                  <TableColumn
+                    key={column.key}
+                    className="text-sm sm:text-base"
+                  >
                     {column.label}
                   </TableColumn>
                 )}
@@ -164,7 +167,7 @@ export default function FavoriteStocks() {
                 {(item) => (
                   <TableRow key={item.id}>
                     {(columnKey) => (
-                      <TableCell className=" text-base">
+                      <TableCell className="text-xs sm:text-base">
                         {getKeyValue(item, columnKey)}
                       </TableCell>
                     )}

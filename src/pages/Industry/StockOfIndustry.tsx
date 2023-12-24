@@ -1,6 +1,6 @@
 import LatestStockPriceCharts from "@/components/Graph/StockPrice/LastOpeningDay";
 import StockCode from "@/data/StockCode.json";
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Card, CardBody } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -21,11 +21,14 @@ const LatestStockPrice = ({ stockID }: LatestStockPriceProps) => {
   const getLatestPrice = async () => {
     const res = await api.getTaiwanStockPriceTick(stockID.toString());
     setLatestPrice(res.data[0].close);
-    if (res.data[0].change_rate > 0) setRise(true);
-    else setRise(false);
+    if (res.data[0].change_rate > 0) {
+      setRise(true);
+      return;
+    }
+    setRise(false);
   };
 
-  const colorDependOnRise = rise
+  const colorDependOnRiseAndFall = rise
     ? " text-red-800 bg-red-100"
     : "text-green-800 bg-green-100";
 
@@ -35,7 +38,7 @@ const LatestStockPrice = ({ stockID }: LatestStockPriceProps) => {
 
   return (
     <span
-      className={`rounded-full ${colorDependOnRise} px-2 py-1 text-xs font-medium`}
+      className={`rounded-full ${colorDependOnRiseAndFall} px-2 py-1 text-xs font-medium`}
     >
       收盤價{latestPrice}
     </span>
@@ -59,7 +62,11 @@ export default function StockOfIndustry({
         className="m-auto mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-3"
       >
         {stockDependOnIndustry.map((stock) => (
-          <Link className="h-64" to={`/stock/${stock.stockCode}/latest`}>
+          <Link
+            className="h-64"
+            to={`/stock/${stock.stockCode}/latest`}
+            key={stock.stockCode}
+          >
             <Card
               key={stock.stockCode}
               className="h-full cursor-pointer rounded-lg hover:scale-105"

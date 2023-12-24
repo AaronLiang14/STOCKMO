@@ -1,8 +1,8 @@
-import { auth, db } from "@/config/firebase";
 import StockCode from "@/data/StockCode.json";
+import firestoreApi from "@/utils/firestoreApi";
 import useChatRoomStore from "@/utils/useChatRoomStore";
 import { Avatar, Spinner } from "@nextui-org/react";
-import { Timestamp, collection, getDocs } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -14,27 +14,15 @@ interface ChatRoomMessage {
 }
 
 export default function EngageChatRooms() {
-  const chatRoomsRef = collection(db, "ChatRooms");
   const [chatRooms, setChatRooms] = useState<ChatRoomMessage[][]>([]);
-  const { changeRoomID, changeIsIndependentRoom, changeIsAllRoom } =
+  const { changeRoomID, switchToIndependentRoom, switchToAllRoom } =
     useChatRoomStore();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getAllChatRooms = async () => {
     try {
-      const querySnapshot = await getDocs(chatRoomsRef);
-      const chatRooms = querySnapshot.docs.map((doc) => doc.data().messages);
-      const userEngagedCharRooms = chatRooms.filter(
-        (chatRoom) =>
-          chatRoom.length > 0 &&
-          chatRoom
-            .map(
-              (message: { member_id: string }) =>
-                message.member_id === auth.currentUser?.uid,
-            )
-            .includes(true),
-      );
-      setChatRooms(userEngagedCharRooms);
+      const engagedChatRooms = await firestoreApi.getAllEngagedChatRooms();
+      setChatRooms(engagedChatRooms);
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +35,7 @@ export default function EngageChatRooms() {
   return (
     <>
       {isLoading ? (
-        <Spinner className=" flex h-[400px] justify-center bg-white" />
+        <Spinner className="flex h-[400px] justify-center bg-white" />
       ) : (
         <div className="h-[395px] overflow-y-auto rounded-b-lg border-1 bg-white shadow-lg">
           {chatRooms.length > 0 ? (
@@ -65,8 +53,8 @@ export default function EngageChatRooms() {
                   key={stockID}
                   onClick={() => {
                     changeRoomID(stockID);
-                    changeIsIndependentRoom(true);
-                    changeIsAllRoom(false);
+                    switchToIndependentRoom(true);
+                    switchToAllRoom(false);
                   }}
                 >
                   <Avatar
@@ -87,25 +75,10 @@ export default function EngageChatRooms() {
 
                   <div className="absolute right-5 top-3 ml-auto">
                     <p className="min-w-unit-20 text-end text-xs">
-                      {
-                        latestMessageTime
-                          .toDate()
-                          .toLocaleTimeString()
-                          .split(":")[0]
-                      }
-                      :
-                      {
-                        latestMessageTime
-                          .toDate()
-                          .toLocaleTimeString()
-                          .split(":")[1]
-                      }{" "}
-                      {
-                        latestMessageTime
-                          .toDate()
-                          .toLocaleTimeString()
-                          .split(" ")[1]
-                      }
+                      {latestMessageTime.toDate().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </p>
                   </div>
                 </div>

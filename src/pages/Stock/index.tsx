@@ -9,7 +9,7 @@ import Article from "~icons/ooui/articles-rtl";
 import AddFavoriteStocks from "@/components/AddFavorite";
 import ChatRoom from "@/components/ChatRoom";
 import FinanceData from "@/data/StockDetail.json";
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -44,7 +44,7 @@ const LatestPrice = () => {
     }
   };
 
-  const colorDependOnRise = rise ? " text-red-600 " : "text-green-800 ";
+  const colorDependOnRiseAndFall = rise ? " text-red-600 " : "text-green-800 ";
 
   useEffect(() => {
     getLatestPrice();
@@ -53,7 +53,7 @@ const LatestPrice = () => {
   return (
     <div className="flex flex-row justify-between">
       <div
-        className={`rounded-full ${colorDependOnRise} px-2 pb-4 text-4xl font-medium`}
+        className={`rounded-full ${colorDependOnRiseAndFall} px-2 pb-4 text-4xl font-medium`}
       >
         {latestInfo.close}
         {rise ? (
@@ -120,7 +120,7 @@ export default function Stock() {
     (item) => item.SecuritiesCompanyCode === id,
   );
 
-  const asideOptions = [
+  const subTitle = [
     {
       name: "最新動態",
       icon: <StockOutLined />,
@@ -148,7 +148,7 @@ export default function Stock() {
     <>
       <div className="m-auto mb-24 flex min-h-[calc(100vh_-_120px)] w-11/12 flex-col  pt-24">
         <div className="mx-auto flex w-11/12 flex-col justify-center">
-          <div className="h-18 sticky top-24 z-40 mb-3 flex justify-between bg-white  py-6">
+          <div className="h-18 sticky top-24 z-20 mb-3 flex justify-between bg-white  py-6">
             <p className="text-3xl font-medium text-gray-900 ">
               {company[0].CompanyName} {company[0].Symbol}
             </p>
@@ -156,7 +156,7 @@ export default function Stock() {
           </div>
           <LatestPrice />
           <div className="flex justify-start gap-8 border-b-1 text-base">
-            {asideOptions.map((item) => (
+            {subTitle.map((item) => (
               <div
                 className={`flex cursor-pointer items-center gap-3 pb-2 ${
                   location.pathname.split("/")[3] === item.link &&

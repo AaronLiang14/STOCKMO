@@ -1,28 +1,42 @@
 import logo from "@/assets/logo.png";
-import { Link } from "react-router-dom";
-
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
+} from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+
 import Avatar from "./Avatar";
 import SearchBox from "./SearchBox";
-
 export default function Header() {
   const location = useLocation();
-
   const [backgroundColor, setBackgroundColor] = useState("bg-gray-300");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
+    if (location.pathname === "/" && isMenuOpen) {
+      setBackgroundColor(" ");
+      return;
+    }
+
     if (location.pathname === "/") {
-      setBackgroundColor("");
-    } else if (
+      setBackgroundColor("bg-transparent bg-opacity-0 ");
+      return;
+    }
+    if (
       location.pathname === "/login/signIn" ||
       location.pathname === "/login/signUp"
     ) {
-      setBackgroundColor("bg-white/60 backdrop-blur-sm");
-    } else {
-      setBackgroundColor("bg-white border-b-2");
+      setBackgroundColor("bg-white/60 backdrop-blur-md");
+      return;
     }
-  }, [location]);
+    setBackgroundColor("bg-white border-b-2");
+  }, [location, isMenuOpen]);
 
   const headerOption: { [key: string]: string } = {
     industry: "產業類別",
@@ -30,40 +44,98 @@ export default function Header() {
     trades: "模擬交易",
   };
 
+  const mobileMenuOption: { [key: string]: { name: string; link: string } } = {
+    industry: {
+      name: "產業類別",
+      link: "/industry",
+    },
+    dashboard: {
+      name: "儀表板",
+      link: "/dashboard",
+    },
+    trades: {
+      name: "模擬交易",
+      link: "/trades/order",
+    },
+    favoriteStocks: {
+      name: "股票收藏",
+      link: "/member/favoriteStocks",
+    },
+    favoriteArticles: {
+      name: "文章收藏",
+      link: "/member/favoriteArticles",
+    },
+  };
+
   return (
     <>
-      <header
-        className={`fixed z-50 flex h-24  w-full items-center  ${backgroundColor}`}
+      <Navbar
+        isBordered
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
+        className={`${backgroundColor} fixed top-0 z-50 w-full border-b-1 py-2 `}
       >
-        <nav className=" mx-auto  w-10/12">
-          <div className="flex items-center justify-between">
-            <div className="mr-auto flex items-center">
-              <Link to="/">
-                <img className="h-12 w-auto" src={logo} alt="logo" />
-                <p className="text-black">STOCK.MO</p>
+        <NavbarContent className="md:hidden" justify="start">
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          />
+        </NavbarContent>
+
+        <NavbarBrand className="absolute left-1/2 -translate-x-1/2 transform md:hidden ">
+          <Link to="/" className="flex items-center">
+            <img className="m-auto h-10" src={logo} alt="logo" />
+            <p className=" text-base">STOCK.MO</p>
+          </Link>{" "}
+        </NavbarBrand>
+
+        <NavbarContent className="hidden gap-4 md:flex" justify="center">
+          <NavbarBrand>
+            <Link to="/">
+              <img className="m-auto h-10" src={logo} alt="logo" />
+              <p className="text-md text-black">STOCK.MO</p>
+            </Link>
+          </NavbarBrand>
+
+          {Object.keys(headerOption).map((item) => {
+            const Links = item === "trades" ? "trades/order" : item;
+            return (
+              <NavbarItem className="ml-10" key={item}>
+                <Link
+                  to={`/${Links}`}
+                  className={`pb-4 text-base font-medium text-black ${
+                    location.pathname.split("/")[1] === item &&
+                    "border-b-4 border-gray-600"
+                  } hover:border-b-4 hover:border-black`}
+                >
+                  {headerOption[item]}
+                </Link>
+              </NavbarItem>
+            );
+          })}
+        </NavbarContent>
+
+        <NavbarContent justify="end" className="hidden md:flex">
+          <SearchBox />
+          <Avatar />
+        </NavbarContent>
+
+        <NavbarMenu className="pt-4">
+          {Object.keys(mobileMenuOption).map((item, index) => {
+            return (
+              <Link
+                key={`${item}-${index}`}
+                className="border-b-2 border-gray-200"
+                to={mobileMenuOption[item].link}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <NavbarMenuItem className="w-full">
+                  {mobileMenuOption[item].name}
+                </NavbarMenuItem>
               </Link>
-              {Object.keys(headerOption).map((item) => {
-                const Links = item === "trades" ? "trades/order" : item;
-                return (
-                  <div className="ml-10" key={item}>
-                    <Link
-                      to={`/${Links}`}
-                      className={`pb-4 text-base font-medium text-black ${
-                        location.pathname.split("/")[1] === item &&
-                        "border-b-4 border-gray-600"
-                      } hover:border-b-4  hover:border-black`}
-                    >
-                      {headerOption[item]}
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
-            <SearchBox />
-            <Avatar />
-          </div>
-        </nav>
-      </header>
+            );
+          })}
+        </NavbarMenu>
+      </Navbar>
     </>
   );
 }

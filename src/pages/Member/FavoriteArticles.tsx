@@ -74,9 +74,9 @@ export default function FavoriteArticles() {
 
   return (
     <>
-      <div className="mx-auto mt-24 w-full pr-8">
+      <div className="mx-auto mt-12 w-11/12 max-w-[1280px]">
         {articles.length > 0 ? (
-          <div className=" space-y-10">
+          <div className="space-y-10">
             {articles.map((post, index) => (
               <Link
                 to={`/../stock/${post.stock_code}/articles/${post.id}`}
@@ -86,32 +86,34 @@ export default function FavoriteArticles() {
                   className="mb-4 flex h-40 flex-col overflow-hidden rounded-lg"
                   key={index}
                 >
-                  <div className="relative flex flex-1 flex-col justify-between p-6">
-                    <div className="flex-1">
-                      <p className="mb-12 text-xl  font-semibold text-gray-900">
+                  <div className="flex flex-1 flex-col justify-between p-6">
+                    <div className="flex flex-1 flex-row justify-between  ">
+                      <p className="mb-12 text-sm font-semibold text-gray-900 sm:text-xl">
                         {post.title}
                       </p>
-
-                      <AuthorAvatar id={post.author_id} />
+                      <Button
+                        color="danger"
+                        className=""
+                        size="sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleRemoveFavorite(post.id);
+                        }}
+                      >
+                        移除收藏
+                      </Button>
                     </div>
-                    <Button
-                      color="danger"
-                      className="absolute right-4 top-4"
-                      size="sm"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleRemoveFavorite(post.id);
-                      }}
-                    >
-                      移除收藏
-                    </Button>
-                    <div className="absolute bottom-5 right-10 text-sm text-gray-500">
-                      {post.created_time.toDate().toLocaleDateString()}{" "}
-                      {post.created_time.toDate().toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+
+                    <div className="flex flex-row items-end justify-between ">
+                      <AuthorAvatar id={post.author_id} />
+                      <div className="text-sm text-gray-400">
+                        {post.created_time.toDate().toLocaleDateString()}{" "}
+                        {post.created_time.toDate().toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
                     </div>
                   </div>
                 </Card>

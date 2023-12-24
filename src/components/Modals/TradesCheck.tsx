@@ -9,7 +9,7 @@ import {
 } from "@nextui-org/react";
 
 import { auth, db } from "@/config/firebase";
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { useOrderStore } from "@/utils/useTradesStore.ts";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";

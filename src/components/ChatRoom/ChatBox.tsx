@@ -19,8 +19,8 @@ export default function ChatBox({ dispatch }: ChatBoxProps) {
     roomID,
     isAllRoom,
     isIndependentRoom,
-    changeIsIndependentRoom,
-    changeIsAllRoom,
+    switchToIndependentRoom,
+    switchToAllRoom,
     changeRoomID,
   } = useChatRoomStore();
   const { id } = useParams();
@@ -28,34 +28,51 @@ export default function ChatBox({ dispatch }: ChatBoxProps) {
     (stock) => stock.stockCode === parseInt(roomID),
   )[0].stockName;
 
+  const chatBoxHeaderIcon = () => {
+    if (isIndependentRoom) {
+      return {
+        icon: (
+          <ReturnIcon
+            className="cursor-pointer"
+            onClick={() => {
+              switchToAllRoom(true);
+              switchToIndependentRoom(false);
+            }}
+          />
+        ),
+      };
+    }
+
+    if (id) {
+      return {
+        icon: (
+          <ChatPlus
+            onClick={() => {
+              switchToIndependentRoom(true);
+              switchToAllRoom(false);
+              changeRoomID(id);
+            }}
+            className="cursor-pointer"
+          />
+        ),
+      };
+    }
+
+    return {
+      icon: <div className="w-[19.2px]" />,
+    };
+  };
+
   return (
     <>
-      <div className="fixed bottom-10 right-32 z-50 w-96">
+      <div className="fixed bottom-32 right-4 z-30 w-11/12 sm:bottom-10 sm:right-32 sm:w-96">
         <div className="w-full max-w-lg rounded-lg bg-white shadow-md">
           <div className="flex items-center justify-between rounded-t-lg border-b bg-cyan-800 p-4 text-white">
-            {isIndependentRoom ? (
-              <ReturnIcon
-                className="cursor-pointer"
-                onClick={() => {
-                  changeIsAllRoom(true);
-                  changeIsIndependentRoom(false);
-                }}
-              />
-            ) : id ? (
-              <ChatPlus
-                onClick={() => {
-                  changeIsIndependentRoom(true);
-                  changeIsAllRoom(false);
-                  changeRoomID(id);
-                }}
-                className="cursor-pointer"
-              />
-            ) : (
-              <div className="w-[19.2px]" />
-            )}
+            {chatBoxHeaderIcon().icon}
             <p className="text-lg font-semibold">
               {isAllRoom ? "聊天室" : roomName}
             </p>
+
             <Close
               onClick={handleCheckBox}
               className="h-4 w-4 cursor-pointer"

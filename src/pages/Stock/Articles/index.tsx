@@ -33,6 +33,7 @@ interface Article {
 const AuthorAvatar = ({ id }: { id: string }) => {
   const [avatar, setAvatar] = useState<string>("");
   const [name, setName] = useState<string>("");
+
   const getAuthorAvatar = async () => {
     const memberRef = doc(db, "Member", id);
     const docSnap = await getDoc(memberRef);

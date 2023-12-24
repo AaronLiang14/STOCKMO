@@ -93,7 +93,7 @@ export default function Order() {
           <p className=" text-red-600">登入後即可進行模擬交易</p>
         </div>
       )}
-      <Card className="m-auto flex w-96 flex-col items-center justify-center gap-3 py-4 ">
+      <Card className="m-auto flex flex-col items-center justify-center gap-3 py-4 sm:w-96 ">
         <div className="flex w-80 flex-row items-center gap-4">
           <div className="relative">
             <Input
@@ -106,7 +106,7 @@ export default function Order() {
               onClear={() => setStockID("")}
               className="max-w-xs"
             />
-            <div className="absolute z-50 mt-2 w-full rounded-lg bg-gray-200">
+            <div className="absolute z-30 mt-2 w-full rounded-lg bg-gray-200">
               {stockID && filterOptions.length > 0 && (
                 <ul className="max-h-60  overflow-y-scroll px-1 py-2 text-sm text-gray-700 dark:text-gray-200">
                   {filterOptions.map((item, index) => (

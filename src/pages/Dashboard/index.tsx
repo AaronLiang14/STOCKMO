@@ -7,7 +7,7 @@ import ChartsOptions from "./ChartsOptions";
 export default function Dashboard() {
   return (
     <>
-      <div className="m-auto flex w-11/12 flex-col pt-36">
+      <div className="m-auto flex w-11/12 flex-col pt-24 sm:pt-36">
         <ChartsOptions />
         <ChartsDisplay />
       </div>

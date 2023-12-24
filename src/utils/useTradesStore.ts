@@ -1,5 +1,5 @@
 import timeSelector from "@/components/Graph/TimeSelect";
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { create } from "zustand";
 
 const initialState = {

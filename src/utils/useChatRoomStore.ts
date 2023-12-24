@@ -11,8 +11,8 @@ interface ChatRoomProps {
   isAllRoom: boolean;
   isIndependentRoom: boolean;
   changeRoomID: (id: string) => void;
-  changeIsAllRoom: (boolean: boolean) => void;
-  changeIsIndependentRoom: (boolean: boolean) => void;
+  switchToAllRoom: (boolean: boolean) => void;
+  switchToIndependentRoom: (boolean: boolean) => void;
 }
 
 const useChatRoomStore = create<ChatRoomProps>((set) => ({
@@ -21,11 +21,11 @@ const useChatRoomStore = create<ChatRoomProps>((set) => ({
     set({ roomID: id });
   },
 
-  changeIsAllRoom: (boolean) => {
+  switchToAllRoom: (boolean) => {
     set({ isAllRoom: boolean });
   },
 
-  changeIsIndependentRoom: (boolean) => {
+  switchToIndependentRoom: (boolean) => {
     set({ isIndependentRoom: boolean });
   },
 }));
