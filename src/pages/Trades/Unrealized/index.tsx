@@ -1,8 +1,10 @@
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
 import api from "@/utils/finMindApi";
+import firestoreApi from "@/utils/firestoreApi";
 import { DocumentData } from "@firebase/firestore";
 import {
   Button,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -11,10 +13,8 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 const columns = [
   {
@@ -59,15 +59,17 @@ const columns = [
 export default function Unrealized() {
   const [stockPrice, setStockPrice] = useState<{ [key: string]: number }>({});
   const [unrealizedStocks, setUnrealizedStocks] = useState<DocumentData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const getUnrealizedStocks = async () => {
-    if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const memberDoc = await getDoc(memberRef);
-
-    if (!memberDoc.exists()) return;
-    setUnrealizedStocks(memberDoc.data().unrealized);
+    try {
+      if (!auth.currentUser) return;
+      const memberData = await firestoreApi.getMemberInfo();
+      setUnrealizedStocks(memberData?.unrealized);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getMarketPrice = async () => {
@@ -83,7 +85,6 @@ export default function Unrealized() {
       });
     } catch (e) {
       const error = e as Error;
-      toast.error(error.message);
       console.log(error);
     }
   };
@@ -131,27 +132,32 @@ export default function Unrealized() {
   return (
     <>
       <div className="flex flex-col gap-3">
-        <Table
-          aria-label="Rows actions table example with dynamic content"
-          selectionMode="multiple"
-          selectionBehavior="replace"
-        >
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={rows}>
-            {(item) => (
-              <TableRow key={item!.key}>
-                {(columnKey) => (
-                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        {unrealizedStocks.length === 0 && (
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Table
+            aria-label="Rows actions table example with dynamic content"
+            selectionMode="multiple"
+            selectionBehavior="replace"
+          >
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn key={column.key}>{column.label}</TableColumn>
+              )}
+            </TableHeader>
+            <TableBody items={rows}>
+              {(item) => (
+                <TableRow key={item!.key}>
+                  {(columnKey) => (
+                    <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
+
+        {unrealizedStocks.length === 0 && !isLoading && (
           <p className="m-auto mt-12 text-2xl">查無資料</p>
         )}
       </div>

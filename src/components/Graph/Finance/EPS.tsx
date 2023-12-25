@@ -60,7 +60,7 @@ export default function EPS({ id }: { id: string }) {
       showFirstLabel: false,
       showLastLabel: true,
       title: {
-        text: "EPS(元)",
+        text: "",
       },
     },
     credits: {

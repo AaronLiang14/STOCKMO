@@ -16,15 +16,15 @@ export default function Trades() {
 
   return (
     <>
-      <div className="m-auto mb-24 min-h-[calc(100vh_-_120px)]  w-11/12 pt-24">
+      <div className="m-auto mb-24 min-h-[calc(100vh_-_120px)] w-11/12 pt-24">
         <div className="mb-6 mt-12 flex justify-center pb-3">
-          <div className=" flex w-full flex-row justify-center gap-3 ">
+          <div className="flex w-full flex-row justify-center gap-3">
             {Object.keys(tradesProcess).map((item) => (
               <div
                 className={`flex w-20 cursor-pointer justify-center pb-2 ${
                   location.pathname.split("/")[2] === tradesProcess[item] &&
                   "border-b-3 border-blue-800"
-                } text-base  hover:border-b-3 hover:border-blue-800 sm:text-lg`}
+                } text-base hover:border-b-3 hover:border-blue-800 sm:text-lg`}
                 onClick={() => navigate(`${tradesProcess[item]}`)}
                 key={item}
               >

@@ -59,7 +59,7 @@ export default function PER({ id }: { id: string }) {
       showFirstLabel: false,
       showLastLabel: true,
       title: {
-        text: "本益比",
+        text: "",
       },
     },
     credits: {

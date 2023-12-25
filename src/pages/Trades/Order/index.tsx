@@ -1,3 +1,7 @@
+import TradesCheck from "@/components/Modals/TradesCheck.tsx";
+import { auth } from "@/config/firebase";
+import stockCode from "@/data/StockCode.json";
+import { useOrderStore } from "@/utils/useTradesStore.ts";
 import {
   Card,
   Input,
@@ -6,11 +10,6 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-
-import TradesCheck from "@/components/Modals/TradesCheck.tsx";
-import { auth } from "@/config/firebase";
-import stockCode from "@/data/StockCode.json";
-import { useOrderStore } from "@/utils/useTradesStore.ts";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import WarningIcon from "~icons/ph/warning-fill";

@@ -51,7 +51,7 @@ export default function Revenue({ id }: { id: string }) {
       type: "line",
     },
     title: {
-      text: `月營收（${id}）`,
+      text: `月營收(百萬元)（${id}）`,
     },
     xAxis: {
       type: "datetime",
@@ -60,7 +60,7 @@ export default function Revenue({ id }: { id: string }) {
       showFirstLabel: false,
       showLastLabel: true,
       title: {
-        text: "月營收(百萬元)",
+        text: "",
       },
     },
     credits: {

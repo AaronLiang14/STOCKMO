@@ -8,35 +8,18 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-
+import SearchIcon from "~icons/ic/twotone-search";
 import Avatar from "./Avatar";
 import SearchBox from "./SearchBox";
+
 export default function Header() {
   const location = useLocation();
   const [backgroundColor, setBackgroundColor] = useState("bg-gray-300");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (location.pathname === "/" && isMenuOpen) {
-      setBackgroundColor(" ");
-      return;
-    }
-
-    if (location.pathname === "/") {
-      setBackgroundColor("bg-transparent bg-opacity-0 ");
-      return;
-    }
-    if (
-      location.pathname === "/login/signIn" ||
-      location.pathname === "/login/signUp"
-    ) {
-      setBackgroundColor("bg-white/60 backdrop-blur-md");
-      return;
-    }
-    setBackgroundColor("bg-white border-b-2");
-  }, [location, isMenuOpen]);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const searchBoxRef = useRef(null);
 
   const headerOption: { [key: string]: string } = {
     industry: "產業類別",
@@ -66,6 +49,26 @@ export default function Header() {
       link: "/member/favoriteArticles",
     },
   };
+
+  useEffect(() => {
+    if (location.pathname === "/" && isMenuOpen) {
+      setBackgroundColor(" ");
+      return;
+    }
+
+    if (location.pathname === "/") {
+      setBackgroundColor("bg-transparent bg-opacity-0 ");
+      return;
+    }
+    if (
+      location.pathname === "/login/signIn" ||
+      location.pathname === "/login/signUp"
+    ) {
+      setBackgroundColor("bg-white/60 backdrop-blur-md");
+      return;
+    }
+    setBackgroundColor("bg-white border-b-2");
+  }, [location, isMenuOpen]);
 
   return (
     <>
@@ -118,6 +121,18 @@ export default function Header() {
           <SearchBox />
           <Avatar />
         </NavbarContent>
+
+        <NavbarContent justify="end" className="md:hidden">
+          <SearchIcon
+            className={`z-50 h-7 w-7 cursor-pointer`}
+            onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+          />
+        </NavbarContent>
+        {isMobileSearchOpen && (
+          <div ref={searchBoxRef} className="absolute w-screen">
+            <SearchBox />
+          </div>
+        )}
 
         <NavbarMenu className="pt-4">
           {Object.keys(mobileMenuOption).map((item, index) => {

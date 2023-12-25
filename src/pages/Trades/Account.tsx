@@ -1,5 +1,6 @@
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
 import api from "@/utils/finMindApi";
+import firestoreApi from "@/utils/firestoreApi";
 import { DocumentData } from "@firebase/firestore";
 import {
   Spinner,
@@ -11,9 +12,8 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+
 const columns = [
   {
     key: "cash",
@@ -43,15 +43,13 @@ export default function Account() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getUnrealizedStocks = async () => {
-    if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const memberDoc = await getDoc(memberRef);
-
-    if (!memberDoc.exists()) {
-      console.error("無持有股份");
-      return;
+    try {
+      if (!auth.currentUser) return;
+      const memberData = await firestoreApi.getMemberInfo();
+      setUnrealizedStocks(memberData?.unrealized);
+    } finally {
+      setIsLoading(false);
     }
-    setUnrealizedStocks(memberDoc.data().unrealized);
   };
 
   const getMarketPrice = async () => {
@@ -67,7 +65,6 @@ export default function Account() {
       });
     } catch (e) {
       const error = e as Error;
-      toast.error(error.message);
       console.log(error);
     } finally {
       setIsLoading(false);
@@ -76,10 +73,7 @@ export default function Account() {
 
   const getAssets = async () => {
     if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser.uid);
-    const memberDoc = await getDoc(memberRef);
-    const memberData = memberDoc.data();
-
+    const memberData = await firestoreApi.getMemberInfo();
     setCash(memberData?.cash);
     setSecuritiesAssets(
       memberData?.unrealized.reduce((acc: number, cur: memberStocksProps) => {
@@ -116,26 +110,30 @@ export default function Account() {
   return (
     <>
       <div className="flex flex-col gap-3">
-        <Table
-          aria-label="Rows actions table example with dynamic content"
-          selectionMode="multiple"
-          selectionBehavior="replace"
-        >
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={rows}>
-            {(item) => (
-              <TableRow key={item!.key}>
-                {(columnKey) => (
-                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Table
+            aria-label="Rows actions table example with dynamic content"
+            selectionMode="multiple"
+            selectionBehavior="replace"
+          >
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn key={column.key}>{column.label}</TableColumn>
+              )}
+            </TableHeader>
+            <TableBody items={rows}>
+              {(item) => (
+                <TableRow key={item!.key}>
+                  {(columnKey) => (
+                    <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </>
   );

@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import BlockquoteIcon from "~icons/clarity/block-quote-line";
 import StrikeIcon from "~icons/ic/baseline-strikethrough-s";
+import OrderList from "~icons/ic/twotone-format-list-numbered";
 import ImageIcon from "~icons/material-symbols/add-photo-alternate-outline-rounded";
 import BoldIcon from "~icons/material-symbols/format-bold";
 import H1Icon from "~icons/material-symbols/format-h1";
@@ -26,7 +27,6 @@ import H3Icon from "~icons/material-symbols/format-h3";
 import H4Icon from "~icons/material-symbols/format-h4";
 import ItalicIcon from "~icons/material-symbols/format-italic";
 import BulletListIcon from "~icons/material-symbols/format-list-bulleted";
-import OrderList from "~icons/streamline/ascending-number-order-solid";
 const MenuBar = () => {
   const { editor } = useCurrentEditor();
 
@@ -150,7 +150,7 @@ const MenuBar = () => {
           className={editor.isActive("orderedList") ? "is-active" : ""}
         >
           <OrderList
-            className={`h-5 w-5 rounded-sm  ${
+            className={`h-6 w-6 rounded-sm  ${
               editor.isActive("orderedList") && "bg-black text-white"
             }`}
           />
@@ -248,7 +248,7 @@ export default function Tiptap() {
   };
 
   return (
-    <div className="relative rounded-lg border border-black p-0.5 ">
+    <div className="relative hidden rounded-lg border border-black p-0.5 sm:block ">
       <input
         placeholder="文章標題"
         className="w-full py-2  pl-4 "

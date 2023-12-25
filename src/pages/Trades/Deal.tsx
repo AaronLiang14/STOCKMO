@@ -1,7 +1,9 @@
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
 import StockCode from "@/data/StockCode.json";
+import firestoreApi from "@/utils/firestoreApi";
 import { DocumentData } from "@firebase/firestore";
 import {
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -10,7 +12,6 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const columns = [
@@ -46,20 +47,19 @@ const columns = [
 
 export default function Deal() {
   const [entrustment, setEntrustment] = useState<DocumentData[]>([]);
-
-  const orderQuery = query(
-    collection(db, "Trades"),
-    where("member_id", "==", auth.currentUser?.uid || ""),
-  );
+  const [isLoading, setIsLoading] = useState(true);
 
   const getOrders = async () => {
-    if (!auth.currentUser) return;
-    setEntrustment([]); //避免資料重複
-
-    const orders = await getDocs(orderQuery);
-    orders.forEach((doc) => {
-      setEntrustment((prev) => [...prev, doc.data()]);
-    });
+    try {
+      if (!auth.currentUser) return;
+      setEntrustment([]); //避免資料重複
+      const orders = await firestoreApi.getEntrustment();
+      orders!.forEach((doc) => {
+        setEntrustment((prev) => [...prev, doc.data()]);
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const rows = entrustment.map((item) => {
@@ -85,28 +85,32 @@ export default function Deal() {
 
   return (
     <div className="flex flex-col gap-3">
-      <Table
-        aria-label="Rows actions table example with dynamic content"
-        selectionMode="multiple"
-        selectionBehavior="replace"
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={rows}>
-          {(item) => (
-            <TableRow key={item!.key}>
-              {(columnKey) => (
-                <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <Table
+          aria-label="Rows actions table example with dynamic content"
+          selectionMode="multiple"
+          selectionBehavior="replace"
+        >
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn key={column.key}>{column.label}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody items={rows}>
+            {(item) => (
+              <TableRow key={item!.key}>
+                {(columnKey) => (
+                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      )}
 
-      {entrustment.length === 0 && (
+      {entrustment.length === 0 && !isLoading && (
         <p className="m-auto mt-12 text-2xl">查無資料</p>
       )}
     </div>

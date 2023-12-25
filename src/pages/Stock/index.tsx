@@ -1,18 +1,17 @@
-import Enterprise from "~icons/carbon/enterprise";
-import NewsPaper from "~icons/fluent-emoji-high-contrast/rolled-up-newspaper";
-import DownArrow from "~icons/mdi/arrow-down-bold";
-import UpArrow from "~icons/mdi/arrow-up-bold";
-
-import StockOutLined from "~icons/mdi/finance";
-import Article from "~icons/ooui/articles-rtl";
-
 import AddFavoriteStocks from "@/components/AddFavorite";
 import ChatRoom from "@/components/ChatRoom";
+import TradesModal from "@/components/Modals/Trades";
 import FinanceData from "@/data/StockDetail.json";
 import api from "@/utils/finMindApi";
 import { Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import Enterprise from "~icons/carbon/enterprise";
+import NewsPaper from "~icons/fluent-emoji-high-contrast/rolled-up-newspaper";
+import DownArrow from "~icons/mdi/arrow-down-bold";
+import UpArrow from "~icons/mdi/arrow-up-bold";
+import StockOutLined from "~icons/mdi/finance";
+import Article from "~icons/ooui/articles-rtl";
 
 interface LatestInfoType {
   close: number;
@@ -35,8 +34,11 @@ const LatestPrice = () => {
     try {
       const res = await api.getTaiwanStockPriceTick(id!.toString());
       setLatestInfo(res.data[0]);
-      if (res.data[0].change_rate > 0) setRise(true);
-      else setRise(false);
+      if (res.data[0].change_rate > 0) {
+        setRise(true);
+        return;
+      }
+      setRise(false);
     } catch (e) {
       console.log(e);
     } finally {
@@ -146,19 +148,22 @@ export default function Stock() {
 
   return (
     <>
-      <div className="m-auto mb-24 flex min-h-[calc(100vh_-_120px)] w-11/12 flex-col  pt-24">
+      <div className="m-auto mb-24 flex min-h-[calc(100vh_-_120px)] w-full flex-col pt-20 sm:w-11/12">
         <div className="mx-auto flex w-11/12 flex-col justify-center">
-          <div className="h-18 sticky top-24 z-20 mb-3 flex justify-between bg-white  py-6">
-            <p className="text-3xl font-medium text-gray-900 ">
+          <div className="sticky top-20 z-20 mb-3 flex items-center justify-between bg-white py-6">
+            <p className="text-xl font-medium text-gray-900 sm:text-3xl ">
               {company[0].CompanyName} {company[0].Symbol}
             </p>
-            <AddFavoriteStocks />
+            <div className="flex flex-col gap-1 sm:flex-row">
+              <AddFavoriteStocks />
+              <TradesModal />
+            </div>
           </div>
           <LatestPrice />
-          <div className="flex justify-start gap-8 border-b-1 text-base">
+          <div className="flex justify-start gap-4 border-b-1 text-sm sm:gap-8 sm:text-base">
             {subTitle.map((item) => (
               <div
-                className={`flex cursor-pointer items-center gap-3 pb-2 ${
+                className={`flex cursor-pointer items-center gap-1 pb-2 sm:gap-3 ${
                   location.pathname.split("/")[3] === item.link &&
                   "border-b-3 border-blue-800"
                 } hover:border-b-3 hover:border-blue-800`}

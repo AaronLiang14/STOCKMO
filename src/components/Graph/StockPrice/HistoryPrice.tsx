@@ -76,7 +76,7 @@ export default function StockChart({ id }: { id: string }) {
           x: -3,
         },
         title: {
-          text: "股價",
+          text: "",
         },
         height: "60%",
         lineWidth: 2,
@@ -90,7 +90,7 @@ export default function StockChart({ id }: { id: string }) {
           x: -3,
         },
         title: {
-          text: "成交量",
+          text: "",
         },
         top: "70%",
         height: "30%",

@@ -82,7 +82,6 @@ const useLoginStore = create<LoginProps>((set) => ({
         realized: [],
         unrealized: [],
         cash: 100000,
-        securities_assets: 0,
         dashboard_layout: [],
       });
       toast.success("註冊成功");
@@ -95,10 +94,10 @@ const useLoginStore = create<LoginProps>((set) => ({
         }
         toast.error("錯誤：" + e.message);
         throw new Error(e.message);
-      } else {
-        console.error("An unknown error occurred");
-        throw new Error("An unknown error occurred");
+        return;
       }
+      console.error("An unknown error occurred");
+      throw new Error("An unknown error occurred");
     }
   },
 
@@ -135,7 +134,6 @@ const useLoginStore = create<LoginProps>((set) => ({
         realized: [],
         unrealized: [],
         cash: 100000,
-        securities_assets: 0,
         dashboard_layout: [],
       });
       toast.success("登入成功");

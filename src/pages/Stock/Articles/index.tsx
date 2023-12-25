@@ -9,7 +9,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  onSnapshot,
   query,
   updateDoc,
   where,
@@ -72,12 +71,11 @@ export default function Articles() {
         });
         toast.success("取消收藏");
         return;
-      } else {
-        await updateDoc(memberRef, {
-          favorite_articles: arrayUnion(id),
-        });
-        toast.success("加入收藏");
       }
+      await updateDoc(memberRef, {
+        favorite_articles: arrayUnion(id),
+      });
+      toast.success("加入收藏");
     }
   };
 
@@ -89,9 +87,7 @@ export default function Articles() {
   };
 
   useEffect(() => {
-    onSnapshot(q, () => {
-      getArticlesByStock();
-    });
+    getArticlesByStock();
   }, []);
 
   useEffect(() => {
@@ -109,7 +105,7 @@ export default function Articles() {
         <div className={` grid gap-12 lg:max-w-none`}>
           {articles.length === 0 ? (
             <div className="flex items-center justify-center">
-              <p className="text-2xl">
+              <p className="text-base sm:text-2xl">
                 目前沒有文章，滾動至下方來撰寫一篇文章吧
               </p>
             </div>
@@ -121,33 +117,34 @@ export default function Articles() {
                   key={index}
                 >
                   <div className="relative flex flex-1 flex-col justify-between p-6">
-                    <div className="flex-1">
-                      <p className="mb-12 text-xl  font-semibold text-gray-900">
+                    <div className="flex flex-row justify-between">
+                      <p className=" text-base font-semibold text-gray-900 sm:text-xl">
                         {post.title}
                       </p>
-                      <AuthorAvatar id={post.author_id} />
+                      <Button
+                        type="button"
+                        color="primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleArticleFavorite(post.id);
+                        }}
+                        size="sm"
+                      >
+                        {favoriteArticles.includes(post.id)
+                          ? "取消收藏"
+                          : "收藏文章"}
+                      </Button>
                     </div>
-                    <Button
-                      type="button"
-                      color="primary"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleArticleFavorite(post.id);
-                      }}
-                      size="sm"
-                      className="absolute right-10 top-5"
-                    >
-                      {favoriteArticles.includes(post.id)
-                        ? "取消收藏"
-                        : "收藏文章"}
-                    </Button>
-                    <div className="absolute bottom-5 right-10 text-sm text-gray-500">
-                      {post.created_time.toDate().toLocaleDateString()}{" "}
-                      {post.created_time.toDate().toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                    <div className="flex flex-row items-end justify-between">
+                      <AuthorAvatar id={post.author_id} />
+                      <div className="text-sm text-gray-400">
+                        {post.created_time.toDate().toLocaleDateString()}{" "}
+                        {post.created_time.toDate().toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -156,13 +153,17 @@ export default function Articles() {
           )}
         </div>
       </div>
+
       <div className="my-12">
         <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
           撰寫文章
         </p>
       </div>
+      <span className="m-auto flex justify-center sm:hidden">
+        使用電腦登入即可撰寫文章
+      </span>
       {!auth.currentUser ? (
-        <div className="flex items-center justify-center">
+        <div className=" hidden items-center  justify-center sm:flex">
           <p className="text-2xl">登入後即可撰寫文章</p>
         </div>
       ) : (

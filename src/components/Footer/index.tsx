@@ -8,9 +8,9 @@ export default function Footer() {
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/") {
       setBackgroundColor("bg-transparent bg-opacity-0 absolute");
-    } else {
-      setBackgroundColor("bg-gray-100");
+      return;
     }
+    setBackgroundColor("bg-gray-100");
   }, [location]);
 
   return (

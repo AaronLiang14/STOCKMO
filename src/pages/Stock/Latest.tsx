@@ -16,7 +16,7 @@ export default function Latest() {
           最新分點籌碼資訊
         </p>
       </div>
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <BuyExcess id={id!.toString()} />
         <SellExcess id={id!.toString()} />
       </div>

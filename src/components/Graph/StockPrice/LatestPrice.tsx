@@ -58,8 +58,11 @@ export default function LatestStockPrice({ id }: { id: string }) {
 
   const judgeRiseOrFall = async () => {
     const res = await api.getTaiwanStockPriceTick(id.toString());
-    if (res.data[0].change_rate > 0) setRise(true);
-    else setRise(false);
+    if (res.data[0].change_rate > 0) {
+      setRise(true);
+      return;
+    }
+    setRise(false);
   };
 
   const options = {

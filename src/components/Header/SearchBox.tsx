@@ -43,36 +43,36 @@ export default function SearchBox() {
       }
       navigate(`/stock/${searchStock[0].stockCode}/latest`);
       setSearch("");
-    } else {
-      const searchStock = stockCode.filter((item) => {
-        return item.stockCode === parseInt(search);
-      });
-      if (searchStock.length === 0) {
-        toast.error("查無此檔股票");
-        return;
-      }
-      navigate(`/stock/${searchStock[0].stockCode}/latest`);
-      setSearch("");
+      return;
     }
+    const searchStock = stockCode.filter((item) => {
+      return item.stockCode === parseInt(search);
+    });
+    if (searchStock.length === 0) {
+      toast.error("查無此檔股票");
+      return;
+    }
+    navigate(`/stock/${searchStock[0].stockCode}/latest`);
+    setSearch("");
   };
 
   return (
     <>
       <form className="mr-12 flex items-center">
-        <label htmlFor="simple-search" className="sr-only">
+        <label htmlFor="stock-search" className="sr-only">
           Search
         </label>
-        <div className="relative">
+        <div className="relative w-11/12">
           <Input
             type="text"
-            id="simple-search"
+            id="stock-search"
             isClearable
             placeholder="股票代碼/股票名稱"
             value={search}
             onClear={() => setSearch("")}
             startContent={
               <SearchIcon
-                className="  h-9 w-9 cursor-pointer "
+                className="h-9 w-9 cursor-pointer "
                 onClick={() => handleSearch()}
               />
             }

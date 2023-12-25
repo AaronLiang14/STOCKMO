@@ -14,9 +14,11 @@ import {
 } from "@nextui-org/react";
 
 import TradesCheck from "@/components/Modals/TradesCheck.tsx";
+import { auth } from "@/config/firebase";
 import { useOrderStore } from "@/utils/useTradesStore.ts";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const orderType = ["ROD", "IOC", "FOK"];
 
@@ -63,7 +65,18 @@ export default function App() {
 
   return (
     <>
-      <Button onPress={onOpen} color="danger">
+      <Button
+        onPress={() => {
+          if (!auth.currentUser) {
+            toast.error("請先登入");
+            return;
+          }
+          onOpen();
+        }}
+        color="danger"
+        size="sm"
+        className="hidden sm:block"
+      >
         模擬交易
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
