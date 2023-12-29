@@ -49,8 +49,6 @@ export default function LatestStockPrice({ id }: { id: string }) {
         };
       });
       setFormattedData(newData);
-    } catch (err) {
-      console.log(err);
     } finally {
       setIsLoading(false);
     }

@@ -1,8 +1,10 @@
 import { auth, db } from "@/config/firebase";
+import firestoreApi from "@/utils/firestoreApi";
 import { Button, Card } from "@nextui-org/react";
-import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
+import { Timestamp, doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 interface Article {
   author_id: string;
   author_name: string;
@@ -14,36 +16,33 @@ interface Article {
   id: string;
 }
 
+const AuthorAvatar = ({ id }: { id: string }) => {
+  const [avatar, setAvatar] = useState<string>("");
+  const [name, setName] = useState<string>("");
+
+  const getAuthorAvatar = async () => {
+    const memberData = await firestoreApi.getMemberInfo(id);
+    setAvatar(memberData?.avatar);
+    setName(memberData?.name);
+  };
+  getAuthorAvatar();
+
+  return (
+    <div className="flex flex-shrink-0 flex-row items-center">
+      <img className="h-10 w-10 rounded-full" src={avatar} alt="" />
+      <p className="pl-2"> {name}</p>
+    </div>
+  );
+};
+
 export default function FavoriteArticles() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [favoriteArticles, setFavoriteArticles] = useState<string[]>([]);
 
   const getFavoriteArticles = async () => {
     if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const docSnap = await getDoc(memberRef);
-    setFavoriteArticles(docSnap.data()!.favorite_articles || []);
-  };
-
-  const AuthorAvatar = ({ id }: { id: string }) => {
-    const [avatar, setAvatar] = useState<string>("");
-    const [name, setName] = useState<string>("");
-    const getAuthorAvatar = async () => {
-      const memberRef = doc(db, "Member", id);
-      const docSnap = await getDoc(memberRef);
-      if (docSnap.exists()) {
-        setAvatar(docSnap.data().avatar);
-        setName(docSnap.data().name);
-      }
-    };
-    getAuthorAvatar();
-
-    return (
-      <div className="flex flex-shrink-0 flex-row items-center">
-        <img className="h-10 w-10 rounded-full" src={avatar} alt="" />
-        <p className="pl-2"> {name}</p>
-      </div>
-    );
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    setFavoriteArticles(memberData?.favorite_articles || []);
   };
 
   const getArticlesDetail = async () => {
@@ -56,11 +55,7 @@ export default function FavoriteArticles() {
   };
 
   const handleRemoveFavorite = async (id: string) => {
-    const newFavoriteArticles = favoriteArticles.filter((item) => item !== id);
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    await updateDoc(memberRef, {
-      favorite_articles: newFavoriteArticles,
-    });
+    firestoreApi.updateFavorite(id, "remove", "favorite_articles");
     getFavoriteArticles();
   };
 

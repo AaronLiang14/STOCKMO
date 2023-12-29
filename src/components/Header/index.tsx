@@ -57,7 +57,7 @@ export default function Header() {
     }
 
     if (location.pathname === "/") {
-      setBackgroundColor("bg-transparent bg-opacity-0 ");
+      setBackgroundColor("bg-white/40 bg-opacity-0 ");
       return;
     }
     if (
@@ -95,7 +95,7 @@ export default function Header() {
           <NavbarBrand>
             <Link to="/">
               <img className="m-auto h-10" src={logo} alt="logo" />
-              <p className="text-md text-black">STOCK.MO</p>
+              <p className="text-xs text-black">STOCK.MO</p>
             </Link>
           </NavbarBrand>
 
@@ -134,7 +134,7 @@ export default function Header() {
           </div>
         )}
 
-        <NavbarMenu className="pt-4">
+        <NavbarMenu className="z-50 pt-4">
           {Object.keys(mobileMenuOption).map((item, index) => {
             return (
               <Link

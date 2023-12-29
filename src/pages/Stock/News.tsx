@@ -21,8 +21,6 @@ export default function News() {
     try {
       const res = await api.getStocksNews(id!, timeSelect.oneMonth);
       setNews(res.data);
-    } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }

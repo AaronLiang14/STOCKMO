@@ -15,9 +15,22 @@ import {
 } from "firebase/firestore";
 
 const firestoreApi = {
-  async getMemberInfo() {
-    if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser?.uid);
+  async setupMemberInfo(imgUrl: string, email: string, name: string) {
+    await setDoc(doc(db, "Member", auth.currentUser!.uid), {
+      avatar: imgUrl,
+      email: email,
+      name: name,
+      favorite_articles: [],
+      favorite_stocks: [],
+      realized: [],
+      unrealized: [],
+      cash: 100000,
+      dashboard_layout: [],
+    });
+  },
+
+  async getMemberInfo(id: string) {
+    const memberRef = doc(db, "Member", id);
     const memberData = await getDoc(memberRef);
     return memberData.data();
   },
@@ -29,6 +42,7 @@ const firestoreApi = {
       dashboard_layout: newLayout,
     });
   },
+
   async sendNewMessage(id: string, message: object) {
     if (!auth.currentUser) return;
     const chatRoomsRef = doc(db, "ChatRooms", id);
@@ -60,6 +74,13 @@ const firestoreApi = {
     const memberRef = doc(db, "Member", auth.currentUser?.uid);
     await updateDoc(memberRef, {
       realized: [...OldRealized, newRealized],
+    });
+  },
+
+  async cancelEntrustment(id: string) {
+    const entrustmentRef = doc(db, "Trades", id);
+    await updateDoc(entrustmentRef, {
+      status: "已取消",
     });
   },
 
@@ -105,13 +126,6 @@ const firestoreApi = {
     return orders;
   },
 
-  async cancelEntrustment(id: string) {
-    const entrustmentRef = doc(db, "Trades", id);
-    await updateDoc(entrustmentRef, {
-      status: "已取消",
-    });
-  },
-
   async matchmaking(id: string, orderPrice: number, orderVolume: number) {
     const entrustmentRef = doc(db, "Trades", id);
     await updateDoc(entrustmentRef, {
@@ -124,17 +138,17 @@ const firestoreApi = {
     });
   },
 
-  async updateFavoriteStocks(id: string, type: string) {
+  async updateFavorite(id: string, type: string, favoriteType: string) {
     if (!auth.currentUser) return;
     const memberRef = doc(db, "Member", auth.currentUser?.uid);
     if (type === "remove") {
       await updateDoc(memberRef, {
-        favorite_stocks: arrayRemove(id),
+        [favoriteType]: arrayRemove(id),
       });
       return;
     }
     await updateDoc(memberRef, {
-      favorite_stocks: arrayUnion(id),
+      [favoriteType]: arrayUnion(id),
     });
   },
 

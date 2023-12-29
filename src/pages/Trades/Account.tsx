@@ -45,7 +45,9 @@ export default function Account() {
   const getUnrealizedStocks = async () => {
     try {
       if (!auth.currentUser) return;
-      const memberData = await firestoreApi.getMemberInfo();
+      const memberData = await firestoreApi.getMemberInfo(
+        auth.currentUser!.uid,
+      );
       setUnrealizedStocks(memberData?.unrealized);
     } finally {
       setIsLoading(false);
@@ -63,9 +65,6 @@ export default function Account() {
           }));
         });
       });
-    } catch (e) {
-      const error = e as Error;
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +72,7 @@ export default function Account() {
 
   const getAssets = async () => {
     if (!auth.currentUser) return;
-    const memberData = await firestoreApi.getMemberInfo();
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
     setCash(memberData?.cash);
     setSecuritiesAssets(
       memberData?.unrealized.reduce((acc: number, cur: memberStocksProps) => {

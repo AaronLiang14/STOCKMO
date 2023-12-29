@@ -16,18 +16,19 @@ export default function AddFavoriteStocks() {
       toast.error("請先登入");
       return;
     }
-    const memberData = await firestoreApi.getMemberInfo();
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
     if (memberData?.favorite_stocks.includes(id)) {
-      await firestoreApi.updateFavoriteStocks(id!, "remove");
+      await firestoreApi.updateFavorite(id!, "remove", "favorite_stocks");
       toast.success("已取消追蹤");
       return;
     }
-    await firestoreApi.updateFavoriteStocks(id!, "add");
+    await firestoreApi.updateFavorite(id!, "add", "favorite_stocks");
     toast.success("已加入追蹤");
   };
 
   const getFavoriteStocks = async () => {
-    const memberData = await firestoreApi.getMemberInfo();
+    if (!auth.currentUser) return;
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
     setFavoriteStocks(memberData?.favorite_stocks);
   };
 

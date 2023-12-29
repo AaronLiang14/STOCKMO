@@ -58,11 +58,11 @@ export default function SearchBox() {
 
   return (
     <>
-      <form className="mr-12 flex items-center">
+      <form className="flex items-center">
         <label htmlFor="stock-search" className="sr-only">
           Search
         </label>
-        <div className="relative w-11/12">
+        <div className="relative w-full">
           <Input
             type="text"
             id="stock-search"

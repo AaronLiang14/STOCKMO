@@ -96,7 +96,7 @@ export default function ChartsOptions() {
       setUnLogInLayout(newUnLoginLayout);
       return;
     }
-    const memberInfo = await firestoreApi.getMemberInfo();
+    const memberInfo = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
     const latestLayout = memberInfo?.dashboard_layout;
     const newLayout = [...latestLayout, newChartInfo];
     firestoreApi.updateDashboardLayout(newLayout);

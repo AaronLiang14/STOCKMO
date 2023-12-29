@@ -65,7 +65,9 @@ export default function Unrealized() {
   const getUnrealizedStocks = async () => {
     try {
       if (!auth.currentUser) return;
-      const memberData = await firestoreApi.getMemberInfo();
+      const memberData = await firestoreApi.getMemberInfo(
+        auth.currentUser!.uid,
+      );
       setUnrealizedStocks(memberData?.unrealized);
     } finally {
       setIsLoading(false);
@@ -85,7 +87,7 @@ export default function Unrealized() {
       });
     } catch (e) {
       const error = e as Error;
-      console.log(error);
+      console.assert(error);
     }
   };
 

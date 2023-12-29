@@ -1,7 +1,7 @@
-import { auth } from "@/config/firebase";
+import { auth, db } from "@/config/firebase";
 import firestoreApi from "@/utils/firestoreApi";
 import useChatRoomStore from "@/utils/useChatRoomStore";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { MyMessage, OtherMessage } from "./Messages";
@@ -39,14 +39,18 @@ export default function IndependentChatRoom({ id }: { id: string }) {
   };
 
   useEffect(() => {
-    const unsubscribeChatRoom = async () => {
-      const latestMessage =
-        (await firestoreApi.getExistedMessageOrSetNewChatRoom(id)) as Message[];
-      setMessages(latestMessage);
-    };
-    unsubscribeChatRoom();
+    const chatRoomsRef = doc(db, "ChatRooms", id!);
+    const unsubscribe = onSnapshot(chatRoomsRef, (doc) => {
+      if (doc.data() === undefined) {
+        setDoc(chatRoomsRef, {
+          messages: [],
+        });
+        return;
+      }
+      setMessages(doc.data()?.messages);
+    });
     return () => {
-      unsubscribeChatRoom();
+      unsubscribe();
     };
   }, [roomID]);
 

@@ -44,7 +44,6 @@ export default function Revenue({ id }: { id: string }) {
     }));
     setFormattedData(newData);
   };
-  // 資料格式 [ {x: 時間, y: 值}, {x: 1622592000000, y: 0.0}, ...]
 
   const options = {
     chart: {

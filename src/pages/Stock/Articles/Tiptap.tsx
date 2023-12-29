@@ -223,8 +223,6 @@ export default function Tiptap() {
   );
 
   const handleSubmitArticles = async () => {
-    console.log(content);
-
     if (!title) {
       toast.error("請輸入文章標題");
       return;

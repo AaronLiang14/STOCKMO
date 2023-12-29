@@ -58,10 +58,9 @@ export default function Realized() {
 
   const getRealizedStocks = async () => {
     try {
-      if (!auth.currentUser) {
-        console.error("尚未登入，使用者不存在");
-      }
-      const memberData = await firestoreApi.getMemberInfo();
+      const memberData = await firestoreApi.getMemberInfo(
+        auth.currentUser!.uid,
+      );
       setRealizedStocks(memberData?.realized);
     } finally {
       setIsLoading(false);

@@ -11,11 +11,10 @@ interface PERProps {
 }
 
 export default function PER({ id }: { id: string }) {
+  const [time, setTime] = useState<string>(timeSelector.oneYear);
   const [formattedData, setFormattedData] = useState<
     { x: number; y: number }[]
   >([]);
-
-  const [time, setTime] = useState<string>(timeSelector.oneYear);
 
   const chartsTime = [
     {

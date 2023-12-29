@@ -82,7 +82,6 @@ export default function Entrustment() {
   };
 
   const rows = entrustment.map((item) => {
-    if (item.status !== "已成交") console.log(item);
     return {
       key: item.id,
       stockID: item.stock_id,

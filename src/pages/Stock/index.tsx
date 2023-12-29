@@ -39,8 +39,6 @@ const LatestPrice = () => {
         return;
       }
       setRise(false);
-    } catch (e) {
-      console.log(e);
     } finally {
       setIsLoading(false);
     }

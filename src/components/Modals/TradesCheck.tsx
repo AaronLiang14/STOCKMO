@@ -183,7 +183,7 @@ export default function CheckModal() {
 
   const findOldAveragePriceAndVolume = async () => {
     if (!auth.currentUser) return;
-    const memberData = await firestoreApi.getMemberInfo();
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
     const unrealized = memberData?.unrealized;
     unrealized.find((stock: memberStocksProps) => {
       if (stock.stock_id === stockID) {
@@ -195,7 +195,7 @@ export default function CheckModal() {
 
   const updateMemberStockHolding = async () => {
     if (!auth.currentUser) return;
-    const memberData = await firestoreApi.getMemberInfo();
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
     const unrealized = memberData?.unrealized;
     const stockPrice = await api.getTaiwanStockPriceTick(stockID);
     const marketPrice = stockPrice.data[0].close;
@@ -230,7 +230,7 @@ export default function CheckModal() {
 
   const updateMemberRealizedProfitLoss = async () => {
     if (!auth.currentUser) return;
-    const memberData = await firestoreApi.getMemberInfo();
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
     const realized = memberData?.realized;
     const stockHolding = memberData?.unrealized;
     const stockPrice = await api.getTaiwanStockPriceTick(stockID);
@@ -259,7 +259,7 @@ export default function CheckModal() {
       toast.error("登入後即可進行模擬交易");
       return;
     }
-    const memberData = await firestoreApi.getMemberInfo();
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
 
     if (buySell === "賣") {
       const stockHolding = memberData?.unrealized;
@@ -287,14 +287,7 @@ export default function CheckModal() {
       toast.error("總預估金額大於現金餘額，請重新選擇交易選項");
       return;
     }
-    // firestoreApi.handleTrade(
-    //   buySell,
-    //   stockID,
-    //   trade,
-    //   order,
-    //   price,
-    //   volume,
-    // )
+
     const docRef = await addDoc(collection(db, "Trades"), {
       buy_or_sell: buySell,
       stock_id: stockID,

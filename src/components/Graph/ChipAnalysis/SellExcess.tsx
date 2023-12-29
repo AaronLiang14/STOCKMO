@@ -20,8 +20,6 @@ export default function SellExcess({ id }: { id: string }) {
       setBuyExcess(
         formatted.sort((a: number[], b: number[]) => b[1] - a[1]).slice(0, 15),
       );
-    } catch (err) {
-      console.log(err);
     } finally {
       setIsLoading(false);
     }

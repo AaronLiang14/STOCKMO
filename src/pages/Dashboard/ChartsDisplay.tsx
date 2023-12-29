@@ -55,7 +55,7 @@ export default function ChartsDisplay() {
       deleteUnLoginLayout(id, unLoginLayout);
       return;
     }
-    const memberInfo = await firestoreApi.getMemberInfo();
+    const memberInfo = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
     const latestLayout = memberInfo?.dashboard_layout;
     const newLayout = latestLayout.filter((item: layoutProps) => item.i !== id);
     firestoreApi.updateDashboardLayout(newLayout);

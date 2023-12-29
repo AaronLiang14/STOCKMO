@@ -1,16 +1,11 @@
 import { auth, db } from "@/config/firebase";
-import { useFavoritesStore } from "@/utils/useLoginStore";
+import firestoreApi from "@/utils/firestoreApi";
 import { Button, Card } from "@nextui-org/react";
 import {
   Timestamp,
-  arrayRemove,
-  arrayUnion,
   collection,
-  doc,
-  getDoc,
   getDocs,
   query,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -34,12 +29,9 @@ const AuthorAvatar = ({ id }: { id: string }) => {
   const [name, setName] = useState<string>("");
 
   const getAuthorAvatar = async () => {
-    const memberRef = doc(db, "Member", id);
-    const docSnap = await getDoc(memberRef);
-    if (docSnap.exists()) {
-      setAvatar(docSnap.data().avatar);
-      setName(docSnap.data().name);
-    }
+    const memberData = await firestoreApi.getMemberInfo(id);
+    setAvatar(memberData?.avatar);
+    setName(memberData?.name);
   };
   getAuthorAvatar();
 
@@ -52,31 +44,29 @@ const AuthorAvatar = ({ id }: { id: string }) => {
 };
 
 export default function Articles() {
-  const { favoriteArticles, getFavoriteArticles } = useFavoritesStore();
   const { id } = useParams();
   const [articles, setArticles] = useState<Article[]>([]);
+  const [favoriteArticles, setFavoriteArticles] = useState<string[]>([]);
+
+  const getFavoriteArticles = async () => {
+    if (!auth.currentUser) return;
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    setFavoriteArticles(memberData?.favorite_articles || []);
+  };
 
   const handleArticleFavorite = async (id: string) => {
     if (!auth.currentUser) {
       toast.error("請先登入");
       return;
     }
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const docSnap = await getDoc(memberRef);
-
-    if (docSnap.exists()) {
-      if (docSnap.data().favorite_articles.includes(id)) {
-        await updateDoc(memberRef, {
-          favorite_articles: arrayRemove(id),
-        });
-        toast.success("取消收藏");
-        return;
-      }
-      await updateDoc(memberRef, {
-        favorite_articles: arrayUnion(id),
-      });
-      toast.success("加入收藏");
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    if (memberData?.favorite_articles.includes(id)) {
+      await firestoreApi.updateFavorite(id!, "remove", "favorite_articles");
+      toast.success("取消收藏");
+      return;
     }
+    await firestoreApi.updateFavorite(id!, "add", "favorite_articles");
+    toast.success("加入收藏");
   };
 
   const q = query(collection(db, "Articles"), where("stock_code", "==", id));
@@ -106,7 +96,7 @@ export default function Articles() {
           {articles.length === 0 ? (
             <div className="flex items-center justify-center">
               <p className="text-base sm:text-2xl">
-                目前沒有文章，滾動至下方來撰寫一篇文章吧
+                目前還沒有文章紀錄，至下方撰寫文章！
               </p>
             </div>
           ) : (

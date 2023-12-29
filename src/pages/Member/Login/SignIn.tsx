@@ -26,6 +26,10 @@ export default function Login() {
   } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
     mode: "onBlur",
+    defaultValues: {
+      email: "user01@gmail.com",
+      password: "stockmo2023",
+    },
   });
 
   const navigate = useNavigate();

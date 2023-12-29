@@ -1,6 +1,6 @@
-import { doc, getDoc } from "firebase/firestore";
 import { create } from "zustand";
-import { auth, db } from "../config/firebase";
+import { auth } from "../config/firebase";
+import firestoreApi from "./firestoreApi";
 
 interface layoutProps {
   i: string;
@@ -26,15 +26,10 @@ const useDashboardStore = create<DashboardProps>((set) => ({
   ...initialState,
   getLatestLayout: async () => {
     if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const layout = await getDoc(memberRef);
-    if (layout.exists()) {
-      set({
-        layout: layout
-          .data()!
-          .dashboard_layout.map((item: layoutProps) => item),
-      });
-    }
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    set({
+      layout: memberData?.dashboard_layout.map((item: layoutProps) => item),
+    });
   },
 
   setUnLogInLayout: (layout: layoutProps[]) => {

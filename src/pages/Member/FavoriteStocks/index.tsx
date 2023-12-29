@@ -1,6 +1,7 @@
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
 import StockCode from "@/data/StockCode.json";
 import api from "@/utils/finMindApi";
+import firestoreApi from "@/utils/firestoreApi";
 import {
   Button,
   Table,
@@ -11,7 +12,6 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -60,9 +60,8 @@ export default function FavoriteStocks() {
 
   const getMemberInfo = async () => {
     if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const docSnap = await getDoc(memberRef);
-    setFavoriteStocks(docSnap.data()?.favorite_stocks);
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    setFavoriteStocks(memberData?.favorite_stocks);
   };
 
   const getStockPrice = async () => {
@@ -77,25 +76,17 @@ export default function FavoriteStocks() {
 
   const handleCancelFavorite = async (id: string) => {
     if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    await updateDoc(memberRef, {
-      favorite_stocks: favoriteStocks.filter((item) => item !== id),
-    });
+    firestoreApi.updateFavorite(id, "remove", "favorite_stocks");
     getMemberInfo();
   };
 
   const favoriteItems = favoriteStocks.map((item) => {
-    const industry = StockCode.filter(
+    const stockInfo = StockCode.find(
       (stock) => stock.stockCode.toString() === item,
-    )[0].industry;
-
-    const market = StockCode.filter(
-      (stock) => stock.stockCode.toString() === item,
-    )[0].market;
-
-    const stockName = StockCode.filter(
-      (stock) => stock.stockCode.toString() === item,
-    )[0].stockName;
+    );
+    const industry = stockInfo?.industry;
+    const market = stockInfo?.market;
+    const stockName = stockInfo?.stockName;
 
     const price = stockPrice[parseInt(item)]?.[0]?.close;
     const changePrice = stockPrice[parseInt(item)]?.[0]?.change_price;

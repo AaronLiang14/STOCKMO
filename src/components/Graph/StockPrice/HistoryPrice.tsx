@@ -151,8 +151,6 @@ export default function StockChart({ id }: { id: string }) {
       });
       setVolume(formattedVolume);
       setStockPrice(formattedData);
-    } catch (err) {
-      console.log(err);
     } finally {
       setIsLoading(false);
     }
