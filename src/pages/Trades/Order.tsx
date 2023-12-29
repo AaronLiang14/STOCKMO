@@ -87,7 +87,7 @@ export default function Order() {
   return (
     <>
       {!auth.currentUser && (
-        <div className=" mb-4 flex items-center justify-center gap-3">
+        <div className="mb-4 flex items-center justify-center gap-3">
           <WarningIcon className=" text-red-600 " />
           <p className=" text-red-600">登入後即可進行模擬交易</p>
         </div>
@@ -211,7 +211,7 @@ export default function Order() {
         />
       </Card>
 
-      <div className="mt-4 flex justify-center">
+      <div className="mb-11 mt-4 flex justify-center">
         <TradesCheck />
       </div>
     </>

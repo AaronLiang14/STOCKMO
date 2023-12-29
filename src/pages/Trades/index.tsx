@@ -16,7 +16,11 @@ export default function Trades() {
 
   return (
     <>
-      <div className="m-auto mb-24 min-h-[calc(100vh_-_120px)] w-11/12 pt-24">
+      <div
+        className={`m-auto ${
+          location.pathname.split("/")[2] !== "order" && "mb-24"
+        } min-h-[calc(100vh_-_120px)] w-11/12 pt-16`}
+      >
         <div className="mb-6 mt-12 flex justify-center pb-3">
           <div className="flex w-full flex-row justify-center gap-3">
             {Object.keys(tradesProcess).map((item) => (

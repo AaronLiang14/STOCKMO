@@ -53,7 +53,7 @@ const LatestPrice = () => {
   return (
     <div className="flex flex-row justify-between">
       <div
-        className={`rounded-full ${colorDependOnRiseAndFall} px-2 pb-4 text-4xl font-medium`}
+        className={`rounded-full ${colorDependOnRiseAndFall} px-2 pb-4 text-3xl font-medium md:text-4xl`}
       >
         {latestInfo.close}
         {rise ? (
@@ -64,22 +64,22 @@ const LatestPrice = () => {
         {isLoading ? (
           <Spinner size="sm" />
         ) : (
-          <span className="ml-2 text-sm font-normal">
+          <span className="ml-2 text-xs font-normal md:text-sm">
             {latestInfo.change_price} ({latestInfo.change_rate}%)
           </span>
         )}
       </div>
-      <div className="flex flex-row gap-8">
+      <div className="flex flex-row gap-2 md:gap-8">
         <div className="flex flex-col items-center">
           {isLoading ? (
             <Spinner size="sm" />
           ) : (
-            <span className="  text-sm font-normal text-red-600">
+            <span className="text-xs font-normal text-red-600 md:text-sm">
               {latestInfo.high}
             </span>
           )}
 
-          <span className="text-co text-sm font-normal text-red-600">
+          <span className="flex-col text-xs  font-normal text-red-600 md:text-sm">
             最高價
           </span>
         </div>
@@ -88,24 +88,28 @@ const LatestPrice = () => {
           {isLoading ? (
             <Spinner size="sm" />
           ) : (
-            <span className=" text-sm font-normal text-green-800">
+            <span className=" text-xs  font-normal text-green-800 md:text-sm">
               {latestInfo.low}
             </span>
           )}
-          <span className="text-sm font-normal text-green-800">最低價</span>
+          <span className="text-xs  font-normal text-green-800 md:text-sm">
+            最低價
+          </span>
         </div>
 
         <div className="flex flex-col">
           {isLoading ? (
             <Spinner size="sm" />
           ) : (
-            <span className="text-center text-sm font-normal text-gray-800">
+            <span className="text-center text-xs font-normal text-gray-800 md:text-sm">
               {latestInfo.total_volume &&
                 latestInfo.total_volume.toLocaleString()}
             </span>
           )}
 
-          <span className="text-sm font-normal text-gray-800">累積成交量</span>
+          <span className="text-xs font-normal text-gray-800 md:text-sm">
+            累積成交量
+          </span>
         </div>
       </div>
     </div>

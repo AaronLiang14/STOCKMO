@@ -34,7 +34,7 @@ export default function Home() {
       <video
         ref={videoRef}
         autoPlay
-        muted
+        muted={true}
         loop
         className="absolute z-0 h-[100vh] w-[100vw] object-cover opacity-90"
       >

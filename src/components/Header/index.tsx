@@ -1,4 +1,5 @@
 import logo from "@/assets/logo.png";
+import useLoginStore from "@/utils/useLoginStore";
 import {
   Navbar,
   NavbarBrand,
@@ -10,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { toast } from "sonner";
 import SearchIcon from "~icons/ic/twotone-search";
 import Avatar from "./Avatar";
 import SearchBox from "./SearchBox";
@@ -20,6 +22,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const searchBoxRef = useRef(null);
+  const { handleLogout } = useLoginStore();
 
   const headerOption: { [key: string]: string } = {
     industry: "產業類別",
@@ -48,6 +51,23 @@ export default function Header() {
       name: "文章收藏",
       link: "/member/favoriteArticles",
     },
+    login: {
+      name: "登入",
+      link: "/login/signIn",
+    },
+    logout: {
+      name: "登出",
+      link: "/",
+    },
+  };
+
+  const handleMobileMenuClick = (item: string) => {
+    setIsMenuOpen(false);
+    console.log(item);
+    if (item === "logout") {
+      handleLogout();
+      toast.success("已登出");
+    }
   };
 
   useEffect(() => {
@@ -69,6 +89,18 @@ export default function Header() {
     }
     setBackgroundColor("bg-white border-b-2");
   }, [location, isMenuOpen]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileSearchOpen(false);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <>
@@ -129,7 +161,7 @@ export default function Header() {
           />
         </NavbarContent>
         {isMobileSearchOpen && (
-          <div ref={searchBoxRef} className="absolute w-screen">
+          <div ref={searchBoxRef} className="absolute w-10/12 ">
             <SearchBox />
           </div>
         )}
@@ -141,7 +173,7 @@ export default function Header() {
                 key={`${item}-${index}`}
                 className="border-b-2 border-gray-200"
                 to={mobileMenuOption[item].link}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => handleMobileMenuClick(item)}
               >
                 <NavbarMenuItem className="w-full">
                   {mobileMenuOption[item].name}

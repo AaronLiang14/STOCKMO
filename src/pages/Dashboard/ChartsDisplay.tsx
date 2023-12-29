@@ -100,7 +100,7 @@ export default function ChartsDisplay() {
 
   return (
     <>
-      <div className="m-auto min-h-[calc(100vh_-_280px)] w-11/12">
+      <div className="m-auto min-h-[calc(100vh_-_232px)] w-11/12">
         <div className={`${getLayoutInfo().isLayoutExist ? "hidden" : ""}`}>
           <NoChartsChosen />
         </div>

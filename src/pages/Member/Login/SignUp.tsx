@@ -44,7 +44,7 @@ export default function Login() {
 
   return (
     <>
-      <div className="relative z-20 m-auto w-8/12 max-w-md rounded-lg bg-white bg-opacity-80">
+      <div className="relative z-20 m-auto w-11/12 max-w-md rounded-lg bg-white bg-opacity-80 md:w-8/12">
         <div className=" rounded-lg px-10 py-8 shadow">
           <ChangeAvatar />
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
