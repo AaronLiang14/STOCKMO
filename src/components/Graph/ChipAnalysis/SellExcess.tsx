@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Card, Spinner } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
@@ -20,8 +20,6 @@ export default function SellExcess({ id }: { id: string }) {
       setBuyExcess(
         formatted.sort((a: number[], b: number[]) => b[1] - a[1]).slice(0, 15),
       );
-    } catch (err) {
-      console.log(err);
     } finally {
       setIsLoading(false);
     }

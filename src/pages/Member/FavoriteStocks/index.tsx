@@ -1,6 +1,7 @@
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
 import StockCode from "@/data/StockCode.json";
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
+import firestoreApi from "@/utils/firestoreApi";
 import {
   Button,
   Table,
@@ -11,7 +12,6 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -60,9 +60,8 @@ export default function FavoriteStocks() {
 
   const getMemberInfo = async () => {
     if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const docSnap = await getDoc(memberRef);
-    setFavoriteStocks(docSnap.data()?.favorite_stocks);
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    setFavoriteStocks(memberData?.favorite_stocks);
   };
 
   const getStockPrice = async () => {
@@ -77,24 +76,17 @@ export default function FavoriteStocks() {
 
   const handleCancelFavorite = async (id: string) => {
     if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    await updateDoc(memberRef, {
-      favorite_stocks: favoriteStocks.filter((item) => item !== id),
-    });
+    firestoreApi.updateFavorite(id, "remove", "favorite_stocks");
+    getMemberInfo();
   };
 
   const favoriteItems = favoriteStocks.map((item) => {
-    const industry = StockCode.filter(
+    const stockInfo = StockCode.find(
       (stock) => stock.stockCode.toString() === item,
-    )[0].industry;
-
-    const market = StockCode.filter(
-      (stock) => stock.stockCode.toString() === item,
-    )[0].market;
-
-    const stockName = StockCode.filter(
-      (stock) => stock.stockCode.toString() === item,
-    )[0].stockName;
+    );
+    const industry = stockInfo?.industry;
+    const market = stockInfo?.market;
+    const stockName = stockInfo?.stockName;
 
     const price = stockPrice[parseInt(item)]?.[0]?.close;
     const changePrice = stockPrice[parseInt(item)]?.[0]?.change_price;
@@ -139,11 +131,8 @@ export default function FavoriteStocks() {
   });
 
   useEffect(() => {
-    if (auth.currentUser)
-      onSnapshot(doc(db, "Member", auth.currentUser.uid), () => {
-        getMemberInfo();
-      });
-  }, [auth.currentUser]);
+    getMemberInfo();
+  }, []);
 
   useEffect(() => {
     getStockPrice();
@@ -151,13 +140,16 @@ export default function FavoriteStocks() {
 
   return (
     <>
-      <div className="mt-24 w-full">
+      <div className="mx-auto mt-12 w-11/12 ">
         <div>
           {favoriteItems.length > 0 ? (
-            <Table aria-label="我的最愛的股票" className="pr-8">
+            <Table aria-label="股票收藏">
               <TableHeader columns={columns}>
                 {(column) => (
-                  <TableColumn key={column.key} className="text-base">
+                  <TableColumn
+                    key={column.key}
+                    className="text-sm sm:text-base"
+                  >
                     {column.label}
                   </TableColumn>
                 )}
@@ -166,7 +158,7 @@ export default function FavoriteStocks() {
                 {(item) => (
                   <TableRow key={item.id}>
                     {(columnKey) => (
-                      <TableCell className=" text-base">
+                      <TableCell className="text-xs sm:text-base">
                         {getKeyValue(item, columnKey)}
                       </TableCell>
                     )}

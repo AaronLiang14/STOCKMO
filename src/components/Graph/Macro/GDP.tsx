@@ -36,8 +36,8 @@ export default function GDP() {
           fontSize: "14px",
         },
       },
-      tickInterval: 2, // Set to 4 to display labels once per year
-      max: years.length - 1, // Ensure only one label is shown for each year
+      tickInterval: 2,
+      max: years.length - 1,
       min: 0,
     },
     yAxis: {

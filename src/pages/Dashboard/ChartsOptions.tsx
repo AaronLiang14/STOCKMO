@@ -1,12 +1,10 @@
-import { Button, Select, SelectItem } from "@nextui-org/react";
-
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
 import stockCode from "@/data/StockCode.json";
+import firestoreApi from "@/utils/firestoreApi";
 import useDashboardStore from "@/utils/useDashboardStore";
-import { Input } from "@nextui-org/react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import WarningIcon from "~icons/ph/warning-fill";
 
 const charts: { [key: string]: string } = {
   gdp: "GDP",
@@ -27,23 +25,45 @@ export default function ChartsOptions() {
   const [selectedCharts, setSelectedCharts] = useState<string>("");
   const [isInputDisabled, setInputDisabled] = useState<boolean>(true);
   const [isButtonDisabled, setButtonDisabled] = useState<boolean>(true);
-  const { getLatestLayout } = useDashboardStore();
+  const { getLatestLayout, setUnLogInLayout, unLoginLayout } =
+    useDashboardStore();
+
+  const isSelectedChartsForMarket = () => {
+    if (
+      selectedCharts === "gdp" ||
+      selectedCharts === "unemployment" ||
+      selectedCharts === "TAIEX"
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const inputAvailable = () => {
+    if (isSelectedChartsForMarket()) {
+      setInputDisabled(true);
+      return;
+    }
+    setInputDisabled(false);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStockID(e.target.value);
+    const inputID = e.target.value.split("/")[0];
+    setStockID(inputID);
 
-    if (isNaN(parseInt(e.target.value))) {
+    if (isNaN(parseInt(inputID))) {
       const filter = stockCode.filter((item) => {
-        return item.stockName.includes(e.target.value);
+        return item.stockName.includes(inputID);
       });
       setFilterOptions(
         filter.map((item) => item.stockCode + "/" + item.stockName),
       );
+      return;
     }
 
-    if (!isNaN(parseInt(e.target.value))) {
+    if (!isNaN(parseInt(inputID))) {
       const filter = stockCode.filter((item) => {
-        return item.stockCode.toString().includes(e.target.value);
+        return item.stockCode.toString().includes(inputID);
       });
       setFilterOptions(
         filter.map((item) => item.stockCode + "/" + item.stockName),
@@ -52,62 +72,41 @@ export default function ChartsOptions() {
   };
 
   const buttonAvailable = () => {
-    if (
-      selectedCharts === "gdp" ||
-      selectedCharts === "unemployment" ||
-      selectedCharts === "TAIEX"
-    ) {
+    if (isSelectedChartsForMarket()) {
       setButtonDisabled(false);
-    } else {
-      if (
-        stockID &&
-        stockCode.find(
-          (item) => item.stockCode.toString() === stockID.split("/")[0],
-        )
-      ) {
-        setButtonDisabled(false);
-      } else {
-        setButtonDisabled(true);
-      }
+      return;
     }
-  };
-
-  const inputAvailable = () => {
-    if (
-      selectedCharts === "gdp" ||
-      selectedCharts === "unemployment" ||
-      selectedCharts === "TAIEX"
-    ) {
-      setInputDisabled(true);
-    } else {
-      setInputDisabled(false);
+    if (stockCode.find((item) => item.stockCode === parseInt(stockID))) {
+      setButtonDisabled(false);
+      return;
     }
+    setButtonDisabled(true);
   };
 
   const addChart = async (chart: string, stockID: string) => {
+    const newChartInfo = {
+      i: chart + "/" + stockID,
+      x: 0,
+      y: -1,
+      w: 6,
+      h: 4,
+    };
     if (!auth.currentUser) {
-      toast.error("請先登入");
+      const newUnLoginLayout = [...unLoginLayout, newChartInfo];
+      setUnLogInLayout(newUnLoginLayout);
       return;
     }
-    const memberRef = doc(db, "Member", auth.currentUser?.uid);
-    const memberData = await getDoc(memberRef);
-    const latestLayout = memberData.data()?.dashboard_layout;
-    const newLayout = [
-      ...latestLayout,
-      {
-        i: chart + "/" + stockID,
-        x: 0,
-        y: -1,
-        w: 6,
-        h: 4,
-      },
-    ];
-    await updateDoc(memberRef, {
-      dashboard_layout: newLayout,
-    });
+    const memberInfo = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    const latestLayout = memberInfo?.dashboard_layout;
+    const newLayout = [...latestLayout, newChartInfo];
+    firestoreApi.updateDashboardLayout(newLayout);
     getLatestLayout();
     setStockID("");
   };
+
+  useEffect(() => {
+    setInputDisabled(true);
+  }, []);
 
   useEffect(() => {
     inputAvailable();
@@ -119,7 +118,14 @@ export default function ChartsOptions() {
 
   return (
     <>
-      <div className=" m-auto mb-4 flex h-24 w-11/12 items-center justify-end gap-4 rounded-lg">
+      <div className="m-auto mb-4 flex w-11/12 flex-col items-center justify-end gap-4 rounded-lg sm:flex-row">
+        {!auth.currentUser && (
+          <div className="mr-auto flex items-center gap-3">
+            <WarningIcon className="text-red-600" />
+            <p className="text-red-600">登入後即可儲存圖表位置及大小</p>
+          </div>
+        )}
+
         <Select
           key={123}
           label={"請選擇圖表"}
@@ -135,7 +141,7 @@ export default function ChartsOptions() {
           ))}
         </Select>
 
-        <div className="relative">
+        <div className={`relative  ${isInputDisabled && "hidden"}`}>
           <Input
             type="text"
             id="simple-search"
@@ -144,10 +150,9 @@ export default function ChartsOptions() {
             value={stockID}
             onChange={handleInputChange}
             onClear={() => setStockID("")}
-            isDisabled={isInputDisabled}
           />
           <div className="absolute z-10 mt-2 w-full rounded-lg bg-gray-200">
-            {stockID && filterOptions.length > 0 && (
+            {filterOptions.length > 0 && (
               <ul className="max-h-60  overflow-y-scroll px-1 py-2 text-sm text-gray-700 dark:text-gray-100">
                 {filterOptions.map((item, index) => (
                   <li key={index}>

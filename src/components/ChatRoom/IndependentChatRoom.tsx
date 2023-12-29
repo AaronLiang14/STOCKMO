@@ -1,13 +1,7 @@
 import { auth, db } from "@/config/firebase";
+import firestoreApi from "@/utils/firestoreApi";
 import useChatRoomStore from "@/utils/useChatRoomStore";
-import {
-  Timestamp,
-  arrayUnion,
-  doc,
-  onSnapshot,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { Timestamp, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { MyMessage, OtherMessage } from "./Messages";
@@ -22,33 +16,22 @@ interface Message {
 export default function IndependentChatRoom({ id }: { id: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
+  const [isComposing, setIsComposing] = useState(false);
   const { roomID } = useChatRoomStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [isComposing, setIsComposing] = useState(false);
 
-  const handleCompositionStart = () => {
-    setIsComposing(true);
-  };
-
-  const handleCompositionEnd = () => {
-    setIsComposing(false);
-  };
   const handleSendMessage = async () => {
     if (input === "" || !id) return;
-
+    const newMessage = {
+      member_id: auth.currentUser!.uid,
+      text: input,
+      message_time: new Date(),
+      name: auth.currentUser?.displayName,
+      avatar: auth.currentUser?.photoURL,
+      room_id: id,
+    };
     try {
-      const newMessage = {
-        member_id: auth.currentUser!.uid,
-        text: input,
-        message_time: new Date(),
-        name: auth.currentUser?.displayName,
-        avatar: auth.currentUser?.photoURL,
-        room_id: id,
-      };
-      const chatRoomsRef = doc(db, "ChatRooms", id);
-      await updateDoc(chatRoomsRef, {
-        messages: arrayUnion(newMessage),
-      });
+      await firestoreApi.sendNewMessage(id, newMessage);
       setInput("");
     } catch (error) {
       toast.error("請先登入");
@@ -57,15 +40,18 @@ export default function IndependentChatRoom({ id }: { id: string }) {
 
   useEffect(() => {
     const chatRoomsRef = doc(db, "ChatRooms", id!);
-    onSnapshot(chatRoomsRef, (doc) => {
+    const unsubscribe = onSnapshot(chatRoomsRef, (doc) => {
       if (doc.data() === undefined) {
         setDoc(chatRoomsRef, {
           messages: [],
         });
-      } else {
-        setMessages(doc.data()?.messages);
+        return;
       }
+      setMessages(doc.data()?.messages);
     });
+    return () => {
+      unsubscribe();
+    };
   }, [roomID]);
 
   useEffect(() => {
@@ -76,7 +62,7 @@ export default function IndependentChatRoom({ id }: { id: string }) {
 
   return (
     <div className=" rounded-b-lg border-1 bg-white shadow-lg">
-      <div className="h-80 overflow-y-auto p-4">
+      <div className="h-80 overflow-y-auto p-4 ">
         {messages.map((message, index) => {
           if (message.member_id === auth.currentUser!.uid) {
             return MyMessage(
@@ -87,16 +73,15 @@ export default function IndependentChatRoom({ id }: { id: string }) {
               message.message_time.toDate().toLocaleTimeString(),
               messagesEndRef,
             );
-          } else {
-            return OtherMessage(
-              message.text,
-              index,
-              message.name,
-              message.avatar,
-              message.message_time.toDate().toLocaleTimeString(),
-              messagesEndRef,
-            );
           }
+          return OtherMessage(
+            message.text,
+            index,
+            message.name,
+            message.avatar,
+            message.message_time.toDate().toLocaleTimeString(),
+            messagesEndRef,
+          );
         })}
       </div>
       <div className="flex border-t p-4">
@@ -113,8 +98,8 @@ export default function IndependentChatRoom({ id }: { id: string }) {
               handleSendMessage();
             }
           }}
-          onCompositionStart={handleCompositionStart}
-          onCompositionEnd={handleCompositionEnd}
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={() => setIsComposing(false)}
         />
         <button
           id="send-button"

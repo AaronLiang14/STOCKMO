@@ -7,7 +7,11 @@ import ChartsOptions from "./ChartsOptions";
 export default function Dashboard() {
   return (
     <>
-      <div className="m-auto flex w-11/12 flex-col pt-36">
+      <div className="m-auto flex min-h-[calc(100vh_-_35px)] items-center justify-center pt-20  md:hidden">
+        請使用電腦版網頁來啟用儀表板功能
+      </div>
+
+      <div className="m-auto hidden w-11/12 flex-col pt-24 sm:pt-36 md:flex">
         <ChartsOptions />
         <ChartsDisplay />
       </div>

@@ -24,28 +24,22 @@ export default function Member() {
 
   return (
     <>
-      <div className="m-auto mb-24 flex min-h-[calc(100vh_-_120px)] max-w-[1280px] pt-24">
-        <div className="flex flex-row">
-          <aside className="mx-8 mt-24 h-full w-60 ">
-            <div className="rounded-lg bg-gray-300 px-3 py-4">
-              <ul className="cursor-pointer space-y-2 font-medium">
-                {asideOptions.map((item, index) => (
-                  <li key={index}>
-                    <div
-                      className={`group flex items-center ${
-                        currentPath.split("/")[2] === item.option &&
-                        "bg-gray-100"
-                      } rounded-lg p-2 text-gray-900  dark:text-black`}
-                      onClick={() => navigate(`/member/${item.option}`)}
-                    >
-                      {item.icon}
-                      <span className="ms-3">{item.name}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+      <div className="mx-auto mb-24 flex min-h-[calc(100vh_-_120px)] max-w-[1280px] flex-col pt-36">
+        <div className="flex w-full flex-row justify-center gap-10">
+          {asideOptions.map((item, index) => (
+            <div key={index}>
+              <div
+                className={`flex cursor-pointer justify-center pb-4 ${
+                  currentPath.split("/")[2] === item.option &&
+                  "border-b-3 border-blue-800"
+                } text-lg hover:border-b-3 hover:border-blue-800`}
+                onClick={() => navigate(`/member/${item.option}`)}
+              >
+                {item.icon}
+                <span className="ms-3">{item.name}</span>
+              </div>
             </div>
-          </aside>
+          ))}
         </div>
         <Outlet />
       </div>

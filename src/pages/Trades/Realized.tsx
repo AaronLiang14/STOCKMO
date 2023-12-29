@@ -1,6 +1,8 @@
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
+import firestoreApi from "@/utils/firestoreApi";
 import { DocumentData } from "@firebase/firestore";
 import {
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -9,7 +11,6 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const columns = [
@@ -53,13 +54,17 @@ const columns = [
 
 export default function Realized() {
   const [realizedStocks, setRealizedStocks] = useState<DocumentData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getRealizedStocks = async () => {
-    if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const memberDoc = await getDoc(memberRef);
-    if (!memberDoc.exists()) return;
-    setRealizedStocks(memberDoc.data().realized);
+    try {
+      const memberData = await firestoreApi.getMemberInfo(
+        auth.currentUser!.uid,
+      );
+      setRealizedStocks(memberData?.realized);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const rows = realizedStocks.map((stock) => {
@@ -92,29 +97,32 @@ export default function Realized() {
   return (
     <>
       <div className="flex flex-col gap-3">
-        <Table
-          aria-label="Rows actions table example with dynamic content"
-          selectionMode="multiple"
-          selectionBehavior="replace"
-          onRowAction={(key) => alert(`Opening item ${key}...`)}
-        >
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={rows}>
-            {(item) => (
-              <TableRow key={item!.key}>
-                {(columnKey) => (
-                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Table
+            aria-label="Rows actions table example with dynamic content"
+            selectionMode="multiple"
+            selectionBehavior="replace"
+          >
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn key={column.key}>{column.label}</TableColumn>
+              )}
+            </TableHeader>
+            <TableBody items={rows}>
+              {(item) => (
+                <TableRow key={item!.key}>
+                  {(columnKey) => (
+                    <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
 
-        {realizedStocks.length === 0 && (
+        {realizedStocks.length === 0 && !isLoading && (
           <p className="m-auto mt-12 text-2xl">查無資料</p>
         )}
       </div>

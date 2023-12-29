@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Card, Select, SelectItem } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
@@ -6,14 +6,15 @@ import { useEffect, useState } from "react";
 import timeSelector from "../TimeSelect";
 
 export default function EPS({ id }: { id: string }) {
+  const [time, setTime] = useState<string>(timeSelector.oneYear);
   const [formattedData, setFormattedData] = useState<
     { x: number; y: number }[]
   >([]);
+
   interface EPSProps {
     date: string;
     value: number;
   }
-  const [time, setTime] = useState<string>(timeSelector.oneYear);
 
   const chartsTime = [
     {
@@ -60,7 +61,7 @@ export default function EPS({ id }: { id: string }) {
       showFirstLabel: false,
       showLastLabel: true,
       title: {
-        text: "EPS(元)",
+        text: "",
       },
     },
     credits: {

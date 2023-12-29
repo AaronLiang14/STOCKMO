@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Spinner } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
@@ -44,8 +44,11 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
 
   const getLatestInfo = async () => {
     const res = await api.getTaiwanStockPriceTick(stockID.toString());
-    if (res.data[0].change_rate > 0) setRise(true);
-    else setRise(false);
+    if (res.data[0].change_rate > 0) {
+      setRise(true);
+      return;
+    }
+    setRise(false);
   };
 
   const chartsColor = rise ? "rgba(255, 0, 0, 0.5)" : "rgb(201,228,222)";

@@ -1,9 +1,10 @@
-import { auth, db } from "@/config/firebase";
 import StockCode from "@/data/StockCode.json";
+import firestoreApi from "@/utils/firestoreApi";
 import useChatRoomStore from "@/utils/useChatRoomStore";
 import { Avatar, Spinner } from "@nextui-org/react";
-import { Timestamp, collection, getDocs } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface ChatRoomMessage {
   member_id: string;
@@ -13,27 +14,15 @@ interface ChatRoomMessage {
 }
 
 export default function EngageChatRooms() {
-  const chatRoomsRef = collection(db, "ChatRooms");
   const [chatRooms, setChatRooms] = useState<ChatRoomMessage[][]>([]);
-  const { changeRoomID, changeIsIndependentRoom, changeIsAllRoom } =
+  const { changeRoomID, switchToIndependentRoom, switchToAllRoom } =
     useChatRoomStore();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getAllChatRooms = async () => {
     try {
-      const querySnapshot = await getDocs(chatRoomsRef);
-      const chatRooms = querySnapshot.docs.map((doc) => doc.data().messages);
-      const userEngagedCharRooms = chatRooms.filter(
-        (chatRoom) =>
-          chatRoom.length > 0 &&
-          chatRoom
-            .map(
-              (message: { member_id: string }) =>
-                message.member_id === auth.currentUser?.uid,
-            )
-            .includes(true),
-      );
-      setChatRooms(userEngagedCharRooms);
+      const engagedChatRooms = await firestoreApi.getAllEngagedChatRooms();
+      setChatRooms(engagedChatRooms);
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +35,7 @@ export default function EngageChatRooms() {
   return (
     <>
       {isLoading ? (
-        <Spinner className=" flex h-[400px] justify-center bg-white" />
+        <Spinner className="flex h-[400px] justify-center bg-white" />
       ) : (
         <div className="h-[395px] overflow-y-auto rounded-b-lg border-1 bg-white shadow-lg">
           {chatRooms.length > 0 ? (
@@ -60,21 +49,22 @@ export default function EngageChatRooms() {
                 chatRoom[chatRoom.length - 1].message_time;
               return (
                 <div
-                  className="m-1 flex cursor-pointer border p-2"
+                  className="relative m-1 flex cursor-pointer rounded border p-2"
                   key={stockID}
                   onClick={() => {
                     changeRoomID(stockID);
-                    changeIsIndependentRoom(true);
-                    changeIsAllRoom(false);
+                    switchToIndependentRoom(true);
+                    switchToAllRoom(false);
                   }}
                 >
                   <Avatar
                     showFallback
                     name={stockID}
                     classNames={{
-                      base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]",
+                      base: "bg-slate-300",
                       icon: "text-black/80",
                     }}
+                    className="min-w-unit-10"
                   />
                   <div className="ml-4 text-xs ">
                     <p className="text-base font-medium">
@@ -83,9 +73,12 @@ export default function EngageChatRooms() {
                     <p>{latestMessage}</p>
                   </div>
 
-                  <div className="ml-auto">
-                    <p className="text-xs">
-                      {latestMessageTime.toDate().toLocaleTimeString()}
+                  <div className="absolute right-5 top-3 ml-auto">
+                    <p className="min-w-unit-20 text-end text-xs">
+                      {latestMessageTime.toDate().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </p>
                   </div>
                 </div>
@@ -93,7 +86,11 @@ export default function EngageChatRooms() {
             })
           ) : (
             <div className="flex h-full items-center justify-center text-gray-400">
-              請先至個股頁面傳遞訊息來加入聊天室
+              <p> 請先至個股頁面</p>
+              <Link to="/stock/2330/latest" className="text-blue-500">
+                個股頁面
+              </Link>
+              <p>傳遞訊息來加入聊天室</p>
             </div>
           )}
         </div>

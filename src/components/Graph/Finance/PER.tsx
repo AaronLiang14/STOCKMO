@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Card, Select, SelectItem } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
@@ -11,11 +11,10 @@ interface PERProps {
 }
 
 export default function PER({ id }: { id: string }) {
+  const [time, setTime] = useState<string>(timeSelector.oneYear);
   const [formattedData, setFormattedData] = useState<
     { x: number; y: number }[]
   >([]);
-
-  const [time, setTime] = useState<string>(timeSelector.oneYear);
 
   const chartsTime = [
     {
@@ -59,7 +58,7 @@ export default function PER({ id }: { id: string }) {
       showFirstLabel: false,
       showLastLabel: true,
       title: {
-        text: "本益比",
+        text: "",
       },
     },
     credits: {

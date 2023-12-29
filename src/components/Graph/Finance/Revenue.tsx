@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Card, Select, SelectItem } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
@@ -44,14 +44,13 @@ export default function Revenue({ id }: { id: string }) {
     }));
     setFormattedData(newData);
   };
-  // 資料格式 [ {x: 時間, y: 值}, {x: 1622592000000, y: 0.0}, ...]
 
   const options = {
     chart: {
       type: "line",
     },
     title: {
-      text: `月營收（${id}）`,
+      text: `月營收(百萬元)（${id}）`,
     },
     xAxis: {
       type: "datetime",
@@ -60,7 +59,7 @@ export default function Revenue({ id }: { id: string }) {
       showFirstLabel: false,
       showLastLabel: true,
       title: {
-        text: "月營收(百萬元)",
+        text: "",
       },
     },
     credits: {

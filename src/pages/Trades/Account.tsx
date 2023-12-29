@@ -1,5 +1,9 @@
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
+import api from "@/utils/finMindApi";
+import firestoreApi from "@/utils/firestoreApi";
+import { DocumentData } from "@firebase/firestore";
 import {
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -8,7 +12,6 @@ import {
   TableRow,
   getKeyValue,
 } from "@nextui-org/react";
-import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const columns = [
@@ -26,29 +29,79 @@ const columns = [
   },
 ];
 
+interface memberStocksProps {
+  stock_id: string;
+  volume: number;
+  average_price: number;
+}
+
 export default function Account() {
   const [cash, setCash] = useState<number>(0);
   const [securitiesAssets, setSecuritiesAssets] = useState<number>(0);
+  const [unrealizedStocks, setUnrealizedStocks] = useState<DocumentData[]>([]);
+  const [stockPrice, setStockPrice] = useState<{ [key: string]: number }>({});
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const getUnrealizedStocks = async () => {
+    try {
+      if (!auth.currentUser) return;
+      const memberData = await firestoreApi.getMemberInfo(
+        auth.currentUser!.uid,
+      );
+      setUnrealizedStocks(memberData?.unrealized);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getMarketPrice = async () => {
+    try {
+      unrealizedStocks.map(async (stock) => {
+        const res = await api.getTaiwanStockPriceTick(stock.stock_id);
+        res.data.map((stock: { stock_id: string; close: number }) => {
+          setStockPrice((prev) => ({
+            ...prev,
+            [stock.stock_id]: stock.close,
+          }));
+        });
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getAssets = async () => {
     if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser.uid);
-    const memberDoc = await getDoc(memberRef);
-    const memberData = memberDoc.data();
-
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
     setCash(memberData?.cash);
-    setSecuritiesAssets(memberData?.securities_assets);
+    setSecuritiesAssets(
+      memberData?.unrealized.reduce((acc: number, cur: memberStocksProps) => {
+        return acc + cur.volume * stockPrice[cur.stock_id];
+      }, 0),
+    );
   };
 
   useEffect(() => {
-    getAssets();
+    getUnrealizedStocks();
   }, [auth.currentUser]);
+
+  useEffect(() => {
+    getMarketPrice();
+  }, [unrealizedStocks]);
+
+  useEffect(() => {
+    getAssets();
+  }, [stockPrice]);
 
   const rows = [
     {
       key: "cash",
       cash: cash.toLocaleString(),
-      securitiesAssets: securitiesAssets.toLocaleString(),
+      securitiesAssets: isLoading ? (
+        <Spinner />
+      ) : (
+        securitiesAssets.toLocaleString()
+      ),
       netAssets: (cash + securitiesAssets).toLocaleString(),
     },
   ];
@@ -56,27 +109,30 @@ export default function Account() {
   return (
     <>
       <div className="flex flex-col gap-3">
-        <Table
-          aria-label="Rows actions table example with dynamic content"
-          selectionMode="multiple"
-          selectionBehavior="replace"
-          onRowAction={(key) => alert(`Opening item ${key}...`)}
-        >
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={rows}>
-            {(item) => (
-              <TableRow key={item!.key}>
-                {(columnKey) => (
-                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Table
+            aria-label="Rows actions table example with dynamic content"
+            selectionMode="multiple"
+            selectionBehavior="replace"
+          >
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn key={column.key}>{column.label}</TableColumn>
+              )}
+            </TableHeader>
+            <TableBody items={rows}>
+              {(item) => (
+                <TableRow key={item!.key}>
+                  {(columnKey) => (
+                    <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </>
   );

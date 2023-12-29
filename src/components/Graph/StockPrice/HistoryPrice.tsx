@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Card, Select, SelectItem, Spinner } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
@@ -52,11 +52,6 @@ export default function StockChart({ id }: { id: string }) {
     },
   ];
 
-  const groupingUnits = [
-    ["week", [1]],
-    ["month", [1, 2, 3, 4, 6]],
-  ];
-
   const options = {
     chart: {},
 
@@ -81,7 +76,7 @@ export default function StockChart({ id }: { id: string }) {
           x: -3,
         },
         title: {
-          text: "股價",
+          text: "",
         },
         height: "60%",
         lineWidth: 2,
@@ -95,7 +90,7 @@ export default function StockChart({ id }: { id: string }) {
           x: -3,
         },
         title: {
-          text: "成交量",
+          text: "",
         },
         top: "70%",
         height: "30%",
@@ -110,14 +105,6 @@ export default function StockChart({ id }: { id: string }) {
       split: true,
       style: {
         fontSize: "16px",
-      },
-    },
-
-    plotOptions: {
-      series: {
-        dataGrouping: {
-          units: groupingUnits,
-        },
       },
     },
 
@@ -164,8 +151,6 @@ export default function StockChart({ id }: { id: string }) {
       });
       setVolume(formattedVolume);
       setStockPrice(formattedData);
-    } catch (err) {
-      console.log(err);
     } finally {
       setIsLoading(false);
     }

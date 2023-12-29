@@ -10,9 +10,12 @@ import Industry from "./pages/Industry/index.tsx";
 import FavoriteArticles from "./pages/Member/FavoriteArticles.tsx";
 import FavoriteStocks from "./pages/Member/FavoriteStocks";
 import Login from "./pages/Member/Login";
+import SignIn from "./pages/Member/Login/SignIn";
+import SignUp from "./pages/Member/Login/SignUp";
 import Member from "./pages/Member/index.tsx";
 import NotFound from "./pages/NotFound/index.tsx";
 import Articles from "./pages/Stock/Articles";
+import IndependentArticles from "./pages/Stock/Articles/IndependentArticles.tsx";
 import BasicInformation from "./pages/Stock/BasicInformation";
 import Latest from "./pages/Stock/Latest.tsx";
 import News from "./pages/Stock/News";
@@ -20,9 +23,9 @@ import Stock from "./pages/Stock/index.tsx";
 import Account from "./pages/Trades/Account.tsx";
 import Deal from "./pages/Trades/Deal.tsx";
 import Entrustment from "./pages/Trades/Entrustment";
-import Order from "./pages/Trades/Order/index.tsx";
+import Order from "./pages/Trades/Order.tsx";
 import Realized from "./pages/Trades/Realized.tsx";
-import Unrealized from "./pages/Trades/Unrealized";
+import Unrealized from "./pages/Trades/Unrealized.tsx";
 import Trades from "./pages/Trades/index.tsx";
 import useLoginStore from "./utils/useLoginStore";
 
@@ -47,7 +50,6 @@ function App() {
       <NextUIProvider>
         <BrowserRouter>
           <ScrollToTop />
-
           <Toaster position="top-center" />
           <Header />
           <Routes>
@@ -56,7 +58,10 @@ function App() {
               <Route path="favoriteArticles" element={<FavoriteArticles />} />
               <Route path="favoriteStocks" element={<FavoriteStocks />} />
             </Route>
-            <Route path="login" element={<Login />} />
+            <Route path="login" element={<Login />}>
+              <Route path="signIn" element={<SignIn />} />
+              <Route path="signUp" element={<SignUp />} />
+            </Route>
             <Route path="industry" element={<Industry />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="stock/:id" element={<Stock />}>
@@ -64,6 +69,10 @@ function App() {
               <Route path="basic" element={<BasicInformation />} />
               <Route path="news" element={<News />} />
               <Route path="articles" element={<Articles />} />
+              <Route
+                path="articles/:articleID"
+                element={<IndependentArticles />}
+              />
             </Route>
             <Route path="trades" element={<Trades />}>
               <Route path="order" element={<Order />} />

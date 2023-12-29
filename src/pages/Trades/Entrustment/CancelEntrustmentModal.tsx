@@ -46,14 +46,13 @@ export default function CancelEntrustment({ cancelEntrustment }: Props) {
 
   const checkTradingTime = async () => {
     if (currentHour < 23 || (currentHour === 23 && currentMinute <= 30)) {
-      console.log("13:30之前。");
-    } else {
-      orderID.forEach((id) => {
-        updateDoc(doc(db, "Trades", id), {
-          status: "委託失敗",
-        });
-      });
+      return;
     }
+    orderID.forEach((id) => {
+      updateDoc(doc(db, "Trades", id), {
+        status: "委託失敗",
+      });
+    });
   };
 
   useEffect(() => {

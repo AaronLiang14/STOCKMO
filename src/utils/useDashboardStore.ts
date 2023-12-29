@@ -1,6 +1,6 @@
-import { doc, getDoc } from "firebase/firestore";
 import { create } from "zustand";
-import { auth, db } from "../config/firebase";
+import { auth } from "../config/firebase";
+import firestoreApi from "./firestoreApi";
 
 interface layoutProps {
   i: string;
@@ -11,22 +11,34 @@ interface layoutProps {
 }
 interface DashboardProps {
   layout: layoutProps[];
+  unLoginLayout: layoutProps[];
   getLatestLayout: () => void;
+  setUnLogInLayout: (layout: layoutProps[]) => void;
+  deleteUnLoginLayout: (id: string, layout: layoutProps[]) => void;
 }
 
-const useDashboardStore = create<DashboardProps>((set) => ({
+const initialState = {
   layout: [],
+  unLoginLayout: [],
+};
+
+const useDashboardStore = create<DashboardProps>((set) => ({
+  ...initialState,
   getLatestLayout: async () => {
     if (!auth.currentUser) return;
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const layout = await getDoc(memberRef);
-    if (layout.exists()) {
-      set({
-        layout: layout
-          .data()!
-          .dashboard_layout.map((item: layoutProps) => item),
-      });
-    }
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    set({
+      layout: memberData?.dashboard_layout.map((item: layoutProps) => item),
+    });
+  },
+
+  setUnLogInLayout: (layout: layoutProps[]) => {
+    set({ unLoginLayout: layout });
+  },
+
+  deleteUnLoginLayout: (id: string, layout: layoutProps[]) => {
+    const newLayout = layout.filter((item: layoutProps) => item.i !== id);
+    set({ unLoginLayout: newLayout });
   },
 }));
 

@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/finMindApi";
 import { Card, Spinner } from "@nextui-org/react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
@@ -84,7 +84,6 @@ export default function LatestStockPrice() {
       setIsLoading(false);
     }
   };
-  console.log(formattedData);
   const options = {
     chart: {
       type: "area",

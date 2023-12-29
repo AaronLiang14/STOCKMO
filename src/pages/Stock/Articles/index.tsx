@@ -1,33 +1,24 @@
-import FullArticle from "@/components/Modals/FullArticles";
 import { auth, db } from "@/config/firebase";
-import { useFavoritesStore } from "@/utils/useLoginStore";
+import firestoreApi from "@/utils/firestoreApi";
 import { Button, Card } from "@nextui-org/react";
 import {
-  arrayRemove,
-  arrayUnion,
+  Timestamp,
   collection,
-  doc,
-  getDoc,
   getDocs,
-  onSnapshot,
   query,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import SubmitArticles from "./SubmitArticles";
+import Tiptap from "./Tiptap";
 
 interface Article {
   author_id: string;
   author_name: string;
   content: string;
-  created_time: Date;
+  created_time: Timestamp;
   industry: string;
-  number_of_favorite: number;
-  photo: string;
-  reply: string[];
   stock_code: string;
   title: string;
   id: string;
@@ -36,18 +27,16 @@ interface Article {
 const AuthorAvatar = ({ id }: { id: string }) => {
   const [avatar, setAvatar] = useState<string>("");
   const [name, setName] = useState<string>("");
+
   const getAuthorAvatar = async () => {
-    const memberRef = doc(db, "Member", id);
-    const docSnap = await getDoc(memberRef);
-    if (docSnap.exists()) {
-      setAvatar(docSnap.data().avatar);
-      setName(docSnap.data().name);
-    }
+    const memberData = await firestoreApi.getMemberInfo(id);
+    setAvatar(memberData?.avatar);
+    setName(memberData?.name);
   };
   getAuthorAvatar();
 
   return (
-    <div className="flex flex-shrink-0 flex-row items-end">
+    <div className="flex flex-shrink-0 flex-row items-center">
       <img className="h-10 w-10 rounded-full" src={avatar} alt="" />
       <p className="pl-2"> {name}</p>
     </div>
@@ -55,32 +44,29 @@ const AuthorAvatar = ({ id }: { id: string }) => {
 };
 
 export default function Articles() {
-  const { favoriteArticles, getFavoriteArticles } = useFavoritesStore();
   const { id } = useParams();
   const [articles, setArticles] = useState<Article[]>([]);
+  const [favoriteArticles, setFavoriteArticles] = useState<string[]>([]);
+
+  const getFavoriteArticles = async () => {
+    if (!auth.currentUser) return;
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    setFavoriteArticles(memberData?.favorite_articles || []);
+  };
 
   const handleArticleFavorite = async (id: string) => {
     if (!auth.currentUser) {
       toast.error("請先登入");
       return;
     }
-    const memberRef = doc(db, "Member", auth.currentUser!.uid);
-    const docSnap = await getDoc(memberRef);
-
-    if (docSnap.exists()) {
-      if (docSnap.data().favorite_articles.includes(id)) {
-        await updateDoc(memberRef, {
-          favorite_articles: arrayRemove(id),
-        });
-        toast.success("取消收藏");
-        return;
-      } else {
-        await updateDoc(memberRef, {
-          favorite_articles: arrayUnion(id),
-        });
-        toast.success("加入收藏");
-      }
+    const memberData = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
+    if (memberData?.favorite_articles.includes(id)) {
+      await firestoreApi.updateFavorite(id!, "remove", "favorite_articles");
+      toast.success("取消收藏");
+      return;
     }
+    await firestoreApi.updateFavorite(id!, "add", "favorite_articles");
+    toast.success("加入收藏");
   };
 
   const q = query(collection(db, "Articles"), where("stock_code", "==", id));
@@ -91,69 +77,88 @@ export default function Articles() {
   };
 
   useEffect(() => {
-    onSnapshot(q, () => {
-      getArticlesByStock();
-    });
+    getArticlesByStock();
   }, []);
 
   useEffect(() => {
     getFavoriteArticles();
-  }, [favoriteArticles]);
+  }, [favoriteArticles, auth.currentUser]);
 
   return (
     <div>
-      <SubmitArticles />
+      <div className="my-12">
+        <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
+          文章列表
+        </p>
+      </div>
       <div className="mx-auto my-12">
-        <div
-          className={`grid gap-12 lg:max-w-none ${
-            articles.length > 0 && "lg:grid-cols-3"
-          }`}
-        >
+        <div className={` grid gap-12 lg:max-w-none`}>
           {articles.length === 0 ? (
             <div className="flex items-center justify-center">
-              <p className="text-2xl">目前沒有文章，點擊右上方按鈕來發表！</p>
+              <p className="text-base sm:text-2xl">
+                目前還沒有文章紀錄，至下方撰寫文章！
+              </p>
             </div>
           ) : (
             articles.map((post, index) => (
-              <Card
-                className="flex flex-col overflow-hidden rounded-lg "
-                key={index}
-              >
-                <div>
-                  <img
-                    className="h-48 w-full object-cover"
-                    src={post.photo}
-                    alt={post.title}
-                  />
-                </div>
-                <div className="flex flex-1 flex-col justify-between p-6">
-                  <div>
-                    <p className="text-xl font-semibold text-gray-900">
-                      {post.title}
-                    </p>
-                  </div>
-                  <div className="relative mt-6 flex items-center justify-between">
-                    <AuthorAvatar id={post.author_id} />
-                    <div className="flex gap-4">
+              <Link to={`./${post.id}`}>
+                <Card
+                  className="flex h-40 flex-col overflow-hidden rounded-lg"
+                  key={index}
+                >
+                  <div className="relative flex flex-1 flex-col justify-between p-6">
+                    <div className="flex flex-row justify-between">
+                      <p className=" text-base font-semibold text-gray-900 sm:text-xl">
+                        {post.title}
+                      </p>
                       <Button
                         type="button"
                         color="primary"
-                        onClick={() => handleArticleFavorite(post.id)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleArticleFavorite(post.id);
+                        }}
                         size="sm"
                       >
                         {favoriteArticles.includes(post.id)
                           ? "取消收藏"
                           : "收藏文章"}
                       </Button>
-                      <FullArticle article={post} />
+                    </div>
+                    <div className="flex flex-row items-end justify-between">
+                      <AuthorAvatar id={post.author_id} />
+                      <div className="text-sm text-gray-400">
+                        {post.created_time.toDate().toLocaleDateString()}{" "}
+                        {post.created_time.toDate().toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              </Link>
             ))
           )}
         </div>
       </div>
+
+      <div className="my-12">
+        <p className="border-l-8 border-solid border-red-500 pl-4 text-2xl font-semibold text-gray-900">
+          撰寫文章
+        </p>
+      </div>
+      <span className="m-auto flex justify-center sm:hidden">
+        使用電腦登入即可撰寫文章
+      </span>
+      {!auth.currentUser ? (
+        <div className=" hidden items-center  justify-center sm:flex">
+          <p className="text-2xl">登入後即可撰寫文章</p>
+        </div>
+      ) : (
+        <Tiptap />
+      )}
     </div>
   );
 }

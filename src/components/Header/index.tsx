@@ -1,27 +1,28 @@
 import logo from "@/assets/logo.png";
-import { Link } from "react-router-dom";
-
-import { auth } from "@/config/firebase";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import useLoginStore from "@/utils/useLoginStore";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
+} from "@nextui-org/react";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
+import SearchIcon from "~icons/ic/twotone-search";
 import Avatar from "./Avatar";
 import SearchBox from "./SearchBox";
 
 export default function Header() {
   const location = useLocation();
-
   const [backgroundColor, setBackgroundColor] = useState("bg-gray-300");
-
-  useEffect(() => {
-    if (location.pathname === "/") {
-      setBackgroundColor("");
-    } else if (location.pathname === "/login") {
-      setBackgroundColor("bg-white/60 backdrop-blur-sm");
-    } else {
-      setBackgroundColor("bg-white border-b-2");
-    }
-  }, [location]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const searchBoxRef = useRef(null);
+  const { handleLogout } = useLoginStore();
 
   const headerOption: { [key: string]: string } = {
     industry: "產業類別",
@@ -29,50 +30,159 @@ export default function Header() {
     trades: "模擬交易",
   };
 
+  const mobileMenuOption: { [key: string]: { name: string; link: string } } = {
+    industry: {
+      name: "產業類別",
+      link: "/industry",
+    },
+    dashboard: {
+      name: "儀表板",
+      link: "/dashboard",
+    },
+    trades: {
+      name: "模擬交易",
+      link: "/trades/order",
+    },
+    favoriteStocks: {
+      name: "股票收藏",
+      link: "/member/favoriteStocks",
+    },
+    favoriteArticles: {
+      name: "文章收藏",
+      link: "/member/favoriteArticles",
+    },
+    login: {
+      name: "登入",
+      link: "/login/signIn",
+    },
+    logout: {
+      name: "登出",
+      link: "/",
+    },
+  };
+
+  const handleMobileMenuClick = (item: string) => {
+    setIsMenuOpen(false);
+    console.log(item);
+    if (item === "logout") {
+      handleLogout();
+      toast.success("已登出");
+    }
+  };
+
+  useEffect(() => {
+    if (location.pathname === "/" && isMenuOpen) {
+      setBackgroundColor(" ");
+      return;
+    }
+
+    if (location.pathname === "/") {
+      setBackgroundColor("bg-white/40 bg-opacity-0 ");
+      return;
+    }
+    if (
+      location.pathname === "/login/signIn" ||
+      location.pathname === "/login/signUp"
+    ) {
+      setBackgroundColor("bg-white/60 backdrop-blur-md");
+      return;
+    }
+    setBackgroundColor("bg-white border-b-2");
+  }, [location, isMenuOpen]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileSearchOpen(false);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <>
-      <header
-        className={`fixed z-50 flex h-24  w-full items-center  ${backgroundColor}`}
+      <Navbar
+        isBordered
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
+        className={`${backgroundColor} fixed top-0 z-50 w-full border-b-1 py-2 `}
       >
-        <nav className=" mx-auto  w-10/12">
-          <div className="flex items-center justify-between">
-            <div className="mr-auto flex items-center">
-              <Link to="/">
-                <img className="h-12 w-auto" src={logo} alt="logo" />
-                <p className="text-black">STOCK.MO</p>
-              </Link>
-              {Object.keys(headerOption).map((item) => {
-                const Links =
-                  item === "trades"
-                    ? auth.currentUser
-                      ? "trades/order"
-                      : "login"
-                    : item;
-                return (
-                  <div className="ml-10" key={item}>
-                    <Link
-                      to={`/${Links}`}
-                      onClick={() => {
-                        if (item === "trades" && !auth.currentUser) {
-                          toast.error("請先登入");
-                        }
-                      }}
-                      className={`pb-4 text-base font-medium text-black ${
-                        location.pathname.split("/")[1] === item &&
-                        "border-b-4 border-gray-600"
-                      } hover:border-b-4  hover:border-black`}
-                    >
-                      {headerOption[item]}
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
+        <NavbarContent className="md:hidden" justify="start">
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          />
+        </NavbarContent>
+
+        <NavbarBrand className="absolute left-1/2 -translate-x-1/2 transform md:hidden ">
+          <Link to="/" className="flex items-center">
+            <img className="m-auto h-10" src={logo} alt="logo" />
+            <p className=" text-base">STOCK.MO</p>
+          </Link>{" "}
+        </NavbarBrand>
+
+        <NavbarContent className="hidden gap-4 md:flex" justify="center">
+          <NavbarBrand>
+            <Link to="/">
+              <img className="m-auto h-10" src={logo} alt="logo" />
+              <p className="text-xs text-black">STOCK.MO</p>
+            </Link>
+          </NavbarBrand>
+
+          {Object.keys(headerOption).map((item) => {
+            const Links = item === "trades" ? "trades/order" : item;
+            return (
+              <NavbarItem className="ml-10" key={item}>
+                <Link
+                  to={`/${Links}`}
+                  className={`pb-4 text-base font-medium text-black ${
+                    location.pathname.split("/")[1] === item &&
+                    "border-b-4 border-gray-600"
+                  } hover:border-b-4 hover:border-black`}
+                >
+                  {headerOption[item]}
+                </Link>
+              </NavbarItem>
+            );
+          })}
+        </NavbarContent>
+
+        <NavbarContent justify="end" className="hidden md:flex">
+          <SearchBox />
+          <Avatar />
+        </NavbarContent>
+
+        <NavbarContent justify="end" className="md:hidden">
+          <SearchIcon
+            className={`z-50 h-7 w-7 cursor-pointer`}
+            onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+          />
+        </NavbarContent>
+        {isMobileSearchOpen && (
+          <div ref={searchBoxRef} className="absolute w-10/12 ">
             <SearchBox />
-            <Avatar />
           </div>
-        </nav>
-      </header>
+        )}
+
+        <NavbarMenu className="z-50 pt-4">
+          {Object.keys(mobileMenuOption).map((item, index) => {
+            return (
+              <Link
+                key={`${item}-${index}`}
+                className="border-b-2 border-gray-200"
+                to={mobileMenuOption[item].link}
+                onClick={() => handleMobileMenuClick(item)}
+              >
+                <NavbarMenuItem className="w-full">
+                  {mobileMenuOption[item].name}
+                </NavbarMenuItem>
+              </Link>
+            );
+          })}
+        </NavbarMenu>
+      </Navbar>
     </>
   );
 }

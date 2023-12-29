@@ -20,32 +20,31 @@ export default function ChatRoom() {
     }
   };
   const { id } = useParams();
-
   const [state, dispatch] = useReducer(reducer, { isOpen: false });
   const {
-    changeIsAllRoom,
+    switchToAllRoom,
     isAllRoom,
     isIndependentRoom,
-    changeIsIndependentRoom,
+    switchToIndependentRoom,
     changeRoomID,
   } = useChatRoomStore();
 
-  const handleCheckBox = () => {
+  const handleCheckBoxDisplay = () => {
     if (!auth.currentUser) {
       toast.error("登入後即可使用聊天室");
-
       return;
     }
+
     if (isAllRoom || isIndependentRoom) {
-      changeIsAllRoom(false);
-      changeIsIndependentRoom(false);
+      switchToAllRoom(false);
+      switchToIndependentRoom(false);
     }
 
     if (id) {
-      changeIsIndependentRoom(true);
+      switchToIndependentRoom(true);
       changeRoomID(id);
     } else {
-      changeIsAllRoom(true);
+      switchToAllRoom(true);
     }
     dispatch({ type: "TOGGLE" });
   };
@@ -53,8 +52,8 @@ export default function ChatRoom() {
   return (
     <>
       <div
-        className="fixed bottom-10 right-10 z-50  rounded-lg border bg-white shadow-inner"
-        onClick={handleCheckBox}
+        className="fixed bottom-10 right-10 z-30 rounded-full  border bg-white shadow-lg"
+        onClick={handleCheckBoxDisplay}
       >
         <ChatIcons className=" h-16 w-16 cursor-pointer  text-cyan-800 " />
       </div>
