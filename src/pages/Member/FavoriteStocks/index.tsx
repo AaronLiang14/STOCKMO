@@ -168,7 +168,9 @@ export default function FavoriteStocks() {
             </Table>
           ) : (
             <div className="mt-8 flex flex-col items-center justify-center gap-12">
-              <p className="text-2xl">目前沒有收藏的股票，到個股頁面看看吧</p>
+              <p className="text-lg sm:text-2xl">
+                目前沒有收藏的股票，到個股頁面看看吧
+              </p>
               <Link to="/stock/2330/latest">
                 <Button color="primary">前往個股頁面</Button>
               </Link>

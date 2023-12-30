@@ -1,27 +1,64 @@
-# React + TypeScript + Vite
+# STOCK.MO
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[STOCK.MO](https://stockmo.web.app/) is a finance data integration website developed for the Taiwan Stock Exchange, featuring financial chart dashboards, chat rooms, and simulated trading.
 
-Currently, two official plugins are available:
+## About STOCK.MO
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Fetched financial data from third-party APIs offered by [FinMind](https://finmindtrade.com/), visualized the data using the `Highcharts`, and combined the charts into a dashboard with `React-Grid-Layout`, providing customized user experience
 
-## Expanding the ESLint configuration
+2. Integrated `Firebase Firestore` as the Back-End, including implementing `onSnapshot` for real-time data updates in the chat rooms
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+3. Implemented `Zustand` for global state management to maintain data consistency and predictability
 
-- Configure the top-level `parserOptions` property like this:
+4. Employed `Tailwind CSS` to achieve responsive web design
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+## Built with
+
+![React](https://img.shields.io/badge/React-61DAFB.svg?style=for-the-badge&logo=React&logoColor=black)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4.svg?style=for-the-badge&logo=Tailwind-CSS&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF.svg?style=for-the-badge&logo=Vite&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28.svg?style=for-the-badge&logo=Firebase&logoColor=black)
+![npm](https://img.shields.io/badge/npm-CB3837.svg?style=for-the-badge&logo=npm&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-4B32C3.svg?style=for-the-badge&logo=ESLint&logoColor=white)
+
+## Libraries
+
+- React Router
+- React-Grid-Layout
+- React-hook-form
+- Zustand
+- Highcharts
+- NextUI
+- TipTap
+
+## File Structure
+
+   <img src="./public/demo/Website_Structure.png" width="700px" />
+
+## Demo
+
+1. Dashboard
+
+   <img src="./public/demo/dashboard.gif" width="800px" />
+
+2. Trade
+
+   <img src="./public/demo/trade.gif" width="800px" />
+
+3. Chat Room
+
+   <img src="./public/demo/chatroom.gif" width="800px" />
+
+## Demo Account
+
+```
+Test Account
+
+  - Mail: user01@gmail.com
+  - PWD: stockmo2023
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Contact
+
+[![Linkedin](https://img.shields.io/badge/LinkedIn-0A66C2.svg?style=for-the-badge&logo=LinkedIn&logoColor=white)](https://www.linkedin.com/in/aaron-liang)

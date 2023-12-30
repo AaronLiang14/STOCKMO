@@ -31,6 +31,9 @@ export default function LatestStockPrice() {
   const getTaiwanStockKBar = async (startDate: string) => {
     try {
       const res = await api.getTaiwanVariousIndicators5Seconds(startDate);
+      console.log(res.data);
+      console.log(startDate);
+
       if (res.data[0].TAIEX < res.data[res.data.length - 1].TAIEX)
         setRise(true);
 
@@ -112,8 +115,8 @@ export default function LatestStockPrice() {
             y2: 1,
           },
           stops: [
-            [0, chartsColor], // 開始顏色
-            [1, chartsTransparentColor], // 结束颜色，透明
+            [0, chartsColor],
+            [1, chartsTransparentColor],
           ],
         },
         marker: {
@@ -146,8 +149,11 @@ export default function LatestStockPrice() {
 
   useEffect(() => {
     const currentHours = new Date().getHours();
+    const currentDay = new Date().getDay();
     const chartDay =
-      currentHours > 14 ? timeSelector.endDate : timeSelector.lastOpeningDate;
+      currentHours > 16 && currentDay !== 6 && currentDay !== 7
+        ? timeSelector.endDate
+        : timeSelector.lastOpeningDate;
     getTaiwanStockKBar(chartDay);
   }, []);
 

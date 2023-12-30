@@ -36,6 +36,7 @@ export default function Home() {
         autoPlay
         muted={true}
         loop
+        playsInline
         className="absolute z-0 h-[100vh] w-[100vw] object-cover opacity-90"
       >
         <source src={indexVideo} type="video/mp4" />
@@ -43,7 +44,7 @@ export default function Home() {
 
       <div className="flex h-screen items-center">
         <div className="absolute z-30 -mt-32 flex w-full justify-center sm:-mt-60 ">
-          <div className="px-5 py-2 font-mono text-xl text-white sm:text-3xl md:text-4xl">
+          <div className="px-5 py-2 font-mono text-lg text-white sm:text-3xl md:text-4xl">
             STOCK.MO 為你開啟一場全新投資旅程
           </div>
         </div>
@@ -51,13 +52,13 @@ export default function Home() {
           <SearchBox />
         </div>
         <div className="absolute z-30 mt-32 flex w-full justify-center">
-          <div className="rounded-full bg-white/40 px-5 py-2 text-sm text-white sm:text-base md:text-lg">
+          <div className="rounded-full bg-white/40 px-5 py-2 text-xs  text-white sm:text-base md:text-lg">
             建議搜尋：
             {suggestSearch.map((item, index) => (
               <Link
                 to={`stock/${item.id}/latest`}
                 key={item.id}
-                className="cursor-pointer"
+                className="cursor-pointer text-xs md:text-lg"
               >
                 {item.name}
                 {index !== suggestSearch.length - 1 && "、  "}

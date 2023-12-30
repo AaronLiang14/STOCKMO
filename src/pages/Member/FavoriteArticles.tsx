@@ -117,7 +117,9 @@ export default function FavoriteArticles() {
           </div>
         ) : (
           <div className="mt-8 flex flex-col items-center justify-center gap-12">
-            <p className="text-2xl">目前沒有收藏的文章，到文章頁面看看吧</p>
+            <p className="text-lg sm:text-2xl">
+              目前沒有收藏的文章，到文章頁面看看吧
+            </p>
             <Link to="/stock/2330/articles">
               <Button color="primary">前往文章頁面</Button>
             </Link>
