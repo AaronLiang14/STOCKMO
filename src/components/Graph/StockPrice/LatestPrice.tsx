@@ -121,8 +121,11 @@ export default function LatestStockPrice({ id }: { id: string }) {
 
   useEffect(() => {
     const currentHours = new Date().getHours();
+    const currentDay = new Date().getDay();
     const chartDay =
-      currentHours > 14 ? timeSelector.endDate : timeSelector.lastOpeningDate;
+      currentHours > 16 && currentDay !== 6 && currentDay !== 7
+        ? timeSelector.endDate
+        : timeSelector.lastOpeningDate;
     if (id) getTaiwanStockKBar(id, chartDay);
     judgeRiseOrFall();
   }, [id]);

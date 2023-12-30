@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import SearchIcon from "~icons/ic/twotone-search";
+import CloseIcon from "~icons/material-symbols/close-small";
 import Avatar from "./Avatar";
 import SearchBox from "./SearchBox";
 
@@ -116,13 +117,6 @@ export default function Header() {
           />
         </NavbarContent>
 
-        <NavbarBrand className="absolute left-1/2 -translate-x-1/2 transform md:hidden ">
-          <Link to="/" className="flex items-center">
-            <img className="m-auto h-10" src={logo} alt="logo" />
-            <p className=" text-base">STOCK.MO</p>
-          </Link>{" "}
-        </NavbarBrand>
-
         <NavbarContent className="hidden gap-4 md:flex" justify="center">
           <NavbarBrand>
             <Link to="/">
@@ -154,19 +148,33 @@ export default function Header() {
           <Avatar />
         </NavbarContent>
 
+        <NavbarBrand className="absolute left-1/2 -translate-x-1/2 transform md:hidden ">
+          <Link to="/" className="flex items-center">
+            <img className="m-auto h-10" src={logo} alt="logo" />
+            <p className=" text-base">STOCK.MO</p>
+          </Link>{" "}
+        </NavbarBrand>
+
         <NavbarContent justify="end" className="md:hidden">
-          <SearchIcon
-            className={`z-50 h-7 w-7 cursor-pointer`}
-            onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-          />
+          {isMobileSearchOpen ? (
+            <CloseIcon
+              className={`z-50 h-7 w-7 cursor-pointer`}
+              onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+            />
+          ) : (
+            <SearchIcon
+              className={`z-50 h-7 w-7 cursor-pointer`}
+              onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+            />
+          )}
         </NavbarContent>
         {isMobileSearchOpen && (
-          <div ref={searchBoxRef} className="absolute w-10/12 ">
+          <div ref={searchBoxRef} className="absolute w-9/12 ">
             <SearchBox />
           </div>
         )}
 
-        <NavbarMenu className="z-50 pt-4">
+        <NavbarMenu className="z-50 mt-4">
           {Object.keys(mobileMenuOption).map((item, index) => {
             return (
               <Link

@@ -165,7 +165,7 @@ export default function Stock() {
           <div className="flex justify-start gap-4 border-b-1 text-sm sm:gap-8 sm:text-base">
             {subTitle.map((item) => (
               <div
-                className={`flex cursor-pointer items-center gap-1 pb-2 sm:gap-3 ${
+                className={`flex cursor-pointer items-center gap-2 pb-2 text-xs sm:gap-3 sm:text-base ${
                   location.pathname.split("/")[3] === item.link &&
                   "border-b-3 border-blue-800"
                 } hover:border-b-3 hover:border-blue-800`}

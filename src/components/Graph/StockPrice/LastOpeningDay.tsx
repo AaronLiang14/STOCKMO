@@ -81,8 +81,8 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
             y2: 1,
           },
           stops: [
-            [0, chartsColor], // 开始颜色，这里是红色的半透明
-            [1, chartsTransparentColor], // 结束颜色，透明
+            [0, chartsColor],
+            [1, chartsTransparentColor],
           ],
         },
         marker: {
@@ -98,7 +98,7 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
       },
     },
     credits: {
-      enabled: false, // 刪除 Highcharts 連結
+      enabled: false,
     },
     series: [
       {
@@ -114,8 +114,11 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
 
   useEffect(() => {
     const currentHours = new Date().getHours();
+    const currentDay = new Date().getDay();
     const chartDay =
-      currentHours > 16 ? timeSelector.endDate : timeSelector.lastOpeningDate;
+      currentHours > 16 && currentDay !== 6 && currentDay !== 7
+        ? timeSelector.endDate
+        : timeSelector.lastOpeningDate;
     if (stockID) getTaiwanStockKBar(stockID, chartDay);
     getLatestInfo();
   }, [stockID]);
