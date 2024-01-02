@@ -24,7 +24,7 @@ export default function StockChart({ id }: { id: string }) {
   const [volume, setVolume] = useState<[]>([]);
   const [time, setTime] = useState<string>(timeSelector.oneMonth);
   const [isLoading, setIsLoading] = useState(true);
-
+  console.log(timeSelector);
   const chartsTime = [
     {
       label: "一年",

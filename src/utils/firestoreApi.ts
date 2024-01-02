@@ -43,6 +43,17 @@ const firestoreApi = {
     });
   },
 
+  async ifChartExistInDashboard(id: string) {
+    if (!auth.currentUser) return;
+    const memberRef = doc(db, "Member", auth.currentUser?.uid);
+    const memberData = await getDoc(memberRef);
+    const dashboardLayout = memberData.data()?.dashboard_layout;
+    const ifExist = dashboardLayout?.find(
+      (item: { i: string }) => item.i === id,
+    );
+    if (ifExist) return true;
+  },
+
   async sendNewMessage(id: string, message: object) {
     if (!auth.currentUser) return;
     const chatRoomsRef = doc(db, "ChatRooms", id);

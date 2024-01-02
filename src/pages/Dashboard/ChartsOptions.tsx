@@ -4,6 +4,7 @@ import firestoreApi from "@/utils/firestoreApi";
 import useDashboardStore from "@/utils/useDashboardStore";
 import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import WarningIcon from "~icons/ph/warning-fill";
 
 const charts: { [key: string]: string } = {
@@ -94,6 +95,13 @@ export default function ChartsOptions() {
     if (!auth.currentUser) {
       const newUnLoginLayout = [...unLoginLayout, newChartInfo];
       setUnLogInLayout(newUnLoginLayout);
+      return;
+    }
+    const isChartExist = await firestoreApi.ifChartExistInDashboard(
+      newChartInfo.i,
+    );
+    if (isChartExist) {
+      toast.error("圖表已存在");
       return;
     }
     const memberInfo = await firestoreApi.getMemberInfo(auth.currentUser!.uid);
