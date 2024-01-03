@@ -12,6 +12,19 @@ function calculateDateBefore(durationInDays: number) {
   }`;
 }
 
+const lastOpeningDate =
+  new Date().getDay() === 0
+    ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
+        new Date().getDate() - 2
+      }`
+    : new Date().getDay() === 1
+      ? `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
+          new Date().getDate() - 3
+        }`
+      : `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
+          new Date().getDate() - 1
+        }`;
+
 const timeSelector = {
   endDate: calculateDateBefore(0),
   fiveYears: calculateDateBefore(5 * 365),
@@ -21,6 +34,6 @@ const timeSelector = {
   threeMonths: calculateDateBefore(3 * 30),
   oneMonth: calculateDateBefore(30),
   fiveDays: calculateDateBefore(5),
-  lastOpeningDate: calculateDateBefore(0),
+  lastOpeningDate: lastOpeningDate,
 };
 export default timeSelector;
