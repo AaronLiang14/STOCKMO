@@ -93,6 +93,13 @@ export default function ChartsOptions() {
       h: 4,
     };
     if (!auth.currentUser) {
+      if (
+        unLoginLayout?.find((item: { i: string }) => item.i === newChartInfo.i)
+      ) {
+        toast.error("圖表已存在");
+        return;
+      }
+
       const newUnLoginLayout = [...unLoginLayout, newChartInfo];
       setUnLogInLayout(newUnLoginLayout);
       return;

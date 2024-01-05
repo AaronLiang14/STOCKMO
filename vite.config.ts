@@ -12,6 +12,5 @@ export default defineConfig(() => {
         "#root": resolve(__dirname),
       },
     },
-    build: { sourcemap: true },
   };
 });
