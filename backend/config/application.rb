@@ -24,6 +24,9 @@ module Backend
     config.time_zone = "Taipei"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    # No image_processing gem — this app doesn't use Active Storage variants.
+    config.active_storage.variant_processor = :disabled
+
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
