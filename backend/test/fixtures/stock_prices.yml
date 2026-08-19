@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  stock_id: MyString
+  date: 2026-08-19
+  open: 9.99
+  max: 9.99
+  min: 9.99
+  close: 9.99
+  trading_volume: 1
+
+two:
+  stock_id: MyString
+  date: 2026-08-19
+  open: 9.99
+  max: 9.99
+  min: 9.99
+  close: 9.99
+  trading_volume: 1

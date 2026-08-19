@@ -23,3 +23,25 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Rails backend
+backend/log/*
+!backend/log/.keep
+backend/tmp/*
+!backend/tmp/.keep
+!backend/tmp/pids
+backend/tmp/pids/*
+!backend/tmp/pids/.keep
+backend/storage/*
+!backend/storage/.keep
+backend/config/master.key
+backend/db/*.sqlite3
+backend/db/*.sqlite3-journal
+backend/db/*.sqlite3-*
+backend/.byebug_history
+backend/public/assets
+backend/.env
+backend/.env.*
+!backend/.env.example
+backend/.bundle
+backend/.kamal/secrets
