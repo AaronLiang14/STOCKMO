@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  stock_id: MyString
+  quoted_at: 2026-08-19 23:42:58
+  price: 9.99
+  open: 9.99
+  high: 9.99
+  low: 9.99
+  previous_close: 9.99
+  volume: 1
+
+two:
+  stock_id: MyString
+  quoted_at: 2026-08-19 23:42:58
+  price: 9.99
+  open: 9.99
+  high: 9.99
+  low: 9.99
+  previous_close: 9.99
+  volume: 1

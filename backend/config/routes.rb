@@ -9,8 +9,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :stock_prices, only: [ :index ]
       resources :stock_pers, only: [ :index ]
+      resources :intraday_quotes, only: [ :index ] do
+        collection do
+          get :latest
+        end
+      end
       get "fin_mind", to: "fin_mind_proxy#show"
-      get "tick_snapshot", to: "tick_snapshots#show"
     end
   end
 

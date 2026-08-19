@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_19_143812) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_19_154258) do
+  create_table "intraday_quotes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "high", precision: 12, scale: 4
+    t.decimal "low", precision: 12, scale: 4
+    t.decimal "open", precision: 12, scale: 4
+    t.decimal "previous_close", precision: 12, scale: 4
+    t.decimal "price", precision: 12, scale: 4
+    t.datetime "quoted_at", null: false
+    t.string "stock_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "volume"
+    t.index ["stock_id", "quoted_at"], name: "index_intraday_quotes_on_stock_id_and_quoted_at", unique: true
+  end
+
   create_table "stock_pers", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date", null: false

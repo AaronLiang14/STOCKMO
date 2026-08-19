@@ -6,7 +6,6 @@ module FinMind
     class Error < StandardError; end
 
     BASE_URL = "https://api.finmindtrade.com/api/v4/data"
-    TICK_SNAPSHOT_URL = "https://api.finmindtrade.com/api/v4/taiwan_stock_tick_snapshot"
 
     def initialize(token: ENV.fetch("FINMIND_TOKEN"))
       @token = token
@@ -15,10 +14,6 @@ module FinMind
     def fetch(dataset:, data_id: nil, start_date: nil, end_date: nil)
       params = { dataset: dataset, data_id: data_id, start_date: start_date, end_date: end_date }.compact
       get(BASE_URL, params)
-    end
-
-    def fetch_tick_snapshot(data_id:)
-      get(TICK_SNAPSHOT_URL, { data_id: data_id })
     end
 
     private

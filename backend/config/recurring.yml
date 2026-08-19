@@ -19,6 +19,9 @@ production:
   sync_stock_pers:
     class: SyncStockPersJob
     schedule: every weekday at 14:35
+  poll_intraday_quotes:
+    class: PollIntradayQuotesJob
+    schedule: "*/3 9-13 * * 1-5"
 
 development:
   sync_stock_prices:
@@ -27,3 +30,6 @@ development:
   sync_stock_pers:
     class: SyncStockPersJob
     schedule: every weekday at 14:35
+  poll_intraday_quotes:
+    class: PollIntradayQuotesJob
+    schedule: "*/3 9-13 * * 1-5"

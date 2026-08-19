@@ -11,7 +11,6 @@ module Api
         TaiwanStockFinancialStatements
         TaiwanStockTradingDailyReport
         TaiwanStockMonthRevenue
-        TaiwanStockKBar
         TaiwanVariousIndicators5Seconds
       ].freeze
 

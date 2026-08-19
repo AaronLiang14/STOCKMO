@@ -20,7 +20,7 @@ const api = {
   },
   async getTaiwanStockPriceTick(stockID: string) {
     const res = await fetch(
-      `${this.baseUrl}/api/v1/tick_snapshot?data_id=${stockID}`,
+      `${this.baseUrl}/api/v1/intraday_quotes/latest?data_id=${stockID}`,
     );
     return res.json();
   },
@@ -58,7 +58,7 @@ const api = {
   },
   async getTaiwanStockKBar(stockID: string, startDate: string) {
     const res = await fetch(
-      `${this.baseUrl}/api/v1/fin_mind?dataset=TaiwanStockKBar&start_date=${startDate}&data_id=${stockID}`,
+      `${this.baseUrl}/api/v1/intraday_quotes?date=${startDate}&data_id=${stockID}`,
     );
     return res.json();
   },
