@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  stock_id: MyString
+  date: 2026-08-19
+  dividend_yield: 9.99
+  per: 9.99
+  pbr: 9.99
+
+two:
+  stock_id: MyString
+  date: 2026-08-19
+  dividend_yield: 9.99
+  per: 9.99
+  pbr: 9.99

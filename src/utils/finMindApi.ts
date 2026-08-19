@@ -1,28 +1,26 @@
 const api = {
-  hostName: "https://api.finmindtrade.com/api/v4/data?",
-  token:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRlIjoiMjAyMy0xMS0yMiAxMDo0MDo1NiIsInVzZXJfaWQiOiJBYXJvbkxJYW5nIiwiaXAiOiI1OS4xMjAuMTEuMTI1In0.RJuFpbVur-YtQ2QyLTWoydAASQ2gKwQH8DEQta5yLFQ",
+  baseUrl: import.meta.env.VITE_API_BASE_URL,
   async getStocksNews(stockID: string, startDate: string) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanStockNews&data_id=${stockID}&start_date=${startDate}&token=${this.token}`,
+      `${this.baseUrl}/api/v1/fin_mind?dataset=TaiwanStockNews&data_id=${stockID}&start_date=${startDate}`,
     );
     return res.json();
   },
   async getStockPrice(stockID: string, startDate: string, endDate: string) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanStockPrice&start_date=${startDate}&end_date=${endDate}&token=${this.token}&data_id=${stockID}`,
+      `${this.baseUrl}/api/v1/stock_prices?start_date=${startDate}&end_date=${endDate}&data_id=${stockID}`,
     );
     return res.json();
   },
   async getPER(stockID: string, startDate: string, endDate: string) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanStockPER&start_date=${startDate}&end_date=${endDate}&token=${this.token}&data_id=${stockID}`,
+      `${this.baseUrl}/api/v1/stock_pers?start_date=${startDate}&end_date=${endDate}&data_id=${stockID}`,
     );
     return res.json();
   },
   async getTaiwanStockPriceTick(stockID: string) {
     const res = await fetch(
-      `https://api.finmindtrade.com/api/v4/taiwan_stock_tick_snapshot?data_id=${stockID}&token=${this.token}`,
+      `${this.baseUrl}/api/v1/intraday_quotes/latest?data_id=${stockID}`,
     );
     return res.json();
   },
@@ -32,7 +30,7 @@ const api = {
     endDate: string,
   ) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanStockPrice&start_date=${startDate}&end_date=${endDate}&token=${this.token}&data_id=${stockID}`,
+      `${this.baseUrl}/api/v1/stock_prices?start_date=${startDate}&end_date=${endDate}&data_id=${stockID}`,
     );
     return res.json();
   },
@@ -42,32 +40,32 @@ const api = {
     endDate: string,
   ) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanStockFinancialStatements&start_date=${startDate}&end_date=${endDate}&token=${this.token}&data_id=${stockID}`,
+      `${this.baseUrl}/api/v1/fin_mind?dataset=TaiwanStockFinancialStatements&start_date=${startDate}&end_date=${endDate}&data_id=${stockID}`,
     );
     return res.json();
   },
   async getTradingDailyReport(stockID: string, startDate: string) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanStockTradingDailyReport&start_date=${startDate}&token=${this.token}&data_id=${stockID}`,
+      `${this.baseUrl}/api/v1/fin_mind?dataset=TaiwanStockTradingDailyReport&start_date=${startDate}&data_id=${stockID}`,
     );
     return res.json();
   },
   async getStockRevenue(stockID: string, startDate: string, endDate: string) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanStockMonthRevenue&start_date=${startDate}&end_date=${endDate}&token=${this.token}&data_id=${stockID}`,
+      `${this.baseUrl}/api/v1/fin_mind?dataset=TaiwanStockMonthRevenue&start_date=${startDate}&end_date=${endDate}&data_id=${stockID}`,
     );
     return res.json();
   },
   async getTaiwanStockKBar(stockID: string, startDate: string) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanStockKBar&start_date=${startDate}&token=${this.token}&data_id=${stockID}`,
+      `${this.baseUrl}/api/v1/intraday_quotes?date=${startDate}&data_id=${stockID}`,
     );
     return res.json();
   },
 
   async getTaiwanVariousIndicators5Seconds(startDate: string) {
     const res = await fetch(
-      `${this.hostName}dataset=TaiwanVariousIndicators5Seconds&start_date=${startDate}&token=${this.token}`,
+      `${this.baseUrl}/api/v1/fin_mind?dataset=TaiwanVariousIndicators5Seconds&start_date=${startDate}`,
     );
     return res.json();
   },
