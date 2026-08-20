@@ -10,7 +10,7 @@ class StockPer < ApplicationRecord
       stock_id: stock_id,
       dividend_yield: dividend_yield&.to_f,
       PER: per&.to_f,
-      PBR: pbr&.to_f,
+      PBR: pbr&.to_f
     }
   end
 end

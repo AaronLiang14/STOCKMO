@@ -19,7 +19,7 @@ module DailyPrices
             trading_volume: row["Trading_Volume"],
             trading_money: row["Trading_money"],
             spread: row["spread"],
-            trading_turnover: row["Trading_turnover"],
+            trading_turnover: row["Trading_turnover"]
           },
           unique_by: [ :stock_id, :date ],
         )

@@ -18,7 +18,7 @@ module Twse
         low: decimal(raw["l"]),
         previous_close: decimal(raw["y"]),
         volume: raw["v"].presence&.to_i,
-        quoted_at: parse_time(raw["d"], raw["t"]),
+        quoted_at: parse_time(raw["d"], raw["t"])
       }
     end
 

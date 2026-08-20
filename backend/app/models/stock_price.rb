@@ -15,7 +15,7 @@ class StockPrice < ApplicationRecord
       spread: spread&.to_f,
       Trading_Volume: trading_volume,
       Trading_money: trading_money,
-      Trading_turnover: trading_turnover,
+      Trading_turnover: trading_turnover
     }
   end
 end

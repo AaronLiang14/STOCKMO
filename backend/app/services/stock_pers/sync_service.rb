@@ -14,7 +14,7 @@ module StockPers
             date: row["date"],
             dividend_yield: row["dividend_yield"],
             per: row["PER"],
-            pbr: row["PBR"],
+            pbr: row["PBR"]
           },
           unique_by: [ :stock_id, :date ],
         )

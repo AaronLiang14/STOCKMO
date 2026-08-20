@@ -8,7 +8,7 @@ class IntradayQuote < ApplicationRecord
     {
       date: quoted_at.to_date.to_s,
       minute: quoted_at.strftime("%H:%M:%S"),
-      close: price&.to_f,
+      close: price&.to_f
     }
   end
 end
