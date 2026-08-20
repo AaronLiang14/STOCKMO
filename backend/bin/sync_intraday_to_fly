@@ -1,0 +1,54 @@
+#!/bin/bash
+# Pushes today's locally-collected IntradayQuote rows up to the Fly.io
+# production database. Local (bin/jobs, launchd) is the reliable
+# collector since the Fly machine auto-suspends when idle and can't be
+# trusted to run the recurring poll on schedule.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+export RBENV_ROOT="$HOME/.rbenv"
+export RAILS_ENV=production
+
+echo "Exporting today's IntradayQuote rows from local production DB..."
+bin/rails runner '
+  require "json"
+  rows = IntradayQuote.where(quoted_at: Date.current.beginning_of_day..Date.current.end_of_day).map do |q|
+    {
+      stock_id: q.stock_id,
+      quoted_at: q.quoted_at.iso8601,
+      price: q.price,
+      open: q.open,
+      high: q.high,
+      low: q.low,
+      previous_close: q.previous_close,
+      volume: q.volume,
+    }
+  end
+  File.write("tmp/intraday_export.json", rows.to_json)
+  puts "#{rows.size} rows exported"
+'
+
+echo "Uploading to stockmo-api.fly.dev..."
+cat tmp/intraday_export.json | flyctl ssh console -a stockmo-api -C "/rails/bin/rails runner '
+  require \"json\"
+  rows = JSON.parse(STDIN.read)
+  rows.each do |row|
+    IntradayQuote.upsert(
+      {
+        stock_id: row[\"stock_id\"],
+        quoted_at: row[\"quoted_at\"],
+        price: row[\"price\"],
+        open: row[\"open\"],
+        high: row[\"high\"],
+        low: row[\"low\"],
+        previous_close: row[\"previous_close\"],
+        volume: row[\"volume\"],
+      },
+      unique_by: [:stock_id, :quoted_at],
+    )
+  end
+  puts \"Synced #{rows.size} rows to production\"
+'"
+
+rm -f tmp/intraday_export.json
