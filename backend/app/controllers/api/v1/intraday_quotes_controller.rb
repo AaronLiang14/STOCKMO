@@ -39,9 +39,9 @@ module Api
               change_rate: change_rate&.to_f,
               high: quote[:high]&.to_f,
               low: quote[:low]&.to_f,
-              total_volume: quote[:volume],
-            },
-          ],
+              total_volume: quote[:volume]
+            }
+          ]
         }
       end
     end
