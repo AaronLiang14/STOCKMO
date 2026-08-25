@@ -116,7 +116,7 @@ export default function LatestStockPrice({ stockID }: { stockID: string }) {
     const currentHours = new Date().getHours();
     const currentDay = new Date().getDay();
     const chartDay =
-      currentHours > 16 && currentDay !== 6 && currentDay !== 7
+      currentHours > 16 && currentDay !== 6 && currentDay !== 0
         ? timeSelector.endDate
         : timeSelector.lastOpeningDate;
     if (stockID) getTaiwanStockKBar(stockID, chartDay);
